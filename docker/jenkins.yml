@@ -1,0 +1,173 @@
+credentials:
+  system:
+    domainCredentials:
+    - credentials:
+      - aws:
+          accessKey: "${ACCESS_KEY}"
+          id: "aws"
+          scope: GLOBAL
+          secretKey: "${SECRET_KEY}"
+      - aws:
+          accessKey: "${INTEGRATION_TERRAFORM_ACCESS_KEY}"
+          id: "integrationTerraform"
+          scope: GLOBAL
+          secretKey: "${INTEGRATION_TERRAFORM_SECRET_KEY}"
+      - usernamePassword:
+          username: ${DOCKER_USERNAME}
+          password: ${DOCKER_PASSWORD}
+          id: "docker"
+          scope: GLOBAL
+      - usernamePassword:
+          username: ${GITHUB_USERNAME}
+          password: ${GITHUB_PASSWORD}
+          id: "github"
+          scope: GLOBAL
+      - string:
+          id: "slack"
+          scope: GLOBAL
+          secret: ${SLACK_TOKEN}
+jenkins:
+  securityRealm:
+    github:
+      clientID: "${GITHUB_CLIENT}"
+      clientSecret: "${GITHUB_SECRET}"
+      githubApiUri: "https://api.github.com"
+      githubWebUri: "https://github.com"
+      oauthScopes: "read:org,user:email,repo"
+
+  agentProtocols:
+  - "JNLP4-connect"
+  - "Ping"
+  authorizationStrategy:
+    github:
+      adminUserNames: "MancunianSam,Dclipsham,ian-hoyle,LauraDamianTNA,MarkKingsbury,plembke-tna,sarrahdi,suzannehamilton,TomJKing"
+      allowAnonymousJobStatusPermission: false
+      allowAnonymousReadPermission: false
+      allowCcTrayPermission: true
+      allowGithubWebHookPermission: true
+      authenticatedUserCreateJobPermission: false
+      authenticatedUserReadPermission: true
+      organizationNames: "nationalarchives"
+      useRepositoryPermissions: true
+  clouds:
+  - ecs:
+      allowedOverrides: "all"
+      cluster: "${JENKINS_CLUSTER}"
+      jenkinsUrl: "${LOAD_BALANCER_URL}"
+      credentialsId: "aws"
+      name: "ecs"
+      regionName: "eu-west-2"
+      templates:
+      - assignPublicIp: true
+        cpu: 2048
+        image: "nationalarchives/jenkins-build-sbt"
+        label: "sbt"
+        launchType: "FARGATE"
+        memory: 0
+        memoryReservation: 4096
+        networkMode: "awsvpc"
+        privileged: false
+        remoteFSRoot: "/home/jenkins"
+        securityGroups: "${FARGATE_SECURITY_GROUP}"
+        sharedMemorySize: 0
+        subnets: "${FARGATE_SUBNET}"
+        templateName: "sbt"
+      - assignPublicIp: true
+        cpu: 256
+        environments:
+        - name: "INTEGRATION_ACCOUNT"
+          value: "${INTEGRATION_ACCOUNT}"
+        - name: "STAGING_ACCOUNT"
+          value: "${STAGING_ACCOUNT}"
+        - name: "PROD_ACCOUNT"
+          value: "${PROD_ACCOUNT}"
+        image: "nationalarchives/jenkins-build-terraform"
+        label: "terraform"
+        launchType: "FARGATE"
+        memory: 0
+        memoryReservation: 512
+        networkMode: "awsvpc"
+        privileged: false
+        remoteFSRoot: "/home/jenkins"
+        securityGroups: "${FARGATE_SECURITY_GROUP}"
+        sharedMemorySize: 0
+        subnets: "${FARGATE_SUBNET}"
+        templateName: "terraform"
+      - assignPublicIp: true
+        cpu: 256
+        environments:
+        - name: "INTEGRATION_ACCOUNT"
+          value: "${INTEGRATION_ACCOUNT}"
+        - name: "STAGING_ACCOUNT"
+          value: "${STAGING_ACCOUNT}"
+        - name: "PROD_ACCOUNT"
+          value: "${PROD_ACCOUNT}"
+        image: "nationalarchives/jenkins-build-aws"
+        label: "aws"
+        launchType: "FARGATE"
+        memory: 0
+        memoryReservation: 512
+        networkMode: "awsvpc"
+        privileged: false
+        remoteFSRoot: "/home/jenkins"
+        securityGroups: "${FARGATE_SECURITY_GROUP}"
+        sharedMemorySize: 0
+        subnets: "${FARGATE_SUBNET}"
+        templateName: "aws"
+  crumbIssuer:
+    standard:
+      excludeClientIPFromCrumb: false
+  disableRememberMe: false
+  markupFormatter: "plainText"
+  mode: EXCLUSIVE
+  myViewsTabBar: "standard"
+  numExecutors: 2
+  primaryView:
+    all:
+      name: "all"
+  projectNamingStrategy: "standard"
+  quietPeriod: 5
+  remotingSecurity:
+    enabled: true
+  scmCheckoutRetryCount: 0
+  slaveAgentPort: 50000
+  updateCenter:
+    sites:
+    - id: "default"
+      url: "https://updates.jenkins.io/update-center.json"
+  views:
+  - all:
+      name: "all"
+  viewsTabBar: "standard"
+
+unclassified:
+  buildStepOperation:
+    enabled: false
+  gitHubPluginConfig:
+    hookUrl: "https://jenkins.tdr-prototype.co.uk"
+  gitSCM:
+    createAccountBasedOnEmail: false
+  location:
+    adminAddress: "address not configured yet <nobody@nowhere>"
+    url: "https://jenkins.tdr-prototype.co.uk"
+  mailer:
+    adminAddress: "address not configured yet <nobody@nowhere>"
+    charset: "UTF-8"
+    useSsl: false
+  pollSCM:
+    pollingThreadCount: 10
+  slackNotifier:
+    botUser: false
+    room: "tdr"
+    sendAsText: false
+    teamDomain: "tna-digital"
+    tokenCredentialId: "slack"
+  timestamperConfig:
+    allPipelines: true
+    elapsedTimeFormat: "'<b>'HH:mm:ss.S'</b> '"
+    systemTimeFormat: "'<b>'HH:mm:ss'</b> '"
+tool:
+  git:
+    installations:
+    - home: "git"
+      name: "Default"
