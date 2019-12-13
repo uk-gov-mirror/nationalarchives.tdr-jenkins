@@ -72,7 +72,7 @@ jenkins:
         sharedMemorySize: 0
         subnets: "${FARGATE_SUBNET}"
         templateName: "sbt"
-      - assignPublicIp: true
+      - assignPublicIp: false
         cpu: 256
         environments:
         - name: "INTEGRATION_ACCOUNT"
@@ -93,7 +93,7 @@ jenkins:
         sharedMemorySize: 0
         subnets: "${FARGATE_SUBNET}"
         templateName: "terraform"
-      - assignPublicIp: true
+      - assignPublicIp: false
         cpu: 256
         environments:
         - name: "INTEGRATION_ACCOUNT"
@@ -114,6 +114,48 @@ jenkins:
         sharedMemorySize: 0
         subnets: "${FARGATE_SUBNET}"
         templateName: "aws"
+      - assignPublicIp: false
+        cpu: 2048
+        environments:
+        - name: "INTEGRATION_ACCOUNT"
+          value: "${INTEGRATION_ACCOUNT}"
+        - name: "STAGING_ACCOUNT"
+          value: "${STAGING_ACCOUNT}"
+        - name: "PROD_ACCOUNT"
+          value: "${PROD_ACCOUNT}"
+        image: "nationalarchives/jenkins-build-npm"
+        label: "npm"
+        launchType: "FARGATE"
+        memory: 0
+        memoryReservation: 4096
+        networkMode: "awsvpc"
+        privileged: false
+        remoteFSRoot: "/home/jenkins"
+        securityGroups: "${FARGATE_SECURITY_GROUP}"
+        sharedMemorySize: 0
+        subnets: "${FARGATE_SUBNET}"
+        templateName: "npm"
+      - assignPublicIp: false
+        cpu: 2048
+        environments:
+        - name: "INTEGRATION_ACCOUNT"
+          value: "${INTEGRATION_ACCOUNT}"
+        - name: "STAGING_ACCOUNT"
+          value: "${STAGING_ACCOUNT}"
+        - name: "PROD_ACCOUNT"
+          value: "${PROD_ACCOUNT}"
+        image: "nationalarchives/jenkins-build-maven"
+        label: "maven"
+        launchType: "FARGATE"
+        memory: 0
+        memoryReservation: 4096
+        networkMode: "awsvpc"
+        privileged: false
+        remoteFSRoot: "/home/jenkins"
+        securityGroups: "${FARGATE_SECURITY_GROUP}"
+        sharedMemorySize: 0
+        subnets: "${FARGATE_SUBNET}"
+        templateName: "maven"
   crumbIssuer:
     standard:
       excludeClientIPFromCrumb: false
