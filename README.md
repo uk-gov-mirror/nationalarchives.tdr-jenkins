@@ -1,5 +1,7 @@
 # Jenkins prototype for TDR
 
+All TDR documentation is available [here](https://github.com/nationalarchives/tdr-dev-documentation)
+
 This project can be used to spin up a jenkins server using ECS. The ECS cluster is created using terraform and the jenkins configuration uses the [JCasC](https://jenkins.io/projects/jcasc/) plugin and the jenkins.yml file sets up the jenkins configuration. 
 
 ## Project components
