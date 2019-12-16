@@ -75,7 +75,7 @@ jenkins:
       - assignPublicIp: false
         cpu: 256
         environments:
-        - name: "INTEGRATION_ACCOUNT"
+        - name: "INTG_ACCOUNT"
           value: "${INTEGRATION_ACCOUNT}"
         - name: "STAGING_ACCOUNT"
           value: "${STAGING_ACCOUNT}"
@@ -96,7 +96,7 @@ jenkins:
       - assignPublicIp: false
         cpu: 256
         environments:
-        - name: "INTEGRATION_ACCOUNT"
+        - name: "INTG_ACCOUNT"
           value: "${INTEGRATION_ACCOUNT}"
         - name: "STAGING_ACCOUNT"
           value: "${STAGING_ACCOUNT}"
@@ -117,7 +117,7 @@ jenkins:
       - assignPublicIp: false
         cpu: 2048
         environments:
-        - name: "INTEGRATION_ACCOUNT"
+        - name: "INTG_ACCOUNT"
           value: "${INTEGRATION_ACCOUNT}"
         - name: "STAGING_ACCOUNT"
           value: "${STAGING_ACCOUNT}"
@@ -138,7 +138,7 @@ jenkins:
       - assignPublicIp: false
         cpu: 2048
         environments:
-        - name: "INTEGRATION_ACCOUNT"
+        - name: "INTG_ACCOUNT"
           value: "${INTEGRATION_ACCOUNT}"
         - name: "STAGING_ACCOUNT"
           value: "${STAGING_ACCOUNT}"
