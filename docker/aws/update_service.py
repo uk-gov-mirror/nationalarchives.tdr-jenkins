@@ -9,7 +9,8 @@ account_number = sys.argv[1]
 stage = sys.argv[2]
 service_name = sys.argv[3]
 
-role_to_assume_arn='arn:aws:iam::' + account_number + ':role/' + stage + '-terraform-role'
+role_to_assume_arn='arn:aws:iam::' + account_number + ':role/TDRJenkinsECSUpdateRole' + stage.capitalize()
+
 role_session_name='session'
 
 response=sts_default_provider_chain.assume_role(
