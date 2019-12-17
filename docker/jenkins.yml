@@ -9,7 +9,7 @@ credentials:
           secretKey: "${SECRET_KEY}"
       - aws:
           accessKey: "${INTEGRATION_TERRAFORM_ACCESS_KEY}"
-          id: "integrationTerraform"
+          id: "intgTerraform"
           scope: GLOBAL
           secretKey: "${INTEGRATION_TERRAFORM_SECRET_KEY}"
       - usernamePassword:
@@ -113,6 +113,7 @@ jenkins:
         securityGroups: "${FARGATE_SECURITY_GROUP}"
         sharedMemorySize: 0
         subnets: "${FARGATE_SUBNET}"
+        taskrole: "arn:aws:iam::${MANAGEMENT_ACCOUNT}:role/TDRJenkinsNodeRole"
         templateName: "aws"
       - assignPublicIp: false
         cpu: 2048
