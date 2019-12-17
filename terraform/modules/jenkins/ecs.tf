@@ -17,6 +17,7 @@ data "template_file" "jenkins_template" {
     cluster_arn = aws_ecs_cluster.jenkins_cluster.arn
     fargate_subnet = aws_subnet.private[0].id
     load_balancer_url = "http://${aws_alb.main.dns_name}"
+    management_account = data.aws_caller_identity.current.account_id
   }
 }
 

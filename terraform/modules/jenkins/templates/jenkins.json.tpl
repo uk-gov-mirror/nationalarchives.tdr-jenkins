@@ -94,6 +94,10 @@
           {
             "name": "LOAD_BALANCER_URL",
             "value": "${load_balancer_url}"
+          },
+          {
+            "name": "MANAGEMENT_ACCOUNT",
+            "value": "${management_account}"
           }
         ],
         "mountPoints": [
