@@ -18,58 +18,6 @@
         "essential": true,
         "secrets": [
           {
-            "name": "ACCESS_KEY",
-            "valueFrom": "/${app_environment}/access_key"
-          },
-          {
-            "name": "SECRET_KEY",
-            "valueFrom": "/${app_environment}/secret_key"
-          },
-          {
-            "name": "JENKINS_URL",
-            "valueFrom" : "/${app_environment}/jenkins_url"
-          },
-          {
-            "name": "FARGATE_SECURITY_GROUP",
-            "valueFrom" : "/${app_environment}/fargate_security_group"
-          },
-          {
-            "name": "GITHUB_CLIENT",
-            "valueFrom" : "/${app_environment}/github/client"
-          },
-          {
-            "name": "GITHUB_SECRET",
-            "valueFrom" : "/${app_environment}/github/secret"
-          },
-          {
-            "name": "GITHUB_USERNAME",
-            "valueFrom" : "/${app_environment}/github/username"
-          },
-          {
-            "name": "GITHUB_PASSWORD",
-            "valueFrom" : "/${app_environment}/github/password"
-          },
-          {
-            "name": "DOCKER_USERNAME",
-            "valueFrom" : "/${app_environment}/docker/username"
-          },
-          {
-            "name": "DOCKER_PASSWORD",
-            "valueFrom" : "/${app_environment}/docker/password"
-          },
-          {
-            "name": "SLACK_TOKEN",
-            "valueFrom" : "/${app_environment}/slack/token"
-          },
-          {
-            "name": "INTEGRATION_TERRAFORM_ACCESS_KEY",
-            "valueFrom" : "/${app_environment}/integration_terraform_access_key"
-          },
-          {
-            "name": "INTEGRATION_TERRAFORM_SECRET_KEY",
-            "valueFrom": "/${app_environment}/integration_terraform_secret_key"
-          },
-          {
             "name": "INTEGRATION_ACCOUNT",
             "valueFrom": "/mgmt/intg_account"
           },

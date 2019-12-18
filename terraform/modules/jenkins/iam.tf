@@ -1,14 +1,3 @@
-resource "aws_iam_role" "jenkins_fargate_role" {
-  name = "jenkins_fargate_role_${var.environment}"
-  assume_role_policy = data.aws_iam_policy_document.jenkins_fargate_assume_role.json
-  tags = merge(
-  var.common_tags,
-  map(
-  "Name", "jenkins-fargate-iam-role-${var.environment}",
-  )
-  )
-}
-
 data "aws_iam_policy_document" "jenkins_fargate_assume_role" {
   version = "2012-10-17"
   statement {
@@ -21,7 +10,37 @@ data "aws_iam_policy_document" "jenkins_fargate_assume_role" {
   }
 }
 
+data "aws_iam_policy_document" "jenkins_fargate_execution_policy_document" {
+  statement {
+    effect = "Allow"
+    actions = [
+
+    ]
+    resources = ["*"]
+  }
+}
+
 data "aws_iam_policy_document" "jenkins_fargate_policy_document" {
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "iam:PassRole",
+      "ecs:RunTask",
+      "ecs:StopTask",
+      "ecs:ListContainerInstances",
+      "ecs:DescribeTasks"
+    ]
+    resources = [
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeRoleIntg",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeRoleStaging",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeRoleProd",
+      "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:task-definition/*:*",
+      "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:cluster/${aws_ecs_cluster.jenkins_cluster.name}",
+      "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:task/*"
+    ]
+  }
+
   statement {
     effect = "Allow"
     actions = [
@@ -30,55 +49,18 @@ data "aws_iam_policy_document" "jenkins_fargate_policy_document" {
       "ecs:ListClusters",
       "ecs:DescribeContainerInstances",
       "ecs:ListTaskDefinitions",
-      "ecs:DescribeTaskDefinition"
+      "ecs:DescribeTaskDefinition",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
     ]
     resources = ["*"]
   }
-  statement {
-    effect = "Allow"
-    actions = [
-      "ecs:StopTask",
-      "ecs:ListContainerInstances",
-      "iam:PassRole"
-    ]
-    resources = [
-      "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:cluster/${aws_ecs_cluster.jenkins_cluster.name}",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeRole"
-    ]
-  }
-
-  statement {
-    effect = "Allow"
-    actions = [
-      "ecs:RunTask"
-    ]
-    resources = [
-      "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:task-definition/*:*"
-    ]
-  }
-
-  statement {
-    effect = "Allow"
-    actions = [
-      "ecs:StopTask",
-      "ecs:DescribeTasks"
-    ]
-    resources = [
-      "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:task/*"
-    ]
-  }
-
 }
 
 resource "aws_iam_policy" "jenkins_fargate_policy" {
-  name   = "jenkins_fargate_policy_${var.environment}"
+  name   = "TDRJenkinsFargatePolicy${title(var.environment)}"
   path   = "/"
   policy = data.aws_iam_policy_document.jenkins_fargate_policy_document.json
-}
-
-resource "aws_iam_role_policy_attachment" "fargate_task_attach" {
-  role       = aws_iam_role.jenkins_fargate_role.name
-  policy_arn = aws_iam_policy.jenkins_fargate_policy.arn
 }
 
 resource "aws_iam_group" jenkins_fargate_group {

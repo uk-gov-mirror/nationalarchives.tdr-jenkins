@@ -84,7 +84,7 @@ resource "aws_ecs_service" "jenkins" {
 }
 
 resource "aws_iam_role" "api_ecs_execution" {
-  name = "api_ecs_execution_role_${var.environment}"
+  name = "TDRJenkinsAppExecutionRole${title(var.environment)}"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_role.json
 
   tags = merge(
@@ -96,7 +96,7 @@ resource "aws_iam_role" "api_ecs_execution" {
 }
 
 resource "aws_iam_role" "api_ecs_task" {
-  name = "api_ecs_task_role_${var.environment}"
+  name = "TDRJenkinsAppTaskRole${title(var.environment)}"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_role.json
 
   tags = merge(
