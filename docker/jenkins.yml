@@ -7,11 +7,6 @@ credentials:
           id: "aws"
           scope: GLOBAL
           secretKey: "${/mgmt/secret_key}"
-      - aws:
-          accessKey: "${/mgmt/integration_terraform_access_key}"
-          id: "intgTerraform"
-          scope: GLOBAL
-          secretKey: "${/mgmt/integration_terraform_secret_key}"
       - usernamePassword:
           username: ${/mgmt/docker/username}
           password: ${/mgmt/docker/password}

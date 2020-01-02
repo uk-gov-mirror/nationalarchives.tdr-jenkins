@@ -20,28 +20,6 @@ resource "aws_ssm_parameter" "secret_key" {
   }
 }
 
-resource "aws_ssm_parameter" "integration_terraform_access_key" {
-  name        = "/${var.environment}/integration_terraform_access_key"
-  description = "The access key to create the environment"
-  type        = "SecureString"
-  value       = var.secrets.integration_terraform_access_key
-  overwrite = true
-  tags = {
-    environment = var.environment
-  }
-}
-
-resource "aws_ssm_parameter" "integration_terraform_secret_key" {
-  name        = "/${var.environment}/integration_terraform_secret_key"
-  description = "The secret key to create the environment"
-  type        = "SecureString"
-  value       = var.secrets.integration_terraform_secret_key
-  overwrite = true
-  tags = {
-    environment = var.environment
-  }
-}
-
 resource "aws_ssm_parameter" "jenkins_url" {
   name        = "/${var.environment}/jenkins_url"
   description = "The url for the jenkins server"
