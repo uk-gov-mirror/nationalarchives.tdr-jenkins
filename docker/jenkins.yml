@@ -7,11 +7,6 @@ credentials:
           id: "aws"
           scope: GLOBAL
           secretKey: "${/mgmt/secret_key}"
-      - aws:
-          accessKey: "${/mgmt/integration_terraform_access_key}"
-          id: "intgTerraform"
-          scope: GLOBAL
-          secretKey: "${/mgmt/integration_terraform_secret_key}"
       - usernamePassword:
           username: ${/mgmt/docker/username}
           password: ${/mgmt/docker/password}
@@ -52,8 +47,8 @@ jenkins:
   clouds:
   - ecs:
       allowedOverrides: "all"
-      cluster: "${JENKINS_CLUSTER}"
-      jenkinsUrl: "${LOAD_BALANCER_URL}"
+      cluster: "${/mgmt/jenkins_cluster_arn}"
+      jenkinsUrl: "${/mgmt/jenkins_load_balancer_url}"
       credentialsId: "aws"
       name: "ecs"
       regionName: "eu-west-2"
@@ -70,19 +65,19 @@ jenkins:
         remoteFSRoot: "/home/jenkins"
         securityGroups: "${/mgmt/fargate_security_group}"
         sharedMemorySize: 0
-        subnets: "${FARGATE_SUBNET}"
+        subnets: "${/mgmt/fargate_subnet}"
         templateName: "sbt"
       - assignPublicIp: false
         cpu: 256
         environments:
         - name: "INTG_ACCOUNT"
-          value: "${INTEGRATION_ACCOUNT}"
+          value: "${/mgmt/intg_account}"
         - name: "STAGING_ACCOUNT"
-          value: "${STAGING_ACCOUNT}"
+          value: "${/mgmt/staging_account}"
         - name: "PROD_ACCOUNT"
-          value: "${PROD_ACCOUNT}"
+          value: "${/mgmt/prod_account}"
         - name: "MANAGEMENT_ACCOUNT"
-          value: "${MANAGEMENT_ACCOUNT}"
+          value: "${/mgmt/management_account}"
         image: "nationalarchives/jenkins-build-terraform"
         label: "terraform"
         launchType: "FARGATE"
@@ -93,19 +88,19 @@ jenkins:
         remoteFSRoot: "/home/jenkins"
         securityGroups: "${/mgmt/fargate_security_group}"
         sharedMemorySize: 0
-        subnets: "${FARGATE_SUBNET}"
+        subnets: "${/mgmt/fargate_subnet}"
         templateName: "terraform"
       - assignPublicIp: false
         cpu: 256
         environments:
         - name: "INTG_ACCOUNT"
-          value: "${INTEGRATION_ACCOUNT}"
+          value: "${/mgmt/intg_account}"
         - name: "STAGING_ACCOUNT"
-          value: "${STAGING_ACCOUNT}"
+          value: "${/mgmt/staging_account}"
         - name: "PROD_ACCOUNT"
-          value: "${PROD_ACCOUNT}"
+          value: "${/mgmt/prod_account}"
         - name: "MANAGEMENT_ACCOUNT"
-          value: "${MANAGEMENT_ACCOUNT}"
+          value: "${/mgmt/management_account}"
         image: "nationalarchives/jenkins-build-aws"
         label: "aws"
         launchType: "FARGATE"
@@ -116,20 +111,20 @@ jenkins:
         remoteFSRoot: "/home/jenkins"
         securityGroups: "${/mgmt/fargate_security_group}"
         sharedMemorySize: 0
-        subnets: "${FARGATE_SUBNET}"
-        taskrole: "arn:aws:iam::${MANAGEMENT_ACCOUNT}:role/TDRJenkinsNodeRole"
+        subnets: "${/mgmt/fargate_subnet}"
+        taskrole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsNodeRole"
         templateName: "aws"
       - assignPublicIp: false
         cpu: 2048
         environments:
         - name: "INTG_ACCOUNT"
-          value: "${INTEGRATION_ACCOUNT}"
+          value: "${/mgmt/intg_account}"
         - name: "STAGING_ACCOUNT"
-          value: "${STAGING_ACCOUNT}"
+          value: "${/mgmt/staging_account}"
         - name: "PROD_ACCOUNT"
-          value: "${PROD_ACCOUNT}"
+          value: "${/mgmt/prod_account}"
         - name: "MANAGEMENT_ACCOUNT"
-          value: "${MANAGEMENT_ACCOUNT}"
+          value: "${/mgmt/management_account}"
         image: "nationalarchives/jenkins-build-npm"
         label: "npm"
         launchType: "FARGATE"
@@ -140,19 +135,19 @@ jenkins:
         remoteFSRoot: "/home/jenkins"
         securityGroups: "${/mgmt/fargate_security_group}"
         sharedMemorySize: 0
-        subnets: "${FARGATE_SUBNET}"
+        subnets: "${/mgmt/fargate_subnet}"
         templateName: "npm"
       - assignPublicIp: false
         cpu: 2048
         environments:
         - name: "INTG_ACCOUNT"
-          value: "${INTEGRATION_ACCOUNT}"
+          value: "${/mgmt/intg_account}"
         - name: "STAGING_ACCOUNT"
-          value: "${STAGING_ACCOUNT}"
+          value: "${/mgmt/staging_account}"
         - name: "PROD_ACCOUNT"
-          value: "${PROD_ACCOUNT}"
+          value: "${/mgmt/prod_account}"
         - name: "MANAGEMENT_ACCOUNT"
-          value: "${MANAGEMENT_ACCOUNT}"
+          value: "${/mgmt/management_account}"
         image: "nationalarchives/jenkins-build-maven"
         label: "maven"
         launchType: "FARGATE"
@@ -163,7 +158,7 @@ jenkins:
         remoteFSRoot: "/home/jenkins"
         securityGroups: "${/mgmt/fargate_security_group}"
         sharedMemorySize: 0
-        subnets: "${FARGATE_SUBNET}"
+        subnets: "${/mgmt/fargate_subnet}"
         templateName: "maven"
   crumbIssuer:
     standard:
