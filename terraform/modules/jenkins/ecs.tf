@@ -14,10 +14,6 @@ data "template_file" "jenkins_template" {
     jenkins_image = "docker.io/nationalarchives/jenkins:${var.environment}"
     container_name = "${var.container_name}-${var.environment}"
     app_environment = var.environment
-    cluster_arn = aws_ecs_cluster.jenkins_cluster.arn
-    fargate_subnet = aws_subnet.private[0].id
-    load_balancer_url = "http://${aws_alb.main.dns_name}"
-    management_account = data.aws_caller_identity.current.account_id
   }
 }
 
@@ -121,9 +117,9 @@ data "aws_iam_policy_document" "ecs_assume_role" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "api_ecs_execution_ssm" {
-  role       = aws_iam_role.api_ecs_execution.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
+resource "aws_iam_role_policy_attachment" "api_ecs_task" {
+  policy_arn = aws_iam_policy.api_ecs_task_policy.arn
+  role = aws_iam_role.api_ecs_task.name
 }
 
 resource "aws_iam_role_policy_attachment" "api_ecs_execution" {
@@ -132,7 +128,7 @@ resource "aws_iam_role_policy_attachment" "api_ecs_execution" {
 }
 
 resource "aws_iam_policy" "api_ecs_execution" {
-  name   = "api_ecs_execution_policy_${var.environment}"
+  name   = "TDRJenkinsExecutionPolicyMgmt"
   path   = "/"
   policy = data.aws_iam_policy_document.api_ecs_execution.json
 }
@@ -143,7 +139,41 @@ data "aws_iam_policy_document" "api_ecs_execution" {
       "logs:CreateLogStream",
       "logs:PutLogEvents"
     ]
-    resources = [aws_cloudwatch_log_group.tdr_jenkins_log_group.arn]
+    resources = [
+      aws_cloudwatch_log_group.tdr_jenkins_log_group.arn,
+      aws_cloudwatch_log_stream.tdr_application_log_stream.arn
+    ]
+  }
+}
+
+resource "aws_iam_policy" "api_ecs_task_policy" {
+  name = "TDRJenkinsTaskPolicyMgmt"
+  path = "/"
+  policy = data.aws_iam_policy_document.api_ecs_task_policy_document.json
+}
+
+data "aws_iam_policy_document" "api_ecs_task_policy_document" {
+  statement {
+    actions = [
+      "ssm:GetParameter"
+    ]
+    resources = [
+      aws_ssm_parameter.access_key.arn,
+      aws_ssm_parameter.docker_password.arn,
+      aws_ssm_parameter.docker_username.arn,
+      aws_ssm_parameter.fargate_security_group.arn,
+      aws_ssm_parameter.fargate_subnet.arn,
+      aws_ssm_parameter.github_client.arn,
+      aws_ssm_parameter.github_password.arn,
+      aws_ssm_parameter.github_secret.arn,
+      aws_ssm_parameter.github_username.arn,
+      aws_ssm_parameter.jenkins_cluster_arn.arn,
+      aws_ssm_parameter.jenkins_url.arn,
+      aws_ssm_parameter.load_balancer_url.arn,
+      aws_ssm_parameter.management_account.arn,
+      aws_ssm_parameter.secret_key.arn,
+      aws_ssm_parameter.slack_token.arn
+    ]
   }
 }
 
