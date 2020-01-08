@@ -14,6 +14,7 @@ data "template_file" "jenkins_template" {
     jenkins_image = "docker.io/nationalarchives/jenkins:${var.environment}"
     container_name = "${var.container_name}-${var.environment}"
     app_environment = var.environment
+    jenkins_log_group = aws_cloudwatch_log_group.tdr_jenkins_log_group.name
   }
 }
 
@@ -122,9 +123,19 @@ resource "aws_iam_role_policy_attachment" "api_ecs_task" {
   role = aws_iam_role.api_ecs_task.name
 }
 
+resource "aws_iam_role_policy_attachment" "api_ecs_task_cloudwatch" {
+  policy_arn = aws_iam_policy.jenkins_cloudwatch_policy.arn
+  role = aws_iam_role.api_ecs_task.name
+}
+
 resource "aws_iam_role_policy_attachment" "api_ecs_execution" {
   role       = aws_iam_role.api_ecs_execution.name
   policy_arn = aws_iam_policy.api_ecs_execution.arn
+}
+
+resource "aws_iam_role_policy_attachment" "api_ecs_execution_cloudwatch" {
+  policy_arn = aws_iam_policy.jenkins_cloudwatch_policy.arn
+  role       = aws_iam_role.api_ecs_execution.name
 }
 
 resource "aws_iam_policy" "api_ecs_execution" {
@@ -135,14 +146,8 @@ resource "aws_iam_policy" "api_ecs_execution" {
 
 data "aws_iam_policy_document" "api_ecs_execution" {
   statement {
-    actions   = [
-      "logs:CreateLogStream",
-      "logs:PutLogEvents"
-    ]
-    resources = [
-      aws_cloudwatch_log_group.tdr_jenkins_log_group.arn,
-      aws_cloudwatch_log_stream.tdr_application_log_stream.arn
-    ]
+    actions   = ["logs:PutLogEvents"]
+    resources = [aws_cloudwatch_log_group.tdr_jenkins_log_group.arn]
   }
 }
 
@@ -150,6 +155,33 @@ resource "aws_iam_policy" "api_ecs_task_policy" {
   name = "TDRJenkinsTaskPolicyMgmt"
   path = "/"
   policy = data.aws_iam_policy_document.api_ecs_task_policy_document.json
+}
+
+resource "aws_iam_policy" "jenkins_cloudwatch_policy" {
+  policy = data.aws_iam_policy_document.jenkins_cloudwatch_policy_document.json
+  path = "/"
+  name = "TDRJenkinsCloudwatchPolicyMgmt"
+}
+
+data aws_iam_policy_document "jenkins_cloudwatch_policy_document" {
+  statement {
+    actions   = [
+      "logs:DescribeLogGroups"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    actions = [
+      "logs:CreateLogStream",
+      "logs:DescribeLogStreams",
+      "logs:PutLogEvents"
+    ]
+    resources = [
+      aws_cloudwatch_log_group.tdr_jenkins_log_group.arn
+    ]
+  }
 }
 
 data "aws_iam_policy_document" "api_ecs_task_policy_document" {
@@ -172,7 +204,10 @@ data "aws_iam_policy_document" "api_ecs_task_policy_document" {
       aws_ssm_parameter.load_balancer_url.arn,
       aws_ssm_parameter.management_account.arn,
       aws_ssm_parameter.secret_key.arn,
-      aws_ssm_parameter.slack_token.arn
+      aws_ssm_parameter.slack_token.arn,
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/staging_account",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/intg_account",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/prod_account"
     ]
   }
 }
@@ -181,9 +216,4 @@ data "aws_iam_policy_document" "api_ecs_task_policy_document" {
 resource "aws_cloudwatch_log_group" "tdr_jenkins_log_group" {
   name              = "/ecs/tdr-jenkins-${var.environment}"
   retention_in_days = 30
-}
-
-resource "aws_cloudwatch_log_stream" "tdr_application_log_stream" {
-  name           = "tdr-jenkins-log-stream-${var.environment}"
-  log_group_name = aws_cloudwatch_log_group.tdr_jenkins_log_group.name
 }

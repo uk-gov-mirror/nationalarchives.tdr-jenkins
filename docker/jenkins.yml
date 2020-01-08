@@ -164,6 +164,11 @@ jenkins:
     standard:
       excludeClientIPFromCrumb: false
   disableRememberMe: false
+  globalNodeProperties:
+  - envVars:
+      env:
+        - key: "MANAGEMENT_ACCOUNT"
+          value: "${/mgmt/management_account}"
   markupFormatter: "plainText"
   mode: EXCLUSIVE
   myViewsTabBar: "standard"
