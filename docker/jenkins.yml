@@ -55,8 +55,8 @@ jenkins:
       templates:
       - assignPublicIp: true
         cpu: 2048
-        image: "nationalarchives/jenkins-build-sbt"
-        label: "sbt"
+        image: "nationalarchives/jenkins-build-transfer-frontend"
+        label: "transfer-frontend"
         launchType: "FARGATE"
         memory: 0
         memoryReservation: 4096
@@ -66,7 +66,7 @@ jenkins:
         securityGroups: "${/mgmt/fargate_security_group}"
         sharedMemorySize: 0
         subnets: "${/mgmt/fargate_subnet}"
-        templateName: "sbt"
+        templateName: "transfer-frontend"
       - assignPublicIp: false
         cpu: 256
         environments:
