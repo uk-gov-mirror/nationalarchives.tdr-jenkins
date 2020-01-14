@@ -6,4 +6,6 @@ RUN apt-get update && \
         echo "deb https://dl.bintray.com/sbt/debian /" >> /etc/apt/sources.list.d/sbt.list && \ 
         apt-key adv --keyserver hkps://keyserver.ubuntu.com:443 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823 && \    
         apt-get update && \ 
-        apt-get install sbt
+        apt-get install sbt && \
+        wget -q https://nodejs.org/dist/v12.13.1/node-v12.13.1-linux-x64.tar.xz && \
+                            tar -xf node-v12.13.1-linux-x64.tar.xz --directory /usr/local --strip-components 1
