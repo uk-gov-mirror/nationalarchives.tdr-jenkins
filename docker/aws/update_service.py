@@ -1,30 +1,13 @@
-import boto3
-from boto3 import Session
 import sys
-
+from sessions import get_session
 
 # Create IAM client
-sts_default_provider_chain = boto3.client('sts')
+
 account_number = sys.argv[1]
 stage = sys.argv[2]
 service_name = sys.argv[3]
 
-role_to_assume_arn='arn:aws:iam::' + account_number + ':role/TDRJenkinsECSUpdateRole' + stage.capitalize()
-
-role_session_name='session'
-
-response=sts_default_provider_chain.assume_role(
-    RoleArn=role_to_assume_arn,
-    RoleSessionName=role_session_name
-)
-
-creds=response['Credentials']
-
-boto3_session = Session(
-    aws_access_key_id=creds['AccessKeyId'],
-    aws_secret_access_key=creds['SecretAccessKey'],
-    aws_session_token=creds['SessionToken'],
-)
+boto3_session = get_session(account_number, 'TDRJenkinsECSUpdateRole' + stage.capitalize())
 
 client = boto3_session.client('ecs')
 
