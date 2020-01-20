@@ -11,6 +11,11 @@ boto_session = get_session(account_number, "TDRJenkinsLambdaRole" + stage.capita
 
 client = boto_session.client("lambda")
 
-resp = client.invoke(FunctionName=function_name)
+args = '{"stage": "%s"}' % stage
+
+payload = bytearray()
+payload.extend(args.encode())
+
+resp = client.invoke(FunctionName=function_name, Payload=payload)
 
 print(resp['ResponseMetadata']['RequestId'])
