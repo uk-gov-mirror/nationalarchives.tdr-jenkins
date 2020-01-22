@@ -38,6 +38,12 @@ data "aws_iam_policy_document" "jenkins_fargate_policy_document" {
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRTerraformAssumeRoleIntg",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRTerraformAssumeRoleStaging",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRTerraformAssumeRoleProd",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeLambdaRoleStaging",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeLambdaRoleProd",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeLambdaRoleIntg",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsPublishRoleIntg",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsPublishRoleStaging",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsPublishRoleProd",
       "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:task-definition/*:*",
       "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:cluster/${aws_ecs_cluster.jenkins_cluster.name}",
       "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:task/*"

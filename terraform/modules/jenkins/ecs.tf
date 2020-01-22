@@ -207,7 +207,8 @@ data "aws_iam_policy_document" "api_ecs_task_policy_document" {
       aws_ssm_parameter.slack_token.arn,
       "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/staging_account",
       "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/intg_account",
-      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/prod_account"
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/prod_account",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/sonatype/passphrase"
     ]
   }
 }
