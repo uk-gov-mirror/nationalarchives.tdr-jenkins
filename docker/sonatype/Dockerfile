@@ -8,9 +8,10 @@ RUN apt-get update && \
         apt-get install sbt && \
 	pip3 install awscli
 WORKDIR /home/jenkins
+ENV GPG_TTY=/dev/pts/ptmx
 COPY gpg.sbt .sbt/1.0/plugins/gpg.sbt
 COPY sonatype.sbt .sbt/1.0/sonatype.sbt
 COPY gpg.conf .gnupg/gpg.conf
-RUN chown -R jenkins:jenkins .sbt .gnupg
+RUN  chown -R jenkins:jenkins .sbt .gnupg && chmod 700 .gnupg && chmod 600 .gnupg/*
 USER jenkins
 
