@@ -11,5 +11,5 @@ RUN apt-get update && \
 ENV CASC_JENKINS_CONFIG /usr/share/jenkins/ref/jenkins.yaml
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
 COPY jenkins.yml /usr/share/jenkins/ref/jenkins.yaml
-COPY logging.groovy /var/jenkins_home/init.groovy.d/
+COPY logging.groovy /var/jenkins_home/init.groovy.d/logging.groovy
 RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
