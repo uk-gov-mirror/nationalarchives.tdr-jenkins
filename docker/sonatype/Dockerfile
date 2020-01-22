@@ -7,7 +7,10 @@ RUN apt-get update && \
         apt-get update && \
         apt-get install sbt && \
 	pip3 install awscli
-COPY gpg.sbt /home/jenkins/.sbt/1.0/plugins/gpg.sbt
-RUN chown -R jenkins:jenkins /home/jenkins/.sbt
+WORKDIR /home/jenkins
+COPY gpg.sbt .sbt/1.0/plugins/gpg.sbt
+COPY sonatype.sbt .sbt/1.0/sonatype.sbt
+COPY gpg.conf .gnupg/gpg.conf
+RUN chown -R jenkins:jenkins .sbt .gnupg
 USER jenkins
-RUN ls -la /home/jenkins && sbt checkPgpSignatures
+
