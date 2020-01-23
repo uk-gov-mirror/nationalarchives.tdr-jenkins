@@ -41,3 +41,18 @@ module "jenkins" {
   az_count = 2
   secrets = local.secrets
 }
+
+module "sonatype_intg" {
+  source = "./modules/sonatype-build-task"
+  environment = "intg"
+}
+
+module "sonatype_staging" {
+  source = "./modules/sonatype-build-task"
+  environment = "staging"
+}
+
+module "sonatype_prod" {
+  source = "./modules/sonatype-build-task"
+  environment = "prod"
+}
