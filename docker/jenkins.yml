@@ -166,8 +166,8 @@ jenkins:
         templateName: "maven"
       - assignPublicIp: false
         cpu: 2048
-        image: "nationalarchives/jenkins-build-sonatype"
-        label: "sonatype"
+        image: "jenkins/jnlp-slave"
+        label: "base"
         launchType: "FARGATE"
         memory: 0
         memoryReservation: 4096
@@ -177,7 +177,7 @@ jenkins:
         securityGroups: "${/mgmt/fargate_security_group}"
         sharedMemorySize: 0
         subnets: "${/mgmt/fargate_subnet}"
-        templateName: "sonatype"
+        templateName: "base"
   crumbIssuer:
     standard:
       excludeClientIPFromCrumb: false
