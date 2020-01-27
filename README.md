@@ -9,7 +9,7 @@ This project can be used to spin up a jenkins server using ECS. The ECS cluster 
 ### docker
 This creates the jenkins docker image which we run as part of the ECS service. It extends the base docker image but adds the plugins.txt and jenkins.yml and runs the command to install the plugins. This is pushed to docker hub.
 
-There is also an image for one of the Jenkins slaves. The idea is that there will be an image to build each project and they can be selected in each projects Jenkinsfile.
+Each folder within the docker directory builds a Jenkins node image which is used to build some part of our infrastructure. The aws directory contains some python scripts which are used by the builds. Using python scripts makes assuming a role in the sub accounts easier than using the cli.
 
 ### terraform
 This creates
