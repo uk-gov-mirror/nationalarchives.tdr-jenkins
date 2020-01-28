@@ -47,6 +47,9 @@ data "aws_iam_policy_document" "jenkins_fargate_policy_document" {
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsPublishRoleIntg",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsPublishRoleStaging",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsPublishRoleProd",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeReadParamsRoleIntg",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeReadParamsRoleStaging",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeReadParamsRoleProd",
       "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:task-definition/*:*",
       "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:cluster/${aws_ecs_cluster.jenkins_cluster.name}",
       "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:task/*"
