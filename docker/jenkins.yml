@@ -21,6 +21,10 @@ credentials:
           id: "slack"
           scope: GLOBAL
           secret: ${/mgmt/slack/token}
+      - string:
+          id: "sonatype-gpg-passphrase"
+          scope: GLOBAL
+          secret: ${/mgmt/sonatype/passphrase}
 jenkins:
   securityRealm:
     github:
@@ -160,6 +164,20 @@ jenkins:
         sharedMemorySize: 0
         subnets: "${/mgmt/fargate_subnet}"
         templateName: "maven"
+      - assignPublicIp: false
+        cpu: 2048
+        image: "jenkins/jnlp-slave"
+        label: "base"
+        launchType: "FARGATE"
+        memory: 0
+        memoryReservation: 4096
+        networkMode: "awsvpc"
+        privileged: false
+        remoteFSRoot: "/home/jenkins"
+        securityGroups: "${/mgmt/fargate_security_group}"
+        sharedMemorySize: 0
+        subnets: "${/mgmt/fargate_subnet}"
+        templateName: "base"
   crumbIssuer:
     standard:
       excludeClientIPFromCrumb: false
