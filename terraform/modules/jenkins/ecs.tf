@@ -2,8 +2,8 @@ resource "aws_ecs_cluster" "jenkins_cluster" {
   name = "jenkins-${var.environment}"
 
   tags = merge(
-  var.common_tags,
-  map("Name", "tdr-ecs-jenkins")
+    var.common_tags,
+    map("Name", "tdr-ecs-jenkins")
   )
 }
 
@@ -11,9 +11,9 @@ data "template_file" "jenkins_template" {
   template = file("./modules/jenkins/templates/jenkins.json.tpl")
 
   vars = {
-    jenkins_image = "docker.io/nationalarchives/jenkins:${var.environment}"
-    container_name = "${var.container_name}-${var.environment}"
-    app_environment = var.environment
+    jenkins_image     = "docker.io/nationalarchives/jenkins:${var.environment}"
+    container_name    = "${var.container_name}-${var.environment}"
+    app_environment   = var.environment
     jenkins_log_group = aws_cloudwatch_log_group.tdr_jenkins_log_group.name
   }
 }
@@ -34,26 +34,26 @@ resource "aws_ecs_task_definition" "jenkins_task" {
   }
 
   volume {
-    name = "docker_bin"
+    name      = "docker_bin"
     host_path = "/usr/bin/docker"
   }
 
   volume {
-    name = "docker_run"
+    name      = "docker_run"
     host_path = "/var/run/docker"
   }
 
   volume {
-    name = "docker_sock"
+    name      = "docker_sock"
     host_path = "/var/run/docker.sock"
   }
 
 
   tags = merge(
-  var.common_tags,
-  map(
-  "Name", "${var.container_name}-task-definition-${var.environment}",
-  )
+    var.common_tags,
+    map(
+      "Name", "${var.container_name}-task-definition-${var.environment}",
+    )
   )
 }
 
@@ -73,34 +73,34 @@ resource "aws_ecs_service" "jenkins" {
 
   load_balancer {
     target_group_arn = aws_alb_target_group.jenkins_api.id
-    container_name = "${var.container_name}-${var.environment}"
-    container_port = 50000
+    container_name   = "${var.container_name}-${var.environment}"
+    container_port   = 50000
   }
 
   depends_on = [aws_alb_listener.jenkins, aws_alb_listener.jenkins_50000]
 }
 
 resource "aws_iam_role" "api_ecs_execution" {
-  name = "TDRJenkinsAppExecutionRole${title(var.environment)}"
+  name               = "TDRJenkinsAppExecutionRole${title(var.environment)}"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_role.json
 
   tags = merge(
-  var.common_tags,
-  map(
-  "Name", "api-ecs-execution-iam-role-${var.environment}",
-  )
+    var.common_tags,
+    map(
+      "Name", "api-ecs-execution-iam-role-${var.environment}",
+    )
   )
 }
 
 resource "aws_iam_role" "api_ecs_task" {
-  name = "TDRJenkinsAppTaskRole${title(var.environment)}"
+  name               = "TDRJenkinsAppTaskRole${title(var.environment)}"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_role.json
 
   tags = merge(
-  var.common_tags,
-  map(
-  "Name", "api-ecs-task-iam-role-${var.environment}",
-  )
+    var.common_tags,
+    map(
+      "Name", "api-ecs-task-iam-role-${var.environment}",
+    )
   )
 }
 
@@ -109,7 +109,7 @@ data "aws_iam_policy_document" "ecs_assume_role" {
 
   statement {
     effect  = "Allow"
-    actions   = ["sts:AssumeRole"]
+    actions = ["sts:AssumeRole"]
 
     principals {
       type        = "Service"
@@ -120,12 +120,12 @@ data "aws_iam_policy_document" "ecs_assume_role" {
 
 resource "aws_iam_role_policy_attachment" "api_ecs_task" {
   policy_arn = aws_iam_policy.api_ecs_task_policy.arn
-  role = aws_iam_role.api_ecs_task.name
+  role       = aws_iam_role.api_ecs_task.name
 }
 
 resource "aws_iam_role_policy_attachment" "api_ecs_task_cloudwatch" {
   policy_arn = aws_iam_policy.jenkins_cloudwatch_policy.arn
-  role = aws_iam_role.api_ecs_task.name
+  role       = aws_iam_role.api_ecs_task.name
 }
 
 resource "aws_iam_role_policy_attachment" "api_ecs_execution" {
@@ -152,20 +152,20 @@ data "aws_iam_policy_document" "api_ecs_execution" {
 }
 
 resource "aws_iam_policy" "api_ecs_task_policy" {
-  name = "TDRJenkinsTaskPolicyMgmt"
-  path = "/"
+  name   = "TDRJenkinsTaskPolicyMgmt"
+  path   = "/"
   policy = data.aws_iam_policy_document.api_ecs_task_policy_document.json
 }
 
 resource "aws_iam_policy" "jenkins_cloudwatch_policy" {
   policy = data.aws_iam_policy_document.jenkins_cloudwatch_policy_document.json
-  path = "/"
-  name = "TDRJenkinsCloudwatchPolicyMgmt"
+  path   = "/"
+  name   = "TDRJenkinsCloudwatchPolicyMgmt"
 }
 
 data aws_iam_policy_document "jenkins_cloudwatch_policy_document" {
   statement {
-    actions   = [
+    actions = [
       "logs:DescribeLogGroups"
     ]
     resources = [

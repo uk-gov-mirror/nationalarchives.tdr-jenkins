@@ -80,7 +80,7 @@ resource "aws_iam_group" jenkins_fargate_group {
 }
 
 resource "aws_iam_group_policy_attachment" "jenkins_fargate_policy_attachment" {
-  group = aws_iam_group.jenkins_fargate_group.name
+  group      = aws_iam_group.jenkins_fargate_group.name
   policy_arn = aws_iam_policy.jenkins_fargate_policy.arn
 }
 

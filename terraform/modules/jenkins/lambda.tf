@@ -2,29 +2,29 @@ data "aws_caller_identity" "current" {}
 
 resource "aws_lambda_function" "sg_update_lambda" {
   function_name = "tdr-jenkins-sg-update-${var.environment}"
-  runtime = "python3.7"
-  handler = "update_security_groups.lambda_handler"
-  role = aws_iam_role.sg_update_lambda_role.arn
-  timeout = 30 # seconds
-  memory_size = 512 # MB
+  runtime       = "python3.7"
+  handler       = "update_security_groups.lambda_handler"
+  role          = aws_iam_role.sg_update_lambda_role.arn
+  timeout       = 30  # seconds
+  memory_size   = 512 # MB
   filename      = "../lambda/function.zip"
-  
+
   tags = merge(
-  var.common_tags,
-  map(
-  "Name", "jenkins-sg-update-check-lambda-${var.environment}",
-  )
+    var.common_tags,
+    map(
+      "Name", "jenkins-sg-update-check-lambda-${var.environment}",
+    )
   )
 }
 
 resource "aws_iam_role" "sg_update_lambda_role" {
-  name = "jenkins-sg-update_lambda_role_${var.environment}"
+  name               = "jenkins-sg-update_lambda_role_${var.environment}"
   assume_role_policy = data.aws_iam_policy_document.sg_update_assume_role.json
   tags = merge(
-  var.common_tags,
-  map(
-  "Name", "jenkins-sg-update-lambda-iam-role-${var.environment}",
-  )
+    var.common_tags,
+    map(
+      "Name", "jenkins-sg-update-lambda-iam-role-${var.environment}",
+    )
   )
 }
 
@@ -41,11 +41,11 @@ data "aws_iam_policy_document" "sg_update_assume_role" {
 }
 
 resource "aws_lambda_permission" "with_sns" {
-  statement_id = "AllowExecutionFromSNS"
-  action = "lambda:InvokeFunction"
+  statement_id  = "AllowExecutionFromSNS"
+  action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.sg_update_lambda.arn
-  principal = "sns.amazonaws.com"
-  source_arn = "arn:aws:sns:us-east-1:806199016981:AmazonIpSpaceChanged"
+  principal     = "sns.amazonaws.com"
+  source_arn    = "arn:aws:sns:us-east-1:806199016981:AmazonIpSpaceChanged"
 }
 
 resource "aws_iam_policy" "invoke_jenkins_sg_update_role" {
