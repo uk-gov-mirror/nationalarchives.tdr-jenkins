@@ -1,5 +1,6 @@
 FROM jenkins/jnlp-slave 
-USER root   
+USER root
+COPY *.py /
 ENV AWS_DEFAULT_REGION eu-west-2    
 RUN apt-get update && \ 
         apt-get install -y apt-transport-https libglib2.0-0 libnss3 xvfb libxi6 curl && \ 
@@ -10,4 +11,7 @@ RUN apt-get update && \
         apt-get -y update && \ 
         apt-get -y install sbt google-chrome-stable && \
         wget -q https://nodejs.org/dist/v12.13.1/node-v12.13.1-linux-x64.tar.xz && \
-                            tar -xf node-v12.13.1-linux-x64.tar.xz --directory /usr/local --strip-components 1
+                            tar -xf node-v12.13.1-linux-x64.tar.xz --directory /usr/local --strip-components 1 && \
+        curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py  && \
+                            python get-pip.py && \
+                            pip install boto3
