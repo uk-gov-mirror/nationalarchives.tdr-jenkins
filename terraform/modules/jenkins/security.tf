@@ -4,24 +4,24 @@ resource "aws_security_group" "ec2_internal" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    protocol  = "tcp"
-    from_port = 80
-    to_port   = 80
+    protocol        = "tcp"
+    from_port       = 80
+    to_port         = 80
     security_groups = [aws_security_group.jenkins_alb_group.id]
   }
 
   ingress {
-    protocol  = "tcp"
-    from_port = 80
-    to_port   = 80
+    protocol        = "tcp"
+    from_port       = 80
+    to_port         = 80
     security_groups = [aws_security_group.ecs_tasks.id]
   }
 
   # 50000 is the port which allows the nodes to connect to the parent
   ingress {
-    protocol  = "tcp"
-    from_port = 50000
-    to_port   = 50000
+    protocol        = "tcp"
+    from_port       = 50000
+    to_port         = 50000
     security_groups = [aws_security_group.ecs_tasks.id]
   }
 
@@ -38,16 +38,16 @@ resource "aws_security_group" "jenkins_alb_group" {
   description = "Controls access to the Jenkins load balancer"
   vpc_id      = aws_vpc.main.id
   ingress {
-    protocol  = "tcp"
-    from_port = 443
-    to_port   = 443
+    protocol    = "tcp"
+    from_port   = 443
+    to_port     = 443
     cidr_blocks = ["89.197.114.197/32"]
   }
 
   ingress {
-    protocol  = "tcp"
-    from_port = 80
-    to_port   = 80
+    protocol    = "tcp"
+    from_port   = 80
+    to_port     = 80
     cidr_blocks = ["89.197.114.197/32"]
   }
 

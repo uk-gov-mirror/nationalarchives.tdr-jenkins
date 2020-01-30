@@ -1,5 +1,5 @@
 resource "aws_route53_zone" "app_dns_zone" {
-  name         = "nationalarchives.gov.uk"
+  name = "nationalarchives.gov.uk"
 }
 
 resource "aws_route53_record" "tna_ns" {
