@@ -39,7 +39,7 @@ jenkins:
   - "Ping"
   authorizationStrategy:
     github:
-      adminUserNames: "MancunianSam,Dclipsham,ian-hoyle,LauraDamianTNA,MarkKingsbury,plembke-tna,sarrahdi,suzannehamilton,TomJKing"
+      adminUserNames: "MancunianSam,Dclipsham,ian-hoyle,LauraDamianTNA,MarkKingsbury,plembke-tna,sarrahdi,suzannehamilton,TomJKing,paulschwarzenberger"
       allowAnonymousJobStatusPermission: false
       allowAnonymousReadPermission: false
       allowCcTrayPermission: true
@@ -52,7 +52,7 @@ jenkins:
   - ecs:
       allowedOverrides: "all"
       cluster: "${/mgmt/jenkins_cluster_arn}"
-      jenkinsUrl: "${/mgmt/jenkins_load_balancer_url}"
+      jenkinsUrl: "http://10.0.0.167"
       credentialsId: "aws"
       name: "ecs"
       regionName: "eu-west-2"

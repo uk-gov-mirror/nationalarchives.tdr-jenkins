@@ -143,17 +143,6 @@ resource "aws_ssm_parameter" "slack_token" {
   }
 }
 
-resource "aws_ssm_parameter" "load_balancer_url" {
-  name        = "/${var.environment}/jenkins_load_balancer_url"
-  description = "The load balancer url for jenkins"
-  type        = "SecureString"
-  value       = "http://${aws_alb.main.dns_name}"
-  overwrite   = true
-  tags = {
-    environment = var.environment
-  }
-}
-
 resource "aws_ssm_parameter" "management_account" {
   name        = "/${var.environment}/management_account"
   description = "The management account id"
