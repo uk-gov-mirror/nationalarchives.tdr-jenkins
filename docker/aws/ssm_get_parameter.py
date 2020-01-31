@@ -1,5 +1,5 @@
 import sys
-from docker.aws.sessions import get_session
+from sessions import get_session
 
 account_number = sys.argv[1]
 stage = sys.argv[2]
