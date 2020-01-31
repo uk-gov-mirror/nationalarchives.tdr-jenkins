@@ -29,9 +29,9 @@ resource "aws_alb_target_group" "jenkins" {
     healthy_threshold   = "3"
     interval            = "30"
     protocol            = "HTTP"
-    matcher             = "301,200,403"
+    matcher             = "200"
     timeout             = "3"
-    path                = "/"
+    path                = "/login"
     unhealthy_threshold = "2"
   }
 
