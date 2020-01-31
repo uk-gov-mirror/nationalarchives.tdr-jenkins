@@ -4,7 +4,7 @@ data "aws_route53_zone" "app_dns_zone" {
 
 resource "aws_route53_record" "dns" {
   zone_id = data.aws_route53_zone.app_dns_zone.zone_id
-  name    = "tdr-transfer-jenkins.nationalarchives.gov.uk"
+  name    = "jenkins"
   type    = "A"
 
   alias {
