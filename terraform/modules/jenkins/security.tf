@@ -34,7 +34,7 @@ resource "aws_security_group" "ec2_internal" {
 }
 
 data "aws_ssm_parameter" "external_ips" {
-  name = "${var.environment}/external_ips"
+  name = "/${var.environment}/external_ips"
 }
 
 resource "aws_security_group" "jenkins_alb_group" {
