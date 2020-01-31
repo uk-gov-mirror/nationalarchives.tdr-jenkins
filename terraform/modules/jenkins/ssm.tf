@@ -143,20 +143,16 @@ resource "aws_ssm_parameter" "slack_token" {
   }
 }
 
-resource "aws_ssm_parameter" "load_balancer_url" {
-  name        = "/${var.environment}/jenkins_load_balancer_url"
-  description = "The load balancer url for jenkins"
-  type        = "SecureString"
-  value       = "http://${aws_alb.main.dns_name}"
-  overwrite   = true
-  tags = {
-    environment = var.environment
-  }
-}
-
 resource "aws_ssm_parameter" "management_account" {
   name        = "/${var.environment}/management_account"
   description = "The management account id"
   type        = "SecureString"
   value       = data.aws_caller_identity.current.account_id
+}
+
+resource "aws_ssm_parameter" "jenkins_master_url" {
+  name = "/${var.environment}/jenkins_master_url"
+  type = "SecureString"
+  description = "The internal url for the jenkins master"
+  value = "http://${aws_instance.jenkins.private_ip}"
 }

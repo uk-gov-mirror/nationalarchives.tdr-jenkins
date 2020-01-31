@@ -23,8 +23,8 @@ resource "aws_ecs_task_definition" "jenkins_task" {
   execution_role_arn       = aws_iam_role.api_ecs_execution.arn
   network_mode             = "bridge"
   requires_compatibilities = ["EC2"]
-  cpu                      = "256"
-  memory                   = "1024"
+  cpu                      = "1024"
+  memory                   = "3072"
   container_definitions    = data.template_file.jenkins_template.rendered
   task_role_arn            = aws_iam_role.api_ecs_task.arn
 
@@ -71,13 +71,7 @@ resource "aws_ecs_service" "jenkins" {
     container_port   = 8080
   }
 
-  load_balancer {
-    target_group_arn = aws_alb_target_group.jenkins_api.id
-    container_name   = "${var.container_name}-${var.environment}"
-    container_port   = 50000
-  }
-
-  depends_on = [aws_alb_listener.jenkins, aws_alb_listener.jenkins_50000]
+  depends_on = [aws_alb_listener.jenkins]
 }
 
 resource "aws_iam_role" "api_ecs_execution" {
@@ -201,10 +195,11 @@ data "aws_iam_policy_document" "api_ecs_task_policy_document" {
       aws_ssm_parameter.github_username.arn,
       aws_ssm_parameter.jenkins_cluster_arn.arn,
       aws_ssm_parameter.jenkins_url.arn,
-      aws_ssm_parameter.load_balancer_url.arn,
       aws_ssm_parameter.management_account.arn,
       aws_ssm_parameter.secret_key.arn,
       aws_ssm_parameter.slack_token.arn,
+      aws_ssm_parameter.jenkins_master_url.arn,
+      aws_ssm_parameter.jenkins_master_url.arn,
       "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/staging_account",
       "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/intg_account",
       "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/prod_account",

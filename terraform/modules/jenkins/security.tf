@@ -1,52 +1,28 @@
-data "aws_ip_ranges" "cloudfront_ranges_global" {
-  regions  = ["global"]
-  services = ["cloudfront"]
-}
-
-data "aws_ip_ranges" "cloudfront_ranges_regional" {
-  regions  = ["ap-northeast-1", "ap-northeast-2", "ap-south-1", "ap-southeast-1", "ap-southeast-2", "ca-central-1", "eu-central-1", "eu-west-2", "eu-west-2", "eu-west-3", "sa-east-1", "us-east-1", "us-east-2", "us-west-1", "us-west-2"]
-  services = ["cloudfront"]
-}
-
 resource "aws_security_group" "ec2_internal" {
   name        = "${var.app_name}-ec2-security-group-internal"
-  description = "Controls access within our network for Jenkins"
+  description = "Controls access within our network for the Jenkins EC2"
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    protocol  = "tcp"
-    from_port = 80
-    to_port   = 80
-    #"${aws_security_group.example.*.id}"
-    cidr_blocks = [
-      for num in aws_eip.gw[*].public_ip :
-      cidrsubnet("${num}/32", 0, 0)
-    ]
+    protocol        = "tcp"
+    from_port       = 80
+    to_port         = 80
+    security_groups = [aws_security_group.jenkins_alb_group.id]
   }
 
   ingress {
-    protocol    = "tcp"
-    from_port   = 80
-    to_port     = 80
-    cidr_blocks = [aws_vpc.main.cidr_block]
+    protocol        = "tcp"
+    from_port       = 80
+    to_port         = 80
+    security_groups = [aws_security_group.ecs_tasks.id]
   }
 
   # 50000 is the port which allows the nodes to connect to the parent
   ingress {
-    protocol  = "tcp"
-    from_port = 50000
-    to_port   = 50000
-    cidr_blocks = [
-      for num in aws_eip.gw[*].public_ip :
-      cidrsubnet("${num}/32", 0, 0)
-    ]
-  }
-
-  ingress {
-    protocol    = "tcp"
-    from_port   = 50000
-    to_port     = 50000
-    cidr_blocks = [aws_vpc.main.cidr_block]
+    protocol        = "tcp"
+    from_port       = 50000
+    to_port         = 50000
+    security_groups = [aws_security_group.ecs_tasks.id]
   }
 
   egress {
@@ -57,16 +33,26 @@ resource "aws_security_group" "ec2_internal" {
   }
 }
 
-resource "aws_security_group" "ec2_cloudfront_global" {
-  name        = "${var.app_name}-ec2-security-group-global"
-  description = "Allows access to Jenkins from global cloudfront IPs"
+data "aws_ssm_parameter" "external_ips" {
+  name = "/${var.environment}/external_ips"
+}
+
+resource "aws_security_group" "jenkins_alb_group" {
+  name        = "${var.app_name}-alb-security-group"
+  description = "Controls access to the Jenkins load balancer"
   vpc_id      = aws_vpc.main.id
+  ingress {
+    protocol    = "tcp"
+    from_port   = 443
+    to_port     = 443
+    cidr_blocks = split(",", data.aws_ssm_parameter.external_ips.value)
+  }
 
   ingress {
     protocol    = "tcp"
     from_port   = 80
     to_port     = 80
-    cidr_blocks = data.aws_ip_ranges.cloudfront_ranges_global.cidr_blocks
+    cidr_blocks = split(",", data.aws_ssm_parameter.external_ips.value)
   }
 
   egress {
@@ -75,38 +61,7 @@ resource "aws_security_group" "ec2_cloudfront_global" {
     to_port     = 0
     cidr_blocks = ["0.0.0.0/0"]
   }
-
-  tags = merge(
-    var.common_tags,
-    map("Name", "${var.app_name}-ec2-security-group-global-${var.environment}", "Type", "Jenkins Cloudfront", "Range", "Global")
-  )
 }
-
-resource "aws_security_group" "ec2_cloudfront_regional" {
-  name        = "${var.app_name}-ec2-security-group-regional"
-  description = "Allows access to Jenkins from regional cloudfront IPs"
-  vpc_id      = aws_vpc.main.id
-
-  ingress {
-    protocol    = "tcp"
-    from_port   = 80
-    to_port     = 80
-    cidr_blocks = data.aws_ip_ranges.cloudfront_ranges_regional.cidr_blocks
-  }
-
-  egress {
-    protocol    = "-1"
-    from_port   = 0
-    to_port     = 0
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = merge(
-    var.common_tags,
-    map("Name", "${var.app_name}-load-balancer-security-group-${var.environment}", "Type", "Jenkins Cloudfront", "Range", "Regional")
-  )
-}
-
 
 resource "aws_security_group" "ecs_tasks" {
   name        = "${var.environment}-ecs-tasks-security-group"

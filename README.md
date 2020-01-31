@@ -24,24 +24,6 @@ This creates
 ### terraform task modules
 Some builds need a task definition with more than one container. These are defined here and then used within the Jenkins pipeline file.
 
-### lambda
-There are security group rules which only allow access to the load balancer from cloudfront IP ranges. This prevents anyone accessing the load balancer directly as this is only served over http and Jenkins should run over https. The problem is that these IP ranges can change. Amazon publishes a notification to an SNS topic when they do change. This will run the lambda in this folder which will update the Jenkins security groups. There is an article [here](https://aws.amazon.com/blogs/security/how-to-automatically-update-your-security-groups-for-amazon-cloudfront-and-aws-waf-by-using-aws-lambda/) describing this.
-
-To build the lambda.
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-deactivate
-cd venv/lib/python3.6/site-packages/
-zip -r9 ../../../../function.zip .
-cd -
-zip -g function.zip update_security_groups.py
-```
-This is deployed using terraform.
-
-
 ## Sample job
 I created the following sample pipeline job.
 
