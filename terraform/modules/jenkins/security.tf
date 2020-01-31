@@ -33,6 +33,10 @@ resource "aws_security_group" "ec2_internal" {
   }
 }
 
+data "aws_ssm_parameter" "external_ips" {
+  name = "${var.environment}/external_ips"
+}
+
 resource "aws_security_group" "jenkins_alb_group" {
   name        = "${var.app_name}-alb-security-group"
   description = "Controls access to the Jenkins load balancer"
@@ -41,14 +45,14 @@ resource "aws_security_group" "jenkins_alb_group" {
     protocol    = "tcp"
     from_port   = 443
     to_port     = 443
-    cidr_blocks = ["89.197.114.197/32"]
+    cidr_blocks = split(",", data.aws_ssm_parameter.external_ips.value)
   }
 
   ingress {
     protocol    = "tcp"
     from_port   = 80
     to_port     = 80
-    cidr_blocks = ["89.197.114.197/32"]
+    cidr_blocks = split(",", data.aws_ssm_parameter.external_ips.value)
   }
 
   egress {

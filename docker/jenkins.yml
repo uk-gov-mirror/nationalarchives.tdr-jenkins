@@ -52,7 +52,7 @@ jenkins:
   - ecs:
       allowedOverrides: "all"
       cluster: "${/mgmt/jenkins_cluster_arn}"
-      jenkinsUrl: "http://10.0.0.167"
+      jenkinsUrl: "${/mgmt/jenkins_master_url}"
       credentialsId: "aws"
       name: "ecs"
       regionName: "eu-west-2"

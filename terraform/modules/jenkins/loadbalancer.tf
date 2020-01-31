@@ -42,7 +42,7 @@ resource "aws_alb_target_group" "jenkins" {
 }
 
 data "aws_acm_certificate" "national_archives" {
-  domain   = "*.nationalarchives.gov.uk"
+  domain   = "jenkins.tdr-management.nationalarchives.gov.uk"
   statuses = ["ISSUED"]
 }
 
