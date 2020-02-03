@@ -8,10 +8,10 @@ resource "aws_flow_log" "jenkins_flowlog" {
 resource "aws_cloudwatch_log_group" "jenkins_flowlog_log_group" {
   name = "/flowlogs/tdr-jenkins-vpc-${var.environment}"
   tags = merge(
-  var.common_tags,
-  map(
-  "Name", "flowlogs/tdr-jenkins-vpc-${var.environment}",
-  )
+    var.common_tags,
+    map(
+      "Name", "flowlogs/tdr-jenkins-vpc-${var.environment}",
+    )
   )
 }
 
@@ -19,10 +19,10 @@ resource "aws_iam_role" "jenkins_flowlog_role" {
   name               = "jenkins_flowlog_role_${var.environment}"
   assume_role_policy = data.aws_iam_policy_document.jenkins_flowlog_assume_role_policy.json
   tags = merge(
-  var.common_tags,
-  map(
-  "Name", "jenkins-flowlog-role-${var.environment}",
-  )
+    var.common_tags,
+    map(
+      "Name", "jenkins-flowlog-role-${var.environment}",
+    )
   )
 }
 
@@ -55,7 +55,7 @@ data "aws_iam_policy_document" "jenkins_flowlog_policy" {
     ]
 
     resources = [
-      "*",
+      "arn:aws:logs:*:*:log-group:/flowlogs/tdr-jenkins-vpc-*"
     ]
   }
 }
