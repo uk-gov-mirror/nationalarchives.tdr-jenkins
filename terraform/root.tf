@@ -3,6 +3,10 @@ data "aws_s3_bucket_object" "secrets" {
   key    = "${local.environment}/secrets.yml"
 }
 
+data "aws_ssm_parameter" "cost_centre" {
+  name = "/mgmt/cost_centre"
+}
+
 locals {
   #Ensure that developers' workspaces always default to 'dev'
   environment = "mgmt"
@@ -11,7 +15,8 @@ locals {
   common_tags = map(
     "Environment", local.environment,
     "Owner", "TDR",
-    "Terraform", true
+    "Terraform", true,
+    "CostCentre", data.aws_ssm_parameter.cost_centre.value
   )
   secrets_file_content = data.aws_s3_bucket_object.secrets.body
   secrets              = yamldecode(local.secrets_file_content)
