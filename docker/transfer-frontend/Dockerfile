@@ -1,6 +1,6 @@
 FROM jenkins/jnlp-slave 
-USER root   
-ENV AWS_DEFAULT_REGION eu-west-2    
+USER root
+ENV AWS_DEFAULT_REGION eu-west-2
 RUN apt-get update && \ 
         apt-get install -y apt-transport-https libglib2.0-0 libnss3 xvfb libxi6 curl && \ 
         curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add && \
