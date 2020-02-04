@@ -2,7 +2,7 @@ import sys
 from sessions import get_session
 
 # This script will retrieve the SSM param and prints the value
-# Too ensure the value does not appear in the console run the script with set+x command this will hide the output on the console:
+# To ensure the value does not appear in the console run the script with set+x command this will hide the output on the console:
 # sh """
 #   set +x
 #   [command that uses script]
