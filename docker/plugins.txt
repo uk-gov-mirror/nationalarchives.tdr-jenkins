@@ -73,3 +73,4 @@ github-oauth:0.33
 slack:2.34
 configuration-as-code-secret-ssm:1.0.0
 cucumber-reports:5.02
+ssh-agent:1.19
