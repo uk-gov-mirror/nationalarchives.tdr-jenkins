@@ -2,7 +2,7 @@
 
 All TDR documentation is available [here](https://github.com/nationalarchives/tdr-dev-documentation)
 
-This project can be used to spin up a jenkins server using ECS. The ECS cluster is created using terraform and the jenkins configuration uses the [JCasC](https://jenkins.io/projects/jcasc/) plugin and the jenkins.yml file sets up the jenkins configuration. 
+This project can be used to spin up a jenkins server using ECS. The ECS cluster is created using terraform and the jenkins configuration uses the [JCasC](https://jenkins.io/projects/jcasc/) plugin and the jenkins.yml file sets up the jenkins configuration.
 
 ## Project components
 
@@ -44,11 +44,11 @@ pipeline {
         }
     }
     stage('Docker') {
-            agent { 
+            agent {
                 label 'master'
             }
             steps {
-                unstash 'Dockerfile' 
+                unstash 'Dockerfile'
                 sh 'docker build -t alpinetest .'
                 sh 'docker run alpinetest'
             }
@@ -59,14 +59,14 @@ pipeline {
 ```
 For the first stage, jenkins starts a fargate task within the ecs cluster and the steps are run on that cluster. The output of these steps are stashed.
 
-The next stage uses the master agent. The reason for this is that we want to run docker commands here and as far as I know, you can't run docker commands in an AWS fargate container. You can against the master node because although jenkins is running in a container, the docker socket is mounted into the image, allowing us to use docker from the host machine. 
+The next stage uses the master agent. The reason for this is that we want to run docker commands here and as far as I know, you can't run docker commands in an AWS fargate container. You can against the master node because although jenkins is running in a container, the docker socket is mounted into the image, allowing us to use docker from the host machine.
 
 I see the way forward with this would be to have a container with an environment for each specific build, e.g. sbt or node and they can be used as necessary.
 
 ## Secrets
 
-Terraform reads the secrets from a yml file stored in a private s3 bucket. These are then used to populate the aws ssm parameter store and these in turm are used to set the environment variables in the jenkins container. 
-Other projects would then use these environment variables when they need something from the secret store. This gives us a single source of truth for the secrets and means that the configuration in this or any other repo doesn't need any secrets in it. 
+Terraform reads the secrets from a yml file stored in a private s3 bucket. These are then used to populate the aws ssm parameter store and these in turm are used to set the environment variables in the jenkins container.
+Other projects would then use these environment variables when they need something from the secret store. This gives us a single source of truth for the secrets and means that the configuration in this or any other repo doesn't need any secrets in it.
 
 ## Deploying
 
@@ -86,5 +86,5 @@ For each project which we need to build, there needs to be a docker image which 
 The docker container must start with `FROM jenkins/jnlp-slave` This image is mostly stock ubuntu and from there, you need to install whatever it is you need for your build. Build the docker image and push to docker hub.
 
  You then need to configure another container in the clouds section of the jenkins [configuration](docker/jenkins.yml) You can copy and paste most of it, just change the name and the image.
- 
- Rebuild and push the jenkins docker container and redeploy to ECS. You can then use this container in your builds. 
+
+ Rebuild and push the jenkins docker container and redeploy to ECS. You can then use this container in your builds.
