@@ -65,8 +65,13 @@ I see the way forward with this would be to have a container with an environment
 
 ## Secrets
 
-Terraform reads the secrets from a yml file stored in a private s3 bucket. These are then used to populate the aws ssm parameter store and these in turm are used to set the environment variables in the jenkins container.
+Terraform reads the secrets from a yml file stored in a private s3 bucket. These are then used to populate the aws ssm parameter store and these in turn are used to set the environment variables in the jenkins container.
+
 Other projects would then use these environment variables when they need something from the secret store. This gives us a single source of truth for the secrets and means that the configuration in this or any other repo doesn't need any secrets in it.
+
+When you update this file, make sure it is uploaded with the `Content-Type`
+metadata value set to `text/plain`. Terraform can only parse plain text data
+sources.
 
 ## Deploying
 
