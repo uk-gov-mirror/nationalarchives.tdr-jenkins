@@ -20,7 +20,7 @@ credentials:
           description: "SSH Credentials for github Jenkins user"
           privateKeySource:
             directEntry:
-              privateKey: ${/mgmt/github/jenkins-ssh-key}
+              privateKey: "${/mgmt/github/jenkins-ssh-key}"
       - string:
           id: "slack"
           scope: GLOBAL
