@@ -15,7 +15,7 @@ credentials:
       - basicSSHUserPrivateKey:
           scope: GLOBAL
           id: "github-jenkins"
-          username: "tna-digital-archiving-jenkins"
+          username: "${/mgmt/github/jenkins-ssh-username}"
           passphrase: ""
           description: "SSH Credentials for github Jenkins user"
           privateKeySource:
