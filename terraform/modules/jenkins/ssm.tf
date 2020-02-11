@@ -87,22 +87,22 @@ resource "aws_ssm_parameter" "github_secret" {
   }
 }
 
-resource "aws_ssm_parameter" "github_username" {
-  name        = "/${var.environment}/github/username"
-  description = "The username for the jenkins github webhook"
+resource "aws_ssm_parameter" "github_ssh_username" {
+  name        = "/${var.environment}/github/jenkins-ssh-username"
+  description = "The username for the jenkins github user"
   type        = "SecureString"
-  value       = var.secrets.github_username
+  value       = var.secrets.github_ssh_username
   overwrite   = true
   tags = {
     environment = var.environment
   }
 }
 
-resource "aws_ssm_parameter" "github_password" {
-  name        = "/${var.environment}/github/password"
-  description = "The password for the jenkins github webhook"
+resource "aws_ssm_parameter" "github_ssh_key" {
+  name        = "/${var.environment}/github/jenkins-ssh-key"
+  description = "The SSH key for the jenkins github user"
   type        = "SecureString"
-  value       = var.secrets.github_password
+  value       = var.secrets.github_ssh_key
   overwrite   = true
   tags = {
     environment = var.environment
