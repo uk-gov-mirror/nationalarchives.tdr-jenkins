@@ -12,11 +12,15 @@ credentials:
           password: ${/mgmt/docker/password}
           id: "docker"
           scope: GLOBAL
-      - usernamePassword:
-          username: ${/mgmt/github/username}
-          password: ${/mgmt/github/password}
-          id: "github"
+      - basicSSHUserPrivateKey:
           scope: GLOBAL
+          id: "github-jenkins"
+          username: "tna-digital-archiving-jenkins"
+          passphrase: ""
+          description: "SSH Credentials for github Jenkins user"
+          privateKeySource:
+            directEntry:
+              privateKey: ${/mgmt/github/jenkins-ssh-key}
       - string:
           id: "slack"
           scope: GLOBAL
