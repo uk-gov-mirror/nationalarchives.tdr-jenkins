@@ -72,9 +72,9 @@ Other projects would then use these environment variables when they need somethi
 
 ```bash
 docker login -u username -p
-cd docker 
-docker build -t nationalarchives/jenkins .
-docker push nationalarchives/jenkins
+cd docker
+docker build -t nationalarchives/jenkins:mgmt .
+docker push nationalarchives/jenkins:mgmt
 
 cd ../terraform
 terraform apply
