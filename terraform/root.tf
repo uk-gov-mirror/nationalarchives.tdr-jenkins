@@ -8,7 +8,6 @@ data "aws_ssm_parameter" "cost_centre" {
 }
 
 locals {
-  #Ensure that developers' workspaces always default to 'dev'
   environment = "mgmt"
   tag_prefix  = var.tag_prefix
   aws_region  = var.default_aws_region
