@@ -2,6 +2,13 @@ resource "aws_alb" "main" {
   name            = "tdr-jenkins-load-balancer-${var.environment}"
   subnets         = aws_subnet.public.*.id
   security_groups = [aws_security_group.jenkins_alb_group.id]
+
+  access_logs {
+    bucket  = var.jenkins_log_bucket
+    prefix  = "tdr-jenkins-load-balancer-${var.environment}"
+    enabled = true
+  }
+
   tags = merge(
     var.common_tags,
     map("Name", "${var.app_name}-loadbalancer")

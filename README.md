@@ -21,6 +21,13 @@ This creates
 * The security group
 * The AWS SSM parameters
 
+### terraform modules
+* Certain terraform modules are in the tdr-terraform-modules repository
+```
+cd terraform
+git clone git@github.com:nationalarchives/tdr-terraform-modules.git
+```
+
 ### terraform task modules
 Some builds need a task definition with more than one container. These are defined here and then used within the Jenkins pipeline file.
 
