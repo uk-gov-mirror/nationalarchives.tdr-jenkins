@@ -4,3 +4,4 @@ variable "app_name" {}
 variable "container_name" {}
 variable "az_count" {}
 variable "secrets" {}
+variable "jenkins_log_bucket" {}

@@ -37,13 +37,23 @@ provider "aws" {
 
 
 module "jenkins" {
-  source         = "./modules/jenkins"
-  common_tags    = local.common_tags
-  environment    = local.environment
-  app_name       = "tdr-jenkins"
-  container_name = "jenkins"
-  az_count       = 2
-  secrets        = local.secrets
+  source             = "./modules/jenkins"
+  common_tags        = local.common_tags
+  environment        = local.environment
+  app_name           = "tdr-jenkins"
+  container_name     = "jenkins"
+  az_count           = 2
+  secrets            = local.secrets
+  jenkins_log_bucket = module.jenkins_logs_s3.s3_bucket_id
+}
+
+module "jenkins_logs_s3" {
+  source        = "./tdr-terraform-modules/s3"
+  project       = "tdr"
+  function      = "jenkins-logs"
+  access_logs   = false
+  bucket_policy = "alb_logging_euwest2"
+  common_tags   = local.common_tags
 }
 
 module "sonatype_intg" {
