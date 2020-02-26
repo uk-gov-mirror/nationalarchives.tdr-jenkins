@@ -24,7 +24,7 @@ resource "aws_ssm_parameter" "jenkins_url" {
   name        = "/${var.environment}/jenkins_url"
   description = "The url for the jenkins server"
   type        = "SecureString"
-  value       = "http://${aws_alb.main.dns_name}"
+  value       = "http://${var.alb_dns_name}"
   overwrite   = true
   tags = {
     environment = var.environment

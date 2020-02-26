@@ -5,7 +5,7 @@ data "aws_ami" "ecs_ami" {
 }
 
 resource "aws_instance" "jenkins" {
-  ami                    = data.aws_ami.ecs_ami.id
+  ami                    = "ami-03f05a4c7314d92be" # data.aws_ami.ecs_ami.id
   instance_type          = "t2.medium"
   iam_instance_profile   = aws_iam_instance_profile.jenkins_profile.name
   subnet_id              = aws_subnet.private[0].id
