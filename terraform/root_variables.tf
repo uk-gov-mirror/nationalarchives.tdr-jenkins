@@ -4,7 +4,7 @@ variable "default_aws_region" {
 
 variable "dns_zone" {
   description = "DNS zone name e.g. tdr-management.nationalarchives.gov.uk"
-  default = "tdr-management.nationalarchives.gov.uk"
+  default     = "tdr-management.nationalarchives.gov.uk"
 }
 
 variable "domain_name" {
@@ -14,12 +14,12 @@ variable "domain_name" {
 
 variable "function" {
   description = "forms the second part of the bucket name, eg. upload"
-  default = "jenkins"
+  default     = "jenkins"
 }
 
 variable "project" {
   description = "abbreviation for the project, e.g. tdr, forms the first part of the bucket name"
-  default = "tdr"
+  default     = "tdr"
 }
 
 variable "tag_prefix" {

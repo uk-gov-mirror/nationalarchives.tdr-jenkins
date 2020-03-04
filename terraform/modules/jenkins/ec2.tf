@@ -1,6 +1,7 @@
 data "aws_ami" "ecs_ami" {
   owners      = ["591542846629"]
-  name_regex  = "^amzn2-ami-ecs-hvm-2.0.\\d{8}-x86_64-ebs"
+  name_regex  = "amzn2-ami-ecs-hvm-2.0.20200115-x86_64-ebs"
+//  name_regex  = "^amzn2-ami-ecs-hvm-2.0.\\d{8}-x86_64-ebs"
   most_recent = true
 }
 
@@ -91,4 +92,51 @@ data "aws_iam_policy_document" "ecs_policy" {
   }
 }
 
+resource "aws_iam_policy" "jenkins_ec2_backup_policy" {
+  name   = "TDRJenkinsBackupPolicy"
+  path   = "/"
+  policy = data.aws_iam_policy_document.ec2_backup_policy_document.json
+}
+
+data "aws_iam_policy_document" "ec2_backup_policy_document" {
+  statement {
+    actions   = ["s3:ListBucket"]
+    resources = ["arn:aws:s3:::tdr-jenkins-backup-mgmt"]
+  }
+  statement {
+    actions = [
+      "s3:PutObject",
+      "s3:GetObject"
+    ]
+    resources = ["arn:aws:s3:::tdr-jenkins-backup-mgmt/*"]
+  }
+}
+
+data "aws_iam_policy_document" "jenkins_backup_assume_role" {
+  version = "2012-10-17"
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "jenkins_ec2_backup_role" {
+  name               = "TDRJenkinsBackupRole"
+  assume_role_policy = data.aws_iam_policy_document.jenkins_backup_assume_role.json
+  tags = merge(
+    var.common_tags,
+    map(
+      "Name", "jenkins-lambda-iam-role-${var.environment}",
+    )
+  )
+}
+
+resource "aws_iam_role_policy_attachment" "jenkins_backup_policy_attachment" {
+  policy_arn = aws_iam_policy.jenkins_ec2_backup_policy.arn
+  role       = aws_iam_role.jenkins_ec2_backup_role.name
+}
 

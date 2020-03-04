@@ -74,6 +74,14 @@ module "jenkins_logs_s3" {
   common_tags   = local.common_tags
 }
 
+module "jenkins_backup_s3" {
+  source      = "./tdr-terraform-modules/s3"
+  project     = "tdr"
+  function    = "jenkins-backup"
+  common_tags = local.common_tags
+
+}
+
 module "sonatype_intg" {
   source      = "./modules/sonatype-build-task"
   environment = "intg"
