@@ -151,8 +151,8 @@ resource "aws_ssm_parameter" "management_account" {
 }
 
 resource "aws_ssm_parameter" "jenkins_master_url" {
-  name = "/${var.environment}/jenkins_master_url"
-  type = "SecureString"
+  name        = "/${var.environment}/jenkins_master_url"
+  type        = "SecureString"
   description = "The internal url for the jenkins master"
-  value = "http://${aws_instance.jenkins.private_ip}"
+  value       = "http://${aws_instance.jenkins.private_ip}"
 }
