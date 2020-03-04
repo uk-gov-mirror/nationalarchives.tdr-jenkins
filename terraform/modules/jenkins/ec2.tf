@@ -1,7 +1,6 @@
 data "aws_ami" "ecs_ami" {
   owners      = ["591542846629"]
-  name_regex  = "amzn2-ami-ecs-hvm-2.0.20200115-x86_64-ebs"
-//  name_regex  = "^amzn2-ami-ecs-hvm-2.0.\\d{8}-x86_64-ebs"
+  name_regex  = "^amzn2-ami-ecs-hvm-2.0.\\d{8}-x86_64-ebs"
   most_recent = true
 }
 
