@@ -204,6 +204,17 @@ data "aws_iam_policy_document" "api_ecs_task_policy_document" {
       "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/sonatype/passphrase"
     ]
   }
+  statement {
+    actions   = ["s3:ListBucket"]
+    resources = ["arn:aws:s3:::tdr-jenkins-backup-mgmt"]
+  }
+  statement {
+    actions = [
+      "s3:PutObject",
+      "s3:GetObject"
+    ]
+    resources = ["arn:aws:s3:::tdr-jenkins-backup-mgmt/*"]
+  }
 }
 
 # Set up CloudWatch group and log stream and retain logs for 30 days
