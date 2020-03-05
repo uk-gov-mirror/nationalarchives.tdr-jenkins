@@ -1,11 +1,5 @@
-data "aws_ami" "ecs_ami" {
-  owners      = ["591542846629"]
-  name_regex  = "^amzn2-ami-ecs-hvm-2.0.\\d{8}-x86_64-ebs"
-  most_recent = true
-}
-
 resource "aws_instance" "jenkins" {
-  ami                    = data.aws_ami.ecs_ami.id
+  ami                    = var.encrypted_ami_id
   instance_type          = "t2.medium"
   iam_instance_profile   = aws_iam_instance_profile.jenkins_profile.name
   subnet_id              = aws_subnet.private[0].id

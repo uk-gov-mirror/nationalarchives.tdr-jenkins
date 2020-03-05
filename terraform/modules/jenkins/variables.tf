@@ -16,6 +16,8 @@ variable "domain_name" {}
 
 variable "dns_zone" {}
 
+variable "encrypted_ami_id" {}
+
 variable "environment" {}
 
 variable "jenkins_log_bucket" {}

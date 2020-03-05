@@ -1,38 +1,20 @@
-data "aws_s3_bucket_object" "secrets" {
-  bucket = "tdr-secrets"
-  key    = "${local.environment}/secrets.yml"
+module "encryption_key" {
+  source      = "./tdr-terraform-modules/kms"
+  project     = var.project
+  function    = "encryption"
+  environment = local.environment
+  common_tags = local.common_tags
 }
 
-data "aws_ssm_parameter" "cost_centre" {
-  name = "/mgmt/cost_centre"
-}
-
-locals {
-  environment = "mgmt"
-  tag_prefix  = var.tag_prefix
-  aws_region  = var.default_aws_region
-  common_tags = map(
-    "Environment", local.environment,
-    "Owner", "TDR",
-    "Terraform", true,
-    "CostCentre", data.aws_ssm_parameter.cost_centre.value
-  )
-  secrets_file_content = data.aws_s3_bucket_object.secrets.body
-  secrets              = yamldecode(local.secrets_file_content)
-}
-
-terraform {
-  backend "s3" {
-    bucket         = "tdr-terraform-state-jenkins"
-    key            = "jenkins-terraform-state"
-    region         = "eu-west-2"
-    encrypt        = true
-    dynamodb_table = "tdr-terraform-state-lock-jenkins"
-  }
-}
-
-provider "aws" {
-  region = local.aws_region
+module "jenkins_ami" {
+  source      = "./tdr-terraform-modules/ami"
+  project     = var.project
+  function    = "ecs-ec2"
+  environment = local.environment
+  common_tags = local.common_tags
+  region      = var.default_aws_region
+  kms_key_id  = module.encryption_key.kms_key_arn
+  source_ami  = data.aws_ami.ecs_ami.id
 }
 
 module "jenkins" {
@@ -46,6 +28,7 @@ module "jenkins" {
   container_name      = var.function
   dns_zone            = var.dns_zone
   domain_name         = var.domain_name
+  encrypted_ami_id    = module.jenkins_ami.encrypted_ami_id
   environment         = local.environment
   jenkins_log_bucket  = module.jenkins_logs_s3.s3_bucket_id
   secrets             = local.secrets
@@ -79,7 +62,6 @@ module "jenkins_backup_s3" {
   project     = "tdr"
   function    = "jenkins-backup"
   common_tags = local.common_tags
-
 }
 
 module "sonatype_intg" {
