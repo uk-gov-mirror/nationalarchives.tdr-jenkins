@@ -76,7 +76,7 @@ jenkins:
         subnets: "${/mgmt/fargate_subnet}"
         templateName: "transfer-frontend"
       - assignPublicIp: false
-        cpu: 256
+        cpu: 2048
         environments:
         - name: "INTG_ACCOUNT"
           value: "${/mgmt/intg_account}"
@@ -90,7 +90,7 @@ jenkins:
         label: "terraform"
         launchType: "FARGATE"
         memory: 0
-        memoryReservation: 512
+        memoryReservation: 4096
         networkMode: "awsvpc"
         privileged: false
         remoteFSRoot: "/home/jenkins"
