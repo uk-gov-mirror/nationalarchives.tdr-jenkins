@@ -29,6 +29,10 @@ credentials:
           id: "sonatype-gpg-passphrase"
           scope: GLOBAL
           secret: ${/mgmt/sonatype/passphrase}
+      - string:
+          id: "npm-login"
+          scope: GLOBAL
+          secret: ${/mgmt/npm_token}
 jenkins:
   securityRealm:
     github:
