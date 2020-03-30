@@ -182,26 +182,26 @@ data "aws_iam_policy_document" "api_ecs_task_policy_document" {
       "ssm:GetParameter"
     ]
     resources = [
-      aws_ssm_parameter.access_key.arn,
-      aws_ssm_parameter.docker_password.arn,
-      aws_ssm_parameter.docker_username.arn,
-      aws_ssm_parameter.fargate_security_group.arn,
-      aws_ssm_parameter.fargate_subnet.arn,
-      aws_ssm_parameter.github_client.arn,
-      aws_ssm_parameter.github_secret.arn,
-      aws_ssm_parameter.github_ssh_key.arn,
-      aws_ssm_parameter.github_ssh_username.arn,
-      aws_ssm_parameter.jenkins_cluster_arn.arn,
-      aws_ssm_parameter.jenkins_url.arn,
-      aws_ssm_parameter.management_account.arn,
-      aws_ssm_parameter.secret_key.arn,
-      aws_ssm_parameter.slack_token.arn,
-      aws_ssm_parameter.jenkins_master_url.arn,
-      aws_ssm_parameter.jenkins_master_url.arn,
+      "arn:aws:s3:::tdr-jenkins-backup-mgmt",
       "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/staging_account",
-      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/intg_account",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/sonatype/passphrase",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/slack/token",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/secret_key",
       "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/prod_account",
-      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/sonatype/passphrase"
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/management_account",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/jenkins_url",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/jenkins_master_url",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/jenkins_cluster_arn",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/intg_account",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/github/secret",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/github/jenkins-ssh-username",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/github/jenkins-ssh-key",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/github/client",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/fargate_subnet",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/fargate_security_group",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/docker/username",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/docker/password",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/access_key"
     ]
   }
   statement {
