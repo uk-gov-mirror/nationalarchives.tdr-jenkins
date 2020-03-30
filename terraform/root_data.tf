@@ -1,8 +1,3 @@
-data "aws_s3_bucket_object" "secrets" {
-  bucket = "tdr-secrets"
-  key    = "${local.environment}/secrets.yml"
-}
-
 data "aws_ssm_parameter" "cost_centre" {
   name = "/mgmt/cost_centre"
 }

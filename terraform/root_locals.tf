@@ -8,6 +8,4 @@ locals {
     "Terraform", true,
     "CostCentre", data.aws_ssm_parameter.cost_centre.value
   )
-  secrets_file_content = data.aws_s3_bucket_object.secrets.body
-  secrets              = yamldecode(local.secrets_file_content)
 }
