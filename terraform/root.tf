@@ -31,7 +31,6 @@ module "jenkins" {
   encrypted_ami_id    = module.jenkins_ami.encrypted_ami_id
   environment         = local.environment
   jenkins_log_bucket  = module.jenkins_logs_s3.s3_bucket_id
-  secrets             = local.secrets
 }
 
 module "jenkins_alb" {
