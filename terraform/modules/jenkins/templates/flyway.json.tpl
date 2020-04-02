@@ -2,7 +2,7 @@
     {
       "cpu": 1024,
       "memory": 4096,
-      "image": "nationalarchives/jenkins-build-sonatype",
+      "image": "nationalarchives/jenkins-build-flyway",
       "name": "sonatype",
       "taskRoleArn": "arn:aws:iam::${account}:role/TDRJenkinsPublishRole${app_environment_title_case}",
       "compatibilities": ["FARGATE"],
@@ -12,17 +12,21 @@
       "cpu": 256,
       "environment": [
         {
-          "name": "MYSQL_DATABASE",
+          "name": "POSTGRES_USER",
+          "value": "tdr"
+        },
+        {
+          "name": "POSTGRES_DB",
           "value": "consignmentapi"
         },
         {
-          "name": "MYSQL_ROOT_PASSWORD",
+          "name": "POSTGRES_PASSWORD",
           "value": "password"
         }
       ],
       "memory": 512,
-      "image": "mysql:5.7",
-      "name": "mysql",
+      "image": "postgres:11.6",
+      "name": "postgres",
       "taskRoleArn": "arn:aws:iam::${account}:role/TDRJenkinsPublishRole${app_environment_title_case}",
       "compatibilities": ["FARGATE"],
       "networkMode": "awsvpc"

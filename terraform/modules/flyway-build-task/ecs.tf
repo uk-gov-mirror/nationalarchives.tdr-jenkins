@@ -1,7 +1,7 @@
 data "aws_caller_identity" "current" {}
 
-data "template_file" "sonatype_template" {
-  template = file("./modules/jenkins/templates/sonatype.json.tpl")
+data "template_file" "flyway_template" {
+  template = file("./modules/jenkins/templates/flyway.json.tpl")
 
   vars = {
     app_environment            = var.environment
@@ -10,9 +10,9 @@ data "template_file" "sonatype_template" {
   }
 }
 
-resource "aws_ecs_task_definition" "sonatype_task" {
-  container_definitions    = data.template_file.sonatype_template.rendered
-  family                   = "sonatype-${var.environment}"
+resource "aws_ecs_task_definition" "flyway_task" {
+  container_definitions    = data.template_file.flyway_template.rendered
+  family                   = "flyway-${var.environment}"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = "2048"
