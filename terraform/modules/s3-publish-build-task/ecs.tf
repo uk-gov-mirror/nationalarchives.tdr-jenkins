@@ -1,7 +1,7 @@
 data "aws_caller_identity" "current" {}
 
-data "template_file" "flyway_template" {
-  template = file("./modules/jenkins/templates/flyway.json.tpl")
+data "template_file" "s3_publish_template" {
+  template = file("./modules/jenkins/templates/s3publish.json.tpl")
 
   vars = {
     app_environment            = var.environment
@@ -10,9 +10,9 @@ data "template_file" "flyway_template" {
   }
 }
 
-resource "aws_ecs_task_definition" "flyway_task" {
-  container_definitions    = data.template_file.flyway_template.rendered
-  family                   = "flyway-${var.environment}"
+resource "aws_ecs_task_definition" "s3_publish_task" {
+  container_definitions    = data.template_file.s3_publish_template.rendered
+  family                   = "s3publish-${var.environment}"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = "2048"
