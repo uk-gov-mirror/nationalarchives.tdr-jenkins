@@ -63,17 +63,6 @@ module "jenkins_backup_s3" {
   common_tags = local.common_tags
 }
 
-module "s3_publish_intg" {
+module "s3_publish" {
   source      = "./modules/s3-publish-build-task"
-  environment = "intg"
-}
-
-module "s3_publish_staging" {
-  source      = "./modules/s3-publish-build-task"
-  environment = "staging"
-}
-
-module "s3_publish_prod" {
-  source      = "./modules/s3-publish-build-task"
-  environment = "prod"
 }
