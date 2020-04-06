@@ -2,9 +2,9 @@
     {
       "cpu": 1024,
       "memory": 4096,
-      "image": "nationalarchives/jenkins-build-flyway",
+      "image": "nationalarchives/jenkins-build-sbt",
       "name": "sonatype",
-      "taskRoleArn": "arn:aws:iam::${account}:role/TDRJenkinsPublishRole${app_environment_title_case}",
+      "taskRoleArn": "arn:aws:iam::${account}:role/TDRJenkinsPublishRole",
       "compatibilities": ["FARGATE"],
       "networkMode": "awsvpc"
     },
@@ -27,7 +27,7 @@
       "memory": 512,
       "image": "postgres:11.6",
       "name": "postgres",
-      "taskRoleArn": "arn:aws:iam::${account}:role/TDRJenkinsPublishRole${app_environment_title_case}",
+      "taskRoleArn": "arn:aws:iam::${account}:role/TDRJenkinsPublishRole",
       "compatibilities": ["FARGATE"],
       "networkMode": "awsvpc"
     }
