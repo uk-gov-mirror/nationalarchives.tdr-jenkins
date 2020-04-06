@@ -78,6 +78,7 @@ jenkins:
         securityGroups: "${/mgmt/fargate_security_group}"
         sharedMemorySize: 0
         subnets: "${/mgmt/fargate_subnet}"
+        taskrole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsPublishRole"
         templateName: "transfer-frontend"
       - assignPublicIp: false
         cpu: 2048

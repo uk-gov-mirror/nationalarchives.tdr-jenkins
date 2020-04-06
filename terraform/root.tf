@@ -63,17 +63,17 @@ module "jenkins_backup_s3" {
   common_tags = local.common_tags
 }
 
-module "sonatype_intg" {
-  source      = "./modules/sonatype-build-task"
+module "s3_publish_intg" {
+  source      = "./modules/s3-publish-build-task"
   environment = "intg"
 }
 
-module "sonatype_staging" {
-  source      = "./modules/sonatype-build-task"
+module "s3_publish_staging" {
+  source      = "./modules/s3-publish-build-task"
   environment = "staging"
 }
 
-module "sonatype_prod" {
-  source      = "./modules/sonatype-build-task"
+module "s3_publish_prod" {
+  source      = "./modules/s3-publish-build-task"
   environment = "prod"
 }

@@ -31,7 +31,10 @@ data "aws_iam_policy_document" "jenkins_fargate_policy_document" {
       "ecs:RunTask",
       "ecs:StopTask",
       "ecs:ListContainerInstances",
-      "ecs:DescribeTasks"
+      "ecs:DescribeTasks",
+      "s3:PutObject",
+      "s3:ListBucket",
+      "s3:GetObject"
     ]
     resources = [
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeRoleIntg",
@@ -46,15 +49,17 @@ data "aws_iam_policy_document" "jenkins_fargate_policy_document" {
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeLambdaRoleStaging",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeLambdaRoleProd",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeLambdaRoleIntg",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsPublishRoleIntg",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsPublishRoleStaging",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsPublishRoleProd",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsPublishRole",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeReadParamsRoleIntg",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeReadParamsRoleStaging",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeReadParamsRoleProd",
       "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:task-definition/*:*",
       "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:cluster/${aws_ecs_cluster.jenkins_cluster.name}",
-      "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:task/*"
+      "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:task/*",
+      "arn:aws:s3:::tdr-staging-mgmt/*",
+      "arn:aws:s3:::tdr-staging-mgmt",
+      "arn:aws:s3:::tdr-releases-mgmt/*",
+      "arn:aws:s3:::tdr-releases-mgmt"
     ]
   }
 
