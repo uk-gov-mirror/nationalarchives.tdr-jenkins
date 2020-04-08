@@ -104,7 +104,7 @@ jenkins:
         subnets: "${/mgmt/fargate_subnet}"
         templateName: "terraform"
       - assignPublicIp: false
-        cpu: 256
+        cpu: 1024
         environments:
         - name: "INTG_ACCOUNT"
           value: "${/mgmt/intg_account}"
@@ -118,7 +118,7 @@ jenkins:
         label: "aws"
         launchType: "FARGATE"
         memory: 0
-        memoryReservation: 512
+        memoryReservation: 2048
         networkMode: "awsvpc"
         privileged: false
         remoteFSRoot: "/home/jenkins"
