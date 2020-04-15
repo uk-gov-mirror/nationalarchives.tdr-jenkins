@@ -6,4 +6,5 @@ RUN apt-get update -y && apt-get install -y python3 jq \
     && python3 get-pip.py \
     && pip install boto3 \
     && pip install awscli \
-    && pip install c7n c7n-mailer
+    && pip install c7n c7n-mailer pathlib ruamel.yaml
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.5 1
