@@ -201,7 +201,10 @@ data "aws_iam_policy_document" "api_ecs_task_policy_document" {
       "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/fargate_security_group",
       "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/docker/username",
       "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/docker/password",
-      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/access_key"
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/access_key",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/identitypoolid_intg",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/identitypoolid_staging",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/identitypoolid_prod"
     ]
   }
   statement {
