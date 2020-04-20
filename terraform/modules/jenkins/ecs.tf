@@ -29,11 +29,6 @@ resource "aws_ecs_task_definition" "jenkins_task" {
   task_role_arn            = aws_iam_role.api_ecs_task.arn
 
   volume {
-    name      = "jenkins"
-    host_path = "/var/lib/docker/volumes/ecs-jenkins"
-  }
-
-  volume {
     name      = "docker_bin"
     host_path = "/usr/bin/docker"
   }
