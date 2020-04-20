@@ -68,6 +68,9 @@ jenkins:
       - assignPublicIp: true
         cpu: 2048
         image: "nationalarchives/jenkins-build-transfer-frontend"
+        environments:
+        - name: "TDR_IDENTITY_POOL_ID"
+          value: "${/mgmt/identitypoolid_intg}"
         label: "transfer-frontend"
         launchType: "FARGATE"
         memory: 0
@@ -91,8 +94,6 @@ jenkins:
           value: "${/mgmt/prod_account}"
         - name: "MANAGEMENT_ACCOUNT"
           value: "${/mgmt/management_account}"
-        - name: "TDR_IDENTITY_POOL_ID"
-          value: "${/mgmt/identitypoolid_intg}"
         image: "nationalarchives/jenkins-build-terraform"
         label: "terraform"
         launchType: "FARGATE"
