@@ -26,10 +26,6 @@
         "essential": true,
         "mountPoints": [
           {
-            "sourceVolume": "jenkins",
-            "containerPath": "/var/jenkins_home"
-          },
-          {
             "sourceVolume": "docker_bin",
             "containerPath": "/usr/bin/docker"
           },
