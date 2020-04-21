@@ -47,7 +47,7 @@ jenkins:
   - "Ping"
   authorizationStrategy:
     github:
-      adminUserNames: "MancunianSam,Dclipsham,ian-hoyle,MarkKingsbury,suzannehamilton,TomJKing,paulschwarzenberger"
+      adminUserNames: "MancunianSam,Dclipsham,ian-hoyle,suzannehamilton,TomJKing,paulschwarzenberger,Lholbourn"
       allowAnonymousJobStatusPermission: false
       allowAnonymousReadPermission: false
       allowCcTrayPermission: true
