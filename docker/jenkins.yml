@@ -232,7 +232,6 @@ unclassified:
     adminAddress: "address not configured yet <nobody@nowhere>"
     url: "https://jenkins.tdr-prototype.co.uk"
   mailer:
-    adminAddress: "address not configured yet <nobody@nowhere>"
     charset: "UTF-8"
     useSsl: false
   pollSCM:
