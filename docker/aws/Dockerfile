@@ -13,4 +13,3 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
     && pip install awscli \
     && pip install c7n c7n-mailer \
     && rm /usr/bin/python && ln /usr/local/bin/python3.7 /usr/bin/python
-RUN python --version
