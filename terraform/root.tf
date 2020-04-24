@@ -34,17 +34,18 @@ module "jenkins" {
 }
 
 module "jenkins_alb" {
-  source                = "./tdr-terraform-modules/alb"
-  project               = var.project
-  function              = var.function
-  environment           = local.environment
-  alb_log_bucket        = module.jenkins_logs_s3.s3_bucket_id
-  alb_security_group_id = module.jenkins.alb_security_group_id
-  domain_name           = var.domain_name
-  public_subnets        = module.jenkins.public_subnets
-  target_id             = module.jenkins.instance_id
-  vpc_id                = module.jenkins.vpc_id
-  common_tags           = local.common_tags
+  source                           = "./tdr-terraform-modules/alb"
+  project                          = var.project
+  function                         = var.function
+  environment                      = local.environment
+  alb_log_bucket                   = module.jenkins_logs_s3.s3_bucket_id
+  alb_security_group_id            = module.jenkins.alb_security_group_id
+  health_check_unhealthy_threshold = 5
+  domain_name                      = var.domain_name
+  public_subnets                   = module.jenkins.public_subnets
+  target_id                        = module.jenkins.instance_id
+  vpc_id                           = module.jenkins.vpc_id
+  common_tags                      = local.common_tags
 }
 
 module "jenkins_logs_s3" {
