@@ -33,6 +33,15 @@ module "jenkins" {
   jenkins_log_bucket  = module.jenkins_logs_s3.s3_bucket_id
 }
 
+module "jenkins_certificate" {
+  source      = "./tdr-terraform-modules/certificatemanager"
+  project     = var.project
+  function    = "jenkins"
+  dns_zone    = var.dns_zone
+  domain_name = var.domain_name
+  common_tags = local.common_tags
+}
+
 module "jenkins_alb" {
   source                           = "./tdr-terraform-modules/alb"
   project                          = var.project
@@ -40,6 +49,7 @@ module "jenkins_alb" {
   environment                      = local.environment
   alb_log_bucket                   = module.jenkins_logs_s3.s3_bucket_id
   alb_security_group_id            = module.jenkins.alb_security_group_id
+  certificate_arn                  = module.jenkins_certificate.certificate_arn
   health_check_unhealthy_threshold = 5
   domain_name                      = var.domain_name
   public_subnets                   = module.jenkins.public_subnets
@@ -65,5 +75,5 @@ module "jenkins_backup_s3" {
 }
 
 module "s3_publish" {
-  source      = "./modules/s3-publish-build-task"
+  source = "./modules/s3-publish-build-task"
 }
