@@ -22,6 +22,10 @@ credentials:
             directEntry:
               privateKey: "${/mgmt/github/jenkins-ssh-key}"
       - string:
+          id: "github-jenkins-api-key"
+          scope: GLOBAL
+          secret: ${/mgmt/github/jenkins-api-key}
+      - string:
           id: "slack"
           scope: GLOBAL
           secret: ${/mgmt/slack/token}
