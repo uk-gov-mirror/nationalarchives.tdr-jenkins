@@ -86,9 +86,25 @@ cd ../terraform
 terraform apply
 ```
 
-## Adding a new container
+## Jenkins node images
 
-For each project which we need to build, there needs to be a docker image which Jenkins can use to build this. For example, there is a [Dockerfile](docker/sbt/Dockerfile) for sbt.  
+For each project which we need to build, there needs to be a docker image which
+Jenkins can use to build this. For example, there is a
+[Dockerfile](docker/sbt/Dockerfile) for sbt.
+
+### Update a container
+
+Once you have changed the Dockerfile for a Jenkins node, build the image and
+push it to Docker Hub by going to the directory for the node (e.g. docker/sbt).
+Log into Docker as above if necessary, then run:
+
+  ```
+  docker build -t nationalarchives/jenkins-build-<name-of-node>:latest .
+  docker push nationalarchives/jenkins-build-<name-of-node>:latest
+  ```
+
+### Adding a new container
+
 The docker container must start with `FROM jenkins/jnlp-slave` This image is mostly stock ubuntu and from there, you need to install whatever it is you need for your build. Build the docker image and push to docker hub.
 
  You then need to configure another container in the clouds section of the jenkins [configuration](docker/jenkins.yml) You can copy and paste most of it, just change the name and the image.
