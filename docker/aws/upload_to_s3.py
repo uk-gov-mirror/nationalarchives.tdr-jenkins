@@ -13,4 +13,4 @@ client = boto_session.client("s3")
 
 response = client.upload_file(filename, s3_bucket, s3_key)
 
-print(response['ResponseMetadata']['RequestId'])
+print(response)
