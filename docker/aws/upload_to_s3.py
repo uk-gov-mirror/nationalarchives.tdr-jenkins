@@ -7,7 +7,7 @@ s3_bucket = sys.argv[3]
 s3_key = sys.argv[4]
 filename = sys.argv[5]
 
-boto_session = get_session(account_number, "TDRJenkinsS3Role" + stage.capitalize())
+boto_session = get_session(account_number, "TDRJenkinsLambdaRole" + stage.capitalize())
 
 client = boto_session.client("s3")
 
