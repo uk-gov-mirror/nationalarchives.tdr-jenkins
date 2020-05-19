@@ -11,7 +11,7 @@ boto_session = get_session(account_number, "TDRJenkinsLambdaRole" + stage.capita
 
 client = boto_session.client("lambda")
 
-resp = client.update_function_code(FunctionName=function_name, S3Bucket=s3_bucket, S3Key=s3_key)
+client.update_function_code(FunctionName=function_name, S3Bucket=s3_bucket, S3Key=s3_key)
 response = client.publish_version(FunctionName=function_name)
 function_arn = 'arn:aws:lambda:eu-west-2:' + account_number + ':function:' + function_name
 event_mappings = client.list_event_source_mappings()['EventSourceMappings']
