@@ -13,6 +13,4 @@ client = boto_session.client("lambda")
 
 client.update_function_code(FunctionName=function_name, S3Bucket=s3_bucket, S3Key=s3_key)
 response = client.publish_version(FunctionName=function_name)
-function_arn = 'arn:aws:lambda:eu-west-2:' + account_number + ':function:' + function_name
-version = response["Version"]
-print("v" + version)
+print(response["Version"])
