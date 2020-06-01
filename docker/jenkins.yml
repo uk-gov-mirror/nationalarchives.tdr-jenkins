@@ -232,6 +232,15 @@ unclassified:
     hookUrl: "https://jenkins.tdr-prototype.co.uk"
   gitSCM:
     createAccountBasedOnEmail: false
+  globalLibraries:
+    libraries:
+      - name: "tdr-jenkinslib"
+        retriever:
+          modernSCM:
+            scm:
+              git:
+                remote: "https://github.com/nationalarchives/tdr-jenkinslib.git"
+                credentialsId: "github-jenkins-api-key"
   location:
     adminAddress: "address not configured yet <nobody@nowhere>"
     url: "https://jenkins.tdr-prototype.co.uk"
