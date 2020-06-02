@@ -13,3 +13,7 @@ output "public_subnets" {
 output "vpc_id" {
   value = aws_vpc.main.id
 }
+
+output "cloudwatch_log_group_name" {
+  value = aws_cloudwatch_log_group.jenkins_flowlog_log_group.name
+}
