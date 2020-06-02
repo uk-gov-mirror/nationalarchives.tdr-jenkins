@@ -235,12 +235,13 @@ unclassified:
   globalLibraries:
     libraries:
       - name: "tdr-jenkinslib"
+        defaultVersion: master
+        implicit: true
         retriever:
           modernSCM:
             scm:
               git:
                 remote: "https://github.com/nationalarchives/tdr-jenkinslib.git"
-                credentialsId: "github-jenkins-api-key"
   location:
     adminAddress: "address not configured yet <nobody@nowhere>"
     url: "https://jenkins.tdr-prototype.co.uk"
