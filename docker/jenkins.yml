@@ -229,7 +229,7 @@ unclassified:
   buildStepOperation:
     enabled: false
   gitHubPluginConfig:
-    hookUrl: "https://jenkins.tdr-prototype.co.uk"
+    hookUrl: "https://jenkins.tdr-management.nationalarchives.gov.uk"
   gitSCM:
     createAccountBasedOnEmail: false
   globalLibraries:
@@ -244,7 +244,7 @@ unclassified:
                 remote: "https://github.com/nationalarchives/tdr-jenkinslib.git"
   location:
     adminAddress: "address not configured yet <nobody@nowhere>"
-    url: "https://jenkins.tdr-prototype.co.uk"
+    url: "https://jenkins.tdr-management.nationalarchives.gov.uk"
   mailer:
     charset: "UTF-8"
     useSsl: false
