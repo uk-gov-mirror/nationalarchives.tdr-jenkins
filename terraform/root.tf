@@ -74,6 +74,15 @@ module "jenkins_backup_s3" {
   common_tags = local.common_tags
 }
 
+module "jenkins_vpc_flow_logs_firehose" {
+  source                    = "./tdr-terraform-modules/kinesisfirehose"
+  project                   = "tdr"
+  function                  = "jenkins"
+  common_tags               = local.common_tags
+  destination_bucket        = "tdr-log-data-mgmt"
+  cloudwatch_log_group_name = module.jenkins.cloudwatch_log_group_name
+}
+
 module "s3_publish" {
   source = "./modules/s3-publish-build-task"
 }
