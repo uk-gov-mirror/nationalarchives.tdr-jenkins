@@ -5,6 +5,13 @@ resource "aws_flow_log" "jenkins_flowlog" {
   vpc_id          = aws_vpc.main.id
 }
 
+resource "aws_flow_log" "jenkins_flowlog_s3" {
+  log_destination_type = "s3"
+  log_destination      = "arn:aws:s3:::tdr-log-data-mgmt/flowlogs/${var.environment}/jenkins/"
+  traffic_type         = "ALL"
+  vpc_id               = aws_vpc.main.id
+}
+
 resource "aws_cloudwatch_log_group" "jenkins_flowlog_log_group" {
   name = "/flowlogs/tdr-jenkins-vpc-${var.environment}"
   tags = merge(
