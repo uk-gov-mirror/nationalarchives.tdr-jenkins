@@ -28,7 +28,7 @@ pipeline {
   }
    post {
           failure {
-              tdr.postToDaTdrSlackChannel(colour: "danger", message:  "*Transfer frontend* :jenkins-fail: The Jenkins backup has failed")
+              tdr.postToDaTdrSlackChannel(colour: "danger", message: "*Transfer frontend* :jenkins-fail: The Jenkins backup has failed")
           }
    }
 }
