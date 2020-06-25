@@ -1,3 +1,5 @@
+library("tdr-jenkinslib")
+
 pipeline {
   agent {
     label "master"
@@ -26,7 +28,7 @@ pipeline {
   }
    post {
           failure {
-              slackSend color: "danger", message: "*Transfer frontend* :jenkins-fail: The Jenkins backup has failed", channel: "#tdr-releases"
+              tdr.postToDaTdrSlackChannel(colour: "danger", message: "*Transfer frontend* :jenkins-fail: The Jenkins backup has failed")
           }
-      }
+   }
 }
