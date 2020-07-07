@@ -12,8 +12,8 @@ boto_session = get_session(account_number, "TDRJenkinsLambdaRole" + stage.capita
 client = boto_session.client('ecs')
 ec2_client = boto_session.client("ec2")
 
-security_groups = [x['GroupId'] for x in list(filter(lambda x: x['GroupName'] == "tdr-outbound-only", ec2_client.describe_security_groups()['SecurityGroups']))]
-subnets = [x['SubnetId'] for x in ec2_client.describe_subnets(Filters=[
+security_groups = [security_group['GroupId'] for security_group in list(filter(lambda x: x['GroupName'] == "tdr-outbound-only", ec2_client.describe_security_groups()['SecurityGroups']))]
+subnets = [subnet['SubnetId'] for subnet in ec2_client.describe_subnets(Filters=[
     {
         'Name': 'tag:Name',
         'Values': [
