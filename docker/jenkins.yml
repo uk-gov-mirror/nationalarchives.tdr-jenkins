@@ -30,6 +30,10 @@ credentials:
           scope: GLOBAL
           secret: ${/mgmt/slack/token}
       - string:
+          id: "slack-pr-monitor"
+          scope: GLOBAL
+          secret: ${/mgmt/pr_monitor/slack/webhook}
+      - string:
           id: "sonatype-gpg-passphrase"
           scope: GLOBAL
           secret: ${/mgmt/sonatype/passphrase}
