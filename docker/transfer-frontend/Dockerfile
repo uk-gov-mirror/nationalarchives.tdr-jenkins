@@ -8,7 +8,7 @@ RUN apt-get update && \
         echo "deb https://dl.bintray.com/sbt/debian /" >> /etc/apt/sources.list.d/sbt.list && \ 
         echo "deb http://ppa.launchpad.net/ubuntu-mozilla-security/ppa/ubuntu bionic main" >> /etc/apt/sources.list.d/firefox.list && \ 
         apt-key adv --keyserver hkps://keyserver.ubuntu.com:443 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823 && \    
-	    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A6DCF7707EBC211F && \
+        apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A6DCF7707EBC211F && \
         apt-get -y update && \ 
         apt-get -y install sbt google-chrome-stable firefox && \
         wget -q https://nodejs.org/dist/v12.13.1/node-v12.13.1-linux-x64.tar.xz && \
