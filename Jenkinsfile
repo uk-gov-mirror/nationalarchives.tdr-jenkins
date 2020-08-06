@@ -1,10 +1,21 @@
 library("tdr-jenkinslib")
+def repo = "tdr-jenkins"
 
 pipeline {
   agent {
     label "master"
   }
   stages {
+    stage("Run git secrets") {
+      agent {
+        label "master"
+      }
+      steps {
+        script {
+          tdr.runGitSecrets(repo)
+        }
+      }
+    }
     stage("Zip jobs directory and upload") {
         agent {
             label "master"
