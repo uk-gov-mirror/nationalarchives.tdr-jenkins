@@ -7,9 +7,6 @@ pipeline {
   }
   stages {
     stage("Run git secrets") {
-      agent {
-        label "master"
-      }
       steps {
         script {
           tdr.runGitSecrets(repo)
@@ -17,9 +14,6 @@ pipeline {
       }
     }
     stage("Zip jobs directory and upload") {
-        agent {
-            label "master"
-        }
         steps {
             script {
                 dir("/tmp") {
