@@ -240,7 +240,7 @@ unclassified:
     libraries:
       - name: "tdr-jenkinslib"
         defaultVersion: master
-        implicit: true
+        implicit: false
         retriever:
           modernSCM:
             scm:
