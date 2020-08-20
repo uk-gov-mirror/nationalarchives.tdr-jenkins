@@ -215,6 +215,25 @@ data "aws_iam_policy_document" "api_ecs_task_policy_document" {
     ]
     resources = ["arn:aws:s3:::tdr-jenkins-backup-mgmt/*"]
   }
+  statement {
+    actions = [
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:DescribeImages",
+      "ecr:DescribeRepositories",
+      "ecr:ListImages",
+      "ecr:PutImage",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:UploadLayerPart",
+      "ecr:InitiateLayerUpload",
+      "ecr:BatchGetImage",
+      "ecr:CompleteLayerUpload"
+    ]
+    resources = [
+      "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/yara-dependencies",
+      "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/yara-rules",
+      "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/yara"
+    ]
+  }
 }
 
 # Set up CloudWatch group and log stream and retain logs for 30 days
