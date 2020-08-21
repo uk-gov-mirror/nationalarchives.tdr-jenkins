@@ -3,7 +3,7 @@ USER root
 ENV JAVA_OPTS "-Djenkins.install.runSetupWizard=false ${JAVA_OPTS:-}"
 RUN apt-get update && \
         apt-key update && \
-        apt-get install -y libltdl7 python3-pip && \
+        apt-get install -y libltdl7 python3-pip zip && \
         mkdir -p /opt/jcasc && \
         groupadd docker && \
         usermod -G docker jenkins && \
