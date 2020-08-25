@@ -2,9 +2,9 @@ resource "aws_instance" "jenkins" {
   ami                    = var.encrypted_ami_id
   instance_type          = "t2.medium"
   iam_instance_profile   = aws_iam_instance_profile.jenkins_profile.name
-  subnet_id              = aws_subnet.private[0].id
+  subnet_id              = aws_subnet.private[1].id
   vpc_security_group_ids = [aws_security_group.ec2_internal.id]
-  private_ip             = "10.0.0.167"
+  private_ip             = "10.0.1.221"
   key_name               = "jenkins_key_pair"
   user_data              = "#!/usr/bin/env bash\necho ECS_CLUSTER=${aws_ecs_cluster.jenkins_cluster.name} > /etc/ecs/ecs.config"
   tags = merge(
