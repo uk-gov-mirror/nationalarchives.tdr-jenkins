@@ -234,6 +234,13 @@ data "aws_iam_policy_document" "api_ecs_task_policy_document" {
       "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/yara"
     ]
   }
+
+  statement {
+    actions = [
+      "ecr:GetAuthorizationToken"
+    ]
+    resources = ["*"]
+  }
 }
 
 # Set up CloudWatch group and log stream and retain logs for 30 days
