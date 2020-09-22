@@ -245,7 +245,11 @@ data "aws_iam_policy_document" "api_ecs_task_policy_document" {
     resources = [
       "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/yara-dependencies",
       "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/yara-rules",
-      "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/yara"
+      "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/yara",
+      "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/transfer-frontend",
+      "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/consignment-api",
+      "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/auth-server",
+      "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/file-format-build",
     ]
   }
 
