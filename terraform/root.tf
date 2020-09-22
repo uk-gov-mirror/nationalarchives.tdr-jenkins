@@ -31,6 +31,7 @@ module "jenkins" {
   encrypted_ami_id    = module.jenkins_ami.encrypted_ami_id
   environment         = local.environment
   jenkins_log_bucket  = module.jenkins_logs_s3.s3_bucket_id
+  repository          = module.ecr_jenkins_repository.repository
 }
 
 module "jenkins_certificate" {
@@ -76,4 +77,68 @@ module "jenkins_backup_s3" {
 
 module "s3_publish" {
   source = "./modules/s3-publish-build-task"
+}
+
+module "ecr_jenkins_repository" {
+  source           = "./tdr-terraform-modules/ecr"
+  name             = "jenkins"
+  common_tags      = local.common_tags
+  policy_name      = "jenkins_policy"
+  policy_variables = { role_arn = module.jenkins.ecs_execution_role_arn }
+}
+
+module "ecr_jenkins_build_npm_repository" {
+  source           = "./tdr-terraform-modules/ecr"
+  name             = "jenkins-build-npm"
+  common_tags      = local.common_tags
+  policy_name      = "jenkins_policy"
+  policy_variables = { role_arn = module.jenkins_build_npm_execution_role.role_arn }
+}
+
+module "jenkins_build_npm_execution_role" {
+  source         = "./modules/build-role"
+  name           = "npm"
+  repository_arn = module.ecr_jenkins_build_npm_repository.repository.arn
+}
+
+module "ecr_jenkins_build_aws_repository" {
+  source           = "./tdr-terraform-modules/ecr"
+  name             = "jenkins-build-aws"
+  common_tags      = local.common_tags
+  policy_name      = "jenkins_policy"
+  policy_variables = { role_arn = module.jenkins_build_aws_execution_role.role_arn }
+}
+
+module "jenkins_build_aws_execution_role" {
+  source         = "./modules/build-role"
+  name           = "aws"
+  repository_arn = module.ecr_jenkins_build_aws_repository.repository.arn
+}
+
+module "ecr_jenkins_build_terraform_repository" {
+  source           = "./tdr-terraform-modules/ecr"
+  name             = "jenkins-build-terraform"
+  common_tags      = local.common_tags
+  policy_name      = "jenkins_policy"
+  policy_variables = { role_arn = module.jenkins_build_terraform_execution_role.role_arn }
+}
+
+module "jenkins_build_terraform_execution_role" {
+  source         = "./modules/build-role"
+  name           = "terraform"
+  repository_arn = module.ecr_jenkins_build_terraform_repository.repository.arn
+}
+
+module "ecr_jenkins_build_transfer_frontend_repository" {
+  source           = "./tdr-terraform-modules/ecr"
+  name             = "jenkins-build-transfer-frontend"
+  common_tags      = local.common_tags
+  policy_name      = "jenkins_policy"
+  policy_variables = { role_arn = module.jenkins_build_transfer_frontend_execution_role.role_arn }
+}
+
+module "jenkins_build_transfer_frontend_execution_role" {
+  source         = "./modules/build-role"
+  name           = "transfer-frontend"
+  repository_arn = module.ecr_jenkins_build_transfer_frontend_repository.repository.arn
 }
