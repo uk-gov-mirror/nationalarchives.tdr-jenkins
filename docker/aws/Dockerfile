@@ -1,4 +1,5 @@
-FROM nationalarchives/jenkins-build-python:3.7
+ARG ACCOUNT_NUMBER
+FROM $ACCOUNT_NUMBER.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-python:3.7
 USER root
 RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
     && python3 get-pip.py \
