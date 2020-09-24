@@ -11,7 +11,7 @@ data "template_file" "jenkins_template" {
   template = file("./modules/jenkins/templates/jenkins.json.tpl")
 
   vars = {
-    jenkins_image     = "docker.io/nationalarchives/jenkins:${var.environment}"
+    jenkins_image     = var.repository.repository_url
     container_name    = "${var.container_name}-${var.environment}"
     app_environment   = var.environment
     jenkins_log_group = aws_cloudwatch_log_group.tdr_jenkins_log_group.name
@@ -133,8 +133,21 @@ resource "aws_iam_policy" "api_ecs_execution" {
 
 data "aws_iam_policy_document" "api_ecs_execution" {
   statement {
-    actions   = ["logs:PutLogEvents"]
-    resources = [aws_cloudwatch_log_group.tdr_jenkins_log_group.arn]
+    actions = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:BatchGetImage",
+      "ecr:GetDownloadUrlForLayer"
+    ]
+    resources = [
+      aws_cloudwatch_log_group.tdr_jenkins_log_group.arn,
+      var.repository.arn
+    ]
+  }
+  statement {
+    actions   = ["ecr:GetAuthorizationToken"]
+    resources = ["*"]
   }
 }
 
@@ -179,6 +192,7 @@ data "aws_iam_policy_document" "api_ecs_task_policy_document" {
     resources = [
       "arn:aws:s3:::tdr-jenkins-backup-mgmt",
       "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/staging_account",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/pr_monitor/slack/webhook",
       "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/sonatype/passphrase",
       "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/slack/token",
       "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/mgmt/secret_key",
@@ -231,7 +245,11 @@ data "aws_iam_policy_document" "api_ecs_task_policy_document" {
     resources = [
       "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/yara-dependencies",
       "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/yara-rules",
-      "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/yara"
+      "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/yara",
+      "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/transfer-frontend",
+      "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/consignment-api",
+      "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/auth-server",
+      "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/file-format-build",
     ]
   }
 

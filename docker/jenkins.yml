@@ -75,10 +75,11 @@ jenkins:
       templates:
       - assignPublicIp: true
         cpu: 2048
-        image: "nationalarchives/jenkins-build-transfer-frontend"
+        image: "${/mgmt/management_account}.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-transfer-frontend"
         environments:
         - name: "TDR_IDENTITY_POOL_ID"
           value: "${/mgmt/identitypoolid_intg}"
+        executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildTransferFrontendExecutionRole"
         label: "transfer-frontend"
         launchType: "FARGATE"
         memory: 0
@@ -102,7 +103,8 @@ jenkins:
           value: "${/mgmt/prod_account}"
         - name: "MANAGEMENT_ACCOUNT"
           value: "${/mgmt/management_account}"
-        image: "nationalarchives/jenkins-build-terraform"
+        image: "${/mgmt/management_account}.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-terraform"
+        executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildTerraformExecutionRole"
         label: "terraform"
         launchType: "FARGATE"
         memory: 0
@@ -125,7 +127,7 @@ jenkins:
           value: "${/mgmt/prod_account}"
         - name: "MANAGEMENT_ACCOUNT"
           value: "${/mgmt/management_account}"
-        image: "nationalarchives/jenkins-build-aws"
+        image: "${/mgmt/management_account}.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-aws"
         label: "aws"
         launchType: "FARGATE"
         memory: 0
@@ -137,6 +139,7 @@ jenkins:
         sharedMemorySize: 0
         subnets: "${/mgmt/fargate_subnet}"
         taskrole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsNodeRole"
+        executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildAwsExecutionRole"
         templateName: "aws"
       - assignPublicIp: false
         cpu: 2048
@@ -149,11 +152,12 @@ jenkins:
           value: "${/mgmt/prod_account}"
         - name: "MANAGEMENT_ACCOUNT"
           value: "${/mgmt/management_account}"
-        image: "nationalarchives/jenkins-build-npm"
+        image: "${/mgmt/management_account}.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-npm"
         label: "npm"
         launchType: "FARGATE"
         memory: 0
         memoryReservation: 4096
+        executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildNpmExecutionRole"
         networkMode: "awsvpc"
         privileged: false
         remoteFSRoot: "/home/jenkins"
@@ -161,29 +165,6 @@ jenkins:
         sharedMemorySize: 0
         subnets: "${/mgmt/fargate_subnet}"
         templateName: "npm"
-      - assignPublicIp: false
-        cpu: 2048
-        environments:
-        - name: "INTG_ACCOUNT"
-          value: "${/mgmt/intg_account}"
-        - name: "STAGING_ACCOUNT"
-          value: "${/mgmt/staging_account}"
-        - name: "PROD_ACCOUNT"
-          value: "${/mgmt/prod_account}"
-        - name: "MANAGEMENT_ACCOUNT"
-          value: "${/mgmt/management_account}"
-        image: "nationalarchives/jenkins-build-maven"
-        label: "maven"
-        launchType: "FARGATE"
-        memory: 0
-        memoryReservation: 4096
-        networkMode: "awsvpc"
-        privileged: false
-        remoteFSRoot: "/home/jenkins"
-        securityGroups: "${/mgmt/fargate_security_group}"
-        sharedMemorySize: 0
-        subnets: "${/mgmt/fargate_subnet}"
-        templateName: "maven"
       - assignPublicIp: false
         cpu: 2048
         image: "jenkins/jnlp-slave"
@@ -210,7 +191,7 @@ jenkins:
   markupFormatter: "plainText"
   mode: EXCLUSIVE
   myViewsTabBar: "standard"
-  numExecutors: 2
+  numExecutors: 6
   primaryView:
     all:
       name: "all"

@@ -13,3 +13,7 @@ output "public_subnets" {
 output "vpc_id" {
   value = aws_vpc.main.id
 }
+
+output "ecs_execution_role_arn" {
+  value = aws_iam_role.api_ecs_execution.arn
+}

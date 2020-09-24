@@ -35,7 +35,7 @@ jquery3-api:3.5.1-1
 jsch:0.1.55.2
 junit:1.32
 lockable-resources:2.8
-mailer:1.32
+mailer:1.32.1
 matrix-project:1.17
 momentjs:1.1.1
 okhttp-api:3.14.9
