@@ -2,7 +2,7 @@
     {
       "cpu": 1024,
       "memory": 4096,
-      "image": "nationalarchives/jenkins-build-sbt",
+      "image": "${account}.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-postgres",
       "name": "sonatype",
       "taskRoleArn": "arn:aws:iam::${account}:role/TDRJenkinsPublishRole",
       "compatibilities": ["FARGATE"],
