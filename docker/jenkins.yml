@@ -3,10 +3,9 @@ credentials:
     domainCredentials:
     - credentials:
       - aws:
-          accessKey: "${/mgmt/access_key}"
+          iamRoleArn: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsFargateRoleMgmt"
           id: "aws"
           scope: GLOBAL
-          secretKey: "${/mgmt/secret_key}"
       - usernamePassword:
           username: ${/mgmt/docker/username}
           password: ${/mgmt/docker/password}
