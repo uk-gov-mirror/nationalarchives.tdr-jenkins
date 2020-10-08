@@ -50,6 +50,7 @@ data "aws_iam_policy_document" "jenkins_fargate_policy_document" {
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeLambdaRoleProd",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeLambdaRoleIntg",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsPublishRole",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRTerraformRoleMgmt",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeReadParamsRoleIntg",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeReadParamsRoleStaging",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsNodeReadParamsRoleProd",
@@ -119,4 +120,14 @@ data "aws_iam_policy_document" "fargate_policy" {
       "*",
     ]
   }
+}
+
+resource "aws_iam_role" "jenkins_ecs_role" {
+  assume_role_policy = templatefile("${path.module}/templates/assume_role_policy.json.tpl", {role_arn = aws_iam_role.api_ecs_task.arn})
+  name = "TDRJenkinsFargateRole${title(var.environment)}"
+}
+
+resource "aws_iam_role_policy_attachment" "jenkins_ecs_role_attach" {
+  policy_arn = aws_iam_policy.jenkins_fargate_policy.arn
+  role = aws_iam_role.jenkins_ecs_role.id
 }
