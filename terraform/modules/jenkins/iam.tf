@@ -123,11 +123,11 @@ data "aws_iam_policy_document" "fargate_policy" {
 }
 
 resource "aws_iam_role" "jenkins_ecs_role" {
-  assume_role_policy = templatefile("${path.module}/templates/assume_role_policy.json.tpl", {role_arn = aws_iam_role.api_ecs_task.arn})
-  name = "TDRJenkinsFargateRole${title(var.environment)}"
+  assume_role_policy = templatefile("${path.module}/templates/assume_role_policy.json.tpl", { role_arn = aws_iam_role.api_ecs_task.arn })
+  name               = "TDRJenkinsFargateRole${title(var.environment)}"
 }
 
 resource "aws_iam_role_policy_attachment" "jenkins_ecs_role_attach" {
   policy_arn = aws_iam_policy.jenkins_fargate_policy.arn
-  role = aws_iam_role.jenkins_ecs_role.id
+  role       = aws_iam_role.jenkins_ecs_role.id
 }

@@ -6,11 +6,6 @@ credentials:
           iamRoleArn: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsFargateRoleMgmt"
           id: "aws"
           scope: GLOBAL
-      - usernamePassword:
-          username: ${/mgmt/docker/username}
-          password: ${/mgmt/docker/password}
-          id: "docker"
-          scope: GLOBAL
       - basicSSHUserPrivateKey:
           scope: GLOBAL
           id: "github-jenkins"
@@ -32,10 +27,6 @@ credentials:
           id: "slack-pr-monitor"
           scope: GLOBAL
           secret: ${/mgmt/pr_monitor/slack/webhook}
-      - string:
-          id: "sonatype-gpg-passphrase"
-          scope: GLOBAL
-          secret: ${/mgmt/sonatype/passphrase}
       - string:
           id: "npm-login"
           scope: GLOBAL
