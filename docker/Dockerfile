@@ -16,7 +16,8 @@ RUN apt-get update && \
 ENV CASC_JENKINS_CONFIG /usr/share/jenkins/ref/jenkins.yaml
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
 COPY jenkins.yml /usr/share/jenkins/ref/jenkins.yaml
+COPY backup.sh /opt/backup.sh
 COPY logging.groovy /var/jenkins_home/init.groovy.d/logging.groovy
-RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
+RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt && chmod +x /opt/backup.sh
 COPY entrypoint.sh .
 ENTRYPOINT ["/entrypoint.sh"]
