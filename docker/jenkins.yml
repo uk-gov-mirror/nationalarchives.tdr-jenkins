@@ -48,10 +48,10 @@ jenkins:
       adminUserNames: "MancunianSam,Dclipsham,ian-hoyle,suzannehamilton,TomJKing,Lholbourn,techncl"
       allowAnonymousJobStatusPermission: false
       allowAnonymousReadPermission: false
-      allowCcTrayPermission: true
-      allowGithubWebHookPermission: true
+      allowCcTrayPermission: false
+      allowGithubWebHookPermission: false
       authenticatedUserCreateJobPermission: false
-      authenticatedUserReadPermission: true
+      authenticatedUserReadPermission: false
       organizationNames: "nationalarchives"
       useRepositoryPermissions: true
   clouds:
