@@ -26,7 +26,6 @@ git-server:1.9
 github:1.31.0
 github-api:1.116
 github-branch-source:2.9.0
-github-oauth:0.33
 handlebars:1.1.1
 jackson2-api:2.11.1
 jdk-tool:1.4
@@ -36,6 +35,7 @@ jsch:0.1.55.2
 junit:1.32
 lockable-resources:2.10
 mailer:1.32.1
+matrix-auth:2.6.3
 matrix-project:1.17
 momentjs:1.1.1
 okhttp-api:3.14.9
