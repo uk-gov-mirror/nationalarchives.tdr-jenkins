@@ -1,11 +1,12 @@
-ARG ACCOUNT_NUMBER
-FROM $ACCOUNT_NUMBER.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-python:3.7
+FROM jenkins/jnlp-slave:alpine
 USER root
-RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
-    && python3 get-pip.py \
-    && pip install boto3 \
-    && pip install awscli \
-    && rm /usr/bin/python && ln /usr/local/bin/python3.7 /usr/bin/python \
-    && pip install c7n c7n-mailer c7n-guardian \
-    && pip install ruamel.yaml
+RUN apk update \    
+    && apk add curl wget py3-pip \
+    && pip3 install boto3 \
+    && pip3 install awscli \
+    && pip3 install c7n c7n-mailer c7n-guardian \
+    && pip3 install ruamel.yaml \
+    && ln /usr/bin/python3 /usr/bin/python \
+    && wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -O /usr/local/bin/jq \
+    && chmod +x /usr/local/bin/jq
 COPY *.py /
