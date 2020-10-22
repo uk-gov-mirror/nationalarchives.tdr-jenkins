@@ -26,7 +26,6 @@ git-server:1.9
 github:1.31.0
 github-api:1.116
 github-branch-source:2.9.0
-github-oauth:0.33
 handlebars:1.1.1
 jackson2-api:2.11.1
 jdk-tool:1.4
