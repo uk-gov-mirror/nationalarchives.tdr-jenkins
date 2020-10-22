@@ -44,16 +44,9 @@ jenkins:
   - "JNLP4-connect"
   - "Ping"
   authorizationStrategy:
-    github:
-      adminUserNames: "MancunianSam,Dclipsham,suzannehamilton,TomJKing,Lholbourn,techncl"
-      allowAnonymousJobStatusPermission: false
-      allowAnonymousReadPermission: false
-      allowCcTrayPermission: false
-      allowGithubWebHookPermission: false
-      authenticatedUserCreateJobPermission: false
-      authenticatedUserReadPermission: false
-      organizationNames: "nationalarchives"
-      useRepositoryPermissions: true
+    globalMatrix:
+      permissions:
+        - "Overall/Administer:nationalarchives*transfer-digital-records"
   clouds:
   - ecs:
       allowedOverrides: "all"
