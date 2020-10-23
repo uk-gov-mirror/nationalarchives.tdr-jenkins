@@ -1,8 +1,8 @@
-FROM jenkins/jnlp-slave
+FROM jenkins/jnlp-slave:alpine
 USER root
 ENV AWS_DEFAULT_REGION eu-west-2
-RUN apt-get update && \
-	apt-get install -y python3 python3-pip wget unzip && \
+RUN apk update && \
+	apk add py3-pip wget unzip curl && \
         pip3 install awscli && \
 	wget https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip && \
 	unzip terraform_0.12.28_linux_amd64.zip && \
