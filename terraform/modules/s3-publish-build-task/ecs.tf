@@ -4,7 +4,7 @@ data "template_file" "s3_publish_template" {
   template = file("./modules/jenkins/templates/s3publish.json.tpl")
 
   vars = {
-    account                    = data.aws_caller_identity.current.account_id
+    account = data.aws_caller_identity.current.account_id
   }
 }
 
