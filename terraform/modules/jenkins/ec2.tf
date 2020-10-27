@@ -61,7 +61,7 @@ resource "aws_iam_role_policy_attachment" "invoke_api_attach" {
 
 resource "aws_iam_role_policy_attachment" "ssm_policy_attach" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-  role = aws_iam_role.jenkins_ecs_role.name
+  role       = aws_iam_role.jenkins_ecs_role.name
 }
 
 data "aws_iam_policy_document" "ecs_policy" {
