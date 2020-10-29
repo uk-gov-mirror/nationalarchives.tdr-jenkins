@@ -11,8 +11,8 @@ RUN apk update && \
         git clone https://github.com/awslabs/git-secrets.git && \
         make install -C git-secrets && \
         git-secrets --register-aws --global && \
-        git-secrets --add --global '(.)*[0-9]{12}(.)*' && \
-        git-secrets --add --global -a '(.)*012345678912(.)*'
+        git-secrets --add --global '([^0-9])*[0-9]{12}([^0-9])*' && \
+        git-secrets --add --global -a '([^0-9])*012345678912([^0-9])*'
 
 ENV CASC_JENKINS_CONFIG /usr/share/jenkins/ref/jenkins.yaml
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
