@@ -13,8 +13,8 @@ RUN apk update && \
         git-secrets --register-aws --global && \
 #       Additional git secrets rule to check for AWS account numbers (any set of 12 digits)
         git-secrets --add --global '([^0-9])*[0-9]{12}([^0-9])*' && \
-#       Additional git secrets exclusion rule to allow dummy AWS account number 12345678901X for documentation
-        git-secrets --add --global --allowed '12345678901X'
+#       Additional git secrets exclusion rule to allow dummy AWS account number 1234 for documentation
+        git-secrets --add --global --allowed '1234'
 
 ENV CASC_JENKINS_CONFIG /usr/share/jenkins/ref/jenkins.yaml
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
