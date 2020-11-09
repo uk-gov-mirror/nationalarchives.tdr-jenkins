@@ -74,25 +74,40 @@ I see the way forward with this would be to have a container with an environment
 
 Secrets are set manually in the aws ssm parameter store and these in turn are used to set credentials using the configuration as code plugin.
 
-## Deploying
+## Deployment
+
+Before doing any Jenkins deployments:
+
+- Warn the other developers, in case they are actively using Jenkins
+- Run a manual backup - see the Backups section below. If you do not do this,
+  the Jenkins job numbers and git version tags may get out of sync, which means
+  you will have to [reset the Jenkins build numbers][reset-builds]
+
+[reset-builds]: https://github.com/nationalarchives/tdr-dev-documentation/blob/master/manual/reset-jenkins-builds.md
+
+### Deploy Jenkins Docker image
 
 ```bash
 docker login -u username -p
 cd docker
 docker build -t nationalarchives/jenkins:mgmt .
 docker push nationalarchives/jenkins:mgmt
+```
 
-cd ../terraform
+### Deploy Jenkins EC2 instance and Terraform config
+
+```bash
+cd terraform
 terraform apply
 ```
 
-## Jenkins node images
+### Deploy Jenkins node images
 
 For each project which we need to build, there needs to be a docker image which
 Jenkins can use to build this. For example, there is a
 [Dockerfile](docker/sbt/Dockerfile) for sbt.
 
-### Update a container
+#### Update a container
 
 Once you have changed the Dockerfile for a Jenkins node, build the image and
 push it to Docker Hub by going to the directory for the node (e.g. docker/sbt).
@@ -103,7 +118,7 @@ Log into Docker as above if necessary, then run:
   docker push nationalarchives/jenkins-build-<name-of-node>:latest
   ```
 
-### Adding a new container
+#### Add a new container
 
 The docker container must start with `FROM jenkins/jnlp-slave` This image is mostly stock ubuntu and from there, you need to install whatever it is you need for your build. Build the docker image and push to docker hub.
 
