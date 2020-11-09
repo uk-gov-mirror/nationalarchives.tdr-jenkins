@@ -110,3 +110,37 @@ The docker container must start with `FROM jenkins/jnlp-slave` This image is mos
  You then need to configure another container in the clouds section of the jenkins [configuration](docker/jenkins.yml) You can copy and paste most of it, just change the name and the image.
 
  Rebuild and push the jenkins docker container and redeploy to ECS. You can then use this container in your builds.
+
+## Backups
+
+Jenkins backups are run every weekday to save the Jenkins job configuration.
+
+We use [AWS Systems Manager Maintenance Windows][SMMW] to schedule and configure
+the backups. The Jenkins Terraform scripts in this repo configure a Bash script
+which is run on the Jenkins EC2 instance on a daily schedule.
+
+To investigate a failed or missed backup, see the [Maintenance Window history]
+in the management account.
+
+To manually initiate a backup:
+
+- If you haven't changed the backup configuration recently, and haven't deployed
+  a new EC2 instance:
+  - Go the [Systems Manager Command History]
+  - Find a recent successful backup
+  - Select the backup and click Rerun
+- Otherwise:
+  - Go to the [Maintenance Window config][mw-config] and click Edit
+  - Change the schedule so that it will run in a few minutes time. For example,
+    to run the backup at 11:45, change the schedule to
+    `cron(0 45 11 ? * MON-FRI *)`
+  - Check the [Maintenance Window history] at the scheduled time, and check that
+    the status changes to "In progress", then (after five to ten minutes) to
+    "Success"
+  - Change the schedule back to the original time, or run the Jenkins Terraform
+    script to reset it
+
+[SMMW]: https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-maintenance.html
+[Maintenance Window history]: https://eu-west-2.console.aws.amazon.com/systems-manager/maintenance-windows/mw-0bd9ef68cfe04bd4e/history?region=eu-west-2
+[Systems Manager Command History]: https://eu-west-2.console.aws.amazon.com/systems-manager/run-command/complete-commands?region=eu-west-2
+[mw-config]: https://eu-west-2.console.aws.amazon.com/systems-manager/maintenance-windows/mw-0bd9ef68cfe04bd4e/description?region=eu-west-2
