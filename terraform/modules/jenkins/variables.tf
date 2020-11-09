@@ -16,6 +16,10 @@ variable "domain_name" {}
 
 variable "dns_zone" {}
 
+variable "ec2_instance_name" {
+  type = string
+}
+
 variable "encrypted_ami_id" {}
 
 variable "environment" {}

@@ -10,7 +10,7 @@ resource "aws_instance" "jenkins" {
   tags = merge(
     var.common_tags,
     map(
-      "Name", "${var.container_name}-task-definition-${var.environment}",
+      "Name", var.ec2_instance_name,
     )
   )
 }
@@ -89,5 +89,3 @@ data "aws_iam_policy_document" "ecs_policy" {
     ]
   }
 }
-
-
