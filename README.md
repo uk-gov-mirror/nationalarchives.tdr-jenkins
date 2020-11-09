@@ -1,4 +1,4 @@
-# Jenkins prototype for TDR
+# Jenkins Continuous Integration server for TDR
 
 All TDR documentation is available [here](https://github.com/nationalarchives/tdr-dev-documentation)
 
