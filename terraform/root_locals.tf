@@ -8,4 +8,5 @@ locals {
     "Terraform", true,
     "CostCentre", data.aws_ssm_parameter.cost_centre.value
   )
+  ec2_instance_name = "jenkins-task-definition-${local.environment}"
 }

@@ -28,6 +28,7 @@ module "jenkins" {
   container_name      = var.function
   dns_zone            = var.dns_zone
   domain_name         = var.domain_name
+  ec2_instance_name   = local.ec2_instance_name
   encrypted_ami_id    = module.jenkins_ami.encrypted_ami_id
   environment         = local.environment
   jenkins_log_bucket  = module.jenkins_logs_s3.s3_bucket_id
@@ -169,4 +170,13 @@ module "jenkins_build_postgres_execution_role" {
   source         = "./modules/build-role"
   name           = "postgres"
   repository_arn = module.ecr_jenkins_build_postgres_repository.repository.arn
+}
+
+# Configure Jenkins backup using Systems Manager Maintenance Windows
+module "jenkins_backup_maintenance_window" {
+  source        = "./tdr-terraform-modules/ssm_maintenance_window"
+  command       = "docker exec $(docker ps -aq -f ancestor=${module.ecr_jenkins_repository.repository.repository_url}) /opt/backup.sh ${data.aws_ssm_parameter.jenkins_backup_healthcheck_url.value}"
+  instance_name = local.ec2_instance_name
+  name          = "tdr-jenkins-backup-window"
+  schedule      = "cron(0 0 18 ? * MON-FRI *)"
 }
