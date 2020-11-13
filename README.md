@@ -7,7 +7,7 @@ This project can be used to spin up a jenkins server using ECS. The ECS cluster 
 ## Project components
 
 ### docker
-This creates the jenkins docker image which we run as part of the ECS service. It extends the base docker image but adds the plugins.txt and jenkins.yml and runs the command to install the plugins. This is pushed to docker hub.
+This creates the jenkins docker image which we run as part of the ECS service. It extends the base docker image but adds the plugins.txt and jenkins.yml and runs the command to install the plugins. This is pushed to AWS ECR.
 
 Each folder within the docker directory builds a Jenkins node image which is used to build some part of our infrastructure. The aws directory contains some python scripts which are used by the builds. Using python scripts makes assuming a role in the sub accounts easier than using the cli.
 
@@ -87,11 +87,30 @@ Before doing any Jenkins deployments:
 
 ### Deploy Jenkins Docker image
 
+First set an environment variable with the TDR management account ID, replacing
+1234 with the real ID:
+
 ```bash
-docker login -u username -p
+export MGMT_ACCOUNT=1234
+```
+
+Get credentials for the TDR management account using Single Sign On. Then log
+into ECR and build and push the image:
+
+```bash
 cd docker
-docker build -t nationalarchives/jenkins:mgmt .
-docker push nationalarchives/jenkins:mgmt
+aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com
+docker build -t nationalarchives/jenkins .
+docker tag nationalarchives/jenkins:latest $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins:latest
+docker push $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins:latest
+```
+
+Then redeploy Jenkins in ECS. This will cause Jenkins downtime, so check with
+the rest of the team first.
+
+```bash
+aws ecs update-service --force-new-deployment --cluster jenkins-mgmt \
+  --service jenkins-service-mgmt --region eu-west-2
 ```
 
 ### Deploy Jenkins EC2 instance and Terraform config
@@ -110,8 +129,8 @@ Jenkins can use to build this. For example, there is a
 #### Update a container
 
 Once you have changed the Dockerfile for a Jenkins node, build the image and
-push it to Docker Hub by going to the directory for the node (e.g. docker/sbt).
-Log into Docker as above if necessary, then run:
+push it to ECR by going to the directory for the node (e.g. docker/sbt). Log
+into ECR as above, then run:
 
   ```
   docker build -t nationalarchives/jenkins-build-<name-of-node>:latest .
@@ -120,7 +139,7 @@ Log into Docker as above if necessary, then run:
 
 #### Add a new container
 
-The docker container must start with `FROM jenkins/jnlp-slave` This image is mostly stock ubuntu and from there, you need to install whatever it is you need for your build. Build the docker image and push to docker hub.
+The docker container must start with `FROM jenkins/jnlp-slave` This image is mostly stock ubuntu and from there, you need to install whatever it is you need for your build. Build the docker image and push to ECR.
 
  You then need to configure another container in the clouds section of the jenkins [configuration](docker/jenkins.yml) You can copy and paste most of it, just change the name and the image.
 
