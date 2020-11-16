@@ -179,4 +179,5 @@ module "jenkins_backup_maintenance_window" {
   ec2_instance_id = module.jenkins.instance_id
   name            = "tdr-jenkins-backup-window"
   schedule        = "cron(0 0 18 ? * MON-FRI *)"
+  common_tags     = local.common_tags
 }
