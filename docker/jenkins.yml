@@ -62,6 +62,10 @@ jenkins:
         environments:
         - name: "TDR_IDENTITY_POOL_ID"
           value: "${/mgmt/identitypoolid_intg}"
+        - name: "INTG_ACCOUNT"
+          value: "${/mgmt/intg_account}"
+        - name: "STAGING_ACCOUNT"
+          value: "${/mgmt/staging_account}"
         executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildTransferFrontendExecutionRole"
         label: "transfer-frontend"
         launchType: "FARGATE"
