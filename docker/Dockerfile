@@ -24,4 +24,7 @@ COPY logging.groovy /var/jenkins_home/init.groovy.d/logging.groovy
 COPY github-oauth.hpi /var/jenkins_home/plugins/
 RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt && chmod +x /opt/backup.sh
 COPY entrypoint.sh .
+
+USER jenkins
+
 ENTRYPOINT ["/entrypoint.sh"]
