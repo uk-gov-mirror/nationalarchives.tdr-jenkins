@@ -175,7 +175,7 @@ module "jenkins_build_postgres_execution_role" {
 # Configure Jenkins backup using Systems Manager Maintenance Windows
 module "jenkins_backup_maintenance_window" {
   source          = "./tdr-terraform-modules/ssm_maintenance_window"
-  command         = "docker exec $(docker ps -aq -f ancestor=${module.ecr_jenkins_repository.repository.repository_url}) /opt/backup.sh ${data.aws_ssm_parameter.jenkins_backup_healthcheck_url.value}"
+  command         = "docker exec $(docker ps -aq -f ancestor=${module.ecr_jenkins_repository.repository.repository_url} -f status=running) /opt/backup.sh ${data.aws_ssm_parameter.jenkins_backup_healthcheck_url.value}"
   ec2_instance_id = module.jenkins.instance_id
   name            = "tdr-jenkins-backup-window"
   schedule        = "cron(0 0 18 ? * MON-FRI *)"
