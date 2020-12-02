@@ -7,3 +7,5 @@ RUN apk update && apk add curl chromium firefox-esr && \
     ln /opt/bin/sbt /usr/local/bin/sbt && \
     wget -q https://nodejs.org/dist/v12.13.1/node-v12.13.1-linux-x64.tar.xz && \    
                     tar -xf node-v12.13.1-linux-x64.tar.xz --directory /usr/local --strip-components 1
+
+USER jenkins
