@@ -11,4 +11,5 @@ RUN apk update \
     && chmod +x /usr/local/bin/jq
 COPY *.py /
 
+RUN chown jenkins /*py
 USER jenkins
