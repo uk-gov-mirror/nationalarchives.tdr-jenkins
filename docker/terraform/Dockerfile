@@ -8,3 +8,5 @@ RUN apk update && \
 	unzip terraform_0.12.28_linux_amd64.zip && \
 	mv terraform /usr/bin && \
 	terraform --version
+
+USER jenkins
