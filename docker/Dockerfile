@@ -19,9 +19,14 @@ RUN apk update && \
 ENV CASC_JENKINS_CONFIG /usr/share/jenkins/ref/jenkins.yaml
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
 COPY jenkins.yml /usr/share/jenkins/ref/jenkins.yaml
-COPY backup.sh /opt/backup.sh
-COPY logging.groovy /var/jenkins_home/init.groovy.d/logging.groovy
-COPY github-oauth.hpi /var/jenkins_home/plugins/
+# Ensure jenkins user owns files on copy
+# to preserve the correct permissions on the /var/jenkins_home/plugins directory
+COPY --chown=jenkins backup.sh /opt/backup.sh
+COPY --chown=jenkins logging.groovy /var/jenkins_home/init.groovy.d/logging.groovy
+COPY --chown=jenkins github-oauth.hpi /var/jenkins_home/plugins/
 RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt && chmod +x /opt/backup.sh
 COPY entrypoint.sh .
+
+USER jenkins
+
 ENTRYPOINT ["/entrypoint.sh"]
