@@ -6,7 +6,7 @@ resource "aws_instance" "jenkins" {
   vpc_security_group_ids = [aws_security_group.ec2_internal.id]
   private_ip             = "10.0.1.221"
   key_name               = "jenkins_key_pair"
-  user_data              = "#!/usr/bin/env bash\necho ECS_CLUSTER=${aws_ecs_cluster.jenkins_cluster.name} > /etc/ecs/ecs.config"
+  user_data              = "#!/usr/bin/env bash\necho ECS_CLUSTER=${aws_ecs_cluster.jenkins_cluster.name} > /etc/ecs/ecs.config\nchown 1000:1000 /var/run/docker*"
   tags = merge(
     var.common_tags,
     map(
