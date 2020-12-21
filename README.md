@@ -132,10 +132,14 @@ Once you have changed the Dockerfile for a Jenkins node, build the image and
 push it to ECR by going to the directory for the node (e.g. docker/sbt). Log
 into ECR as above, then run:
 
-  ```
-  docker build -t nationalarchives/jenkins-build-<name-of-node>:latest .
-  docker push nationalarchives/jenkins-build-<name-of-node>:latest
-  ```
+```bash
+aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com
+docker build -t nationalarchives/jenkins-build-$NODE_NAME .
+docker tag nationalarchives/jenkins-build-$NODE_NAME:latest $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-$NODE_NAME:latest
+docker push $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-$NODE_NAME:latest
+```
+
+where `$NODE_NAME` is the the name of the Jenkins node, e.g. "sbt" or "npm".
 
 #### Add a new container
 
