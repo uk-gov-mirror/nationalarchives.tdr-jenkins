@@ -1,6 +1,6 @@
-FROM jenkins/jnlp-slave:alpine
+FROM jenkins/inbound-agent:alpine
 USER root
-RUN apk update \    
+RUN apk update \
     && apk add curl wget py3-pip gcc python3-dev musl-dev libffi-dev openssl-dev jansson-dev build-base libc-dev file-dev automake autoconf libtool flex bison \
     && pip3 install boto3 \
     && pip3 install awscli \
