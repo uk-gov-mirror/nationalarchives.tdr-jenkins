@@ -108,10 +108,19 @@ docker push $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins:latest
 Then redeploy Jenkins in ECS. This will cause Jenkins downtime, so check with
 the rest of the team first.
 
+First, **run a backup** to avoid resetting build numbers. See the backup
+instructions below.
+
+Then restart the Jenkins ECS container:
+
 ```bash
 aws ecs update-service --force-new-deployment --cluster jenkins-mgmt \
   --service jenkins-service-mgmt --region eu-west-2
 ```
+
+If this fails because there are not enough resources available on the Jenkins
+EC2 instance, manually stop the current Jenkins ECS task in the AWS console. ECS
+will automatically deploy a new container when the first one has stopped.
 
 ### Deploy Jenkins EC2 instance and Terraform config
 
