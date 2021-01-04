@@ -144,20 +144,6 @@ module "jenkins_build_transfer_frontend_execution_role" {
   repository_arn = module.ecr_jenkins_build_transfer_frontend_repository.repository.arn
 }
 
-module "ecr_jenkins_build_python_repository" {
-  source           = "./tdr-terraform-modules/ecr"
-  name             = "jenkins-build-python"
-  common_tags      = local.common_tags
-  policy_name      = "jenkins_policy"
-  policy_variables = { role_arn = module.jenkins_build_python_execution_role.role_arn }
-}
-
-module "jenkins_build_python_execution_role" {
-  source         = "./modules/build-role"
-  name           = "python"
-  repository_arn = module.ecr_jenkins_build_python_repository.repository.arn
-}
-
 module "ecr_jenkins_build_postgres_repository" {
   source           = "./tdr-terraform-modules/ecr"
   name             = "jenkins-build-postgres"
