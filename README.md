@@ -148,7 +148,7 @@ into ECR as above, then run:
 
 #### Add a new container
 
-The docker container must start with `FROM jenkins/jnlp-slave:alpine` This image is mostly stock Alpine Linux and from there, you need to install whatever it is you need for your build. Build the docker image and push to ECR.
+The docker container must start with `FROM jenkins/inbound-agent:alpine` This image is mostly stock Alpine Linux and from there, you need to install whatever it is you need for your build. Build the docker image and push to ECR.
 
 You then need to configure another container in the clouds section of the jenkins [configuration](docker/jenkins.yml) You can copy and paste most of it, just change the name and the image.
 
