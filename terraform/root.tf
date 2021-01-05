@@ -83,6 +83,7 @@ module "s3_publish" {
 module "ecr_jenkins_repository" {
   source           = "./tdr-terraform-modules/ecr"
   name             = "jenkins"
+  image_source_url = "https://github.com/nationalarchives/tdr-jenkins/blob/master/docker/Dockerfile"
   common_tags      = local.common_tags
   policy_name      = "jenkins_policy"
   policy_variables = { role_arn = module.jenkins.ecs_execution_role_arn }
@@ -91,6 +92,7 @@ module "ecr_jenkins_repository" {
 module "ecr_jenkins_build_npm_repository" {
   source           = "./tdr-terraform-modules/ecr"
   name             = "jenkins-build-npm"
+  image_source_url = "https://github.com/nationalarchives/tdr-jenkins/blob/master/docker/npm/Dockerfile"
   common_tags      = local.common_tags
   policy_name      = "jenkins_policy"
   policy_variables = { role_arn = module.jenkins_build_npm_execution_role.role_arn }
@@ -105,6 +107,7 @@ module "jenkins_build_npm_execution_role" {
 module "ecr_jenkins_build_aws_repository" {
   source           = "./tdr-terraform-modules/ecr"
   name             = "jenkins-build-aws"
+  image_source_url = "https://github.com/nationalarchives/tdr-jenkins/blob/master/docker/aws/Dockerfile"
   common_tags      = local.common_tags
   policy_name      = "jenkins_policy"
   policy_variables = { role_arn = module.jenkins_build_aws_execution_role.role_arn }
@@ -119,6 +122,7 @@ module "jenkins_build_aws_execution_role" {
 module "ecr_jenkins_build_terraform_repository" {
   source           = "./tdr-terraform-modules/ecr"
   name             = "jenkins-build-terraform"
+  image_source_url = "https://github.com/nationalarchives/tdr-jenkins/blob/master/docker/terraform/Dockerfile"
   common_tags      = local.common_tags
   policy_name      = "jenkins_policy"
   policy_variables = { role_arn = module.jenkins_build_terraform_execution_role.role_arn }
@@ -133,6 +137,7 @@ module "jenkins_build_terraform_execution_role" {
 module "ecr_jenkins_build_transfer_frontend_repository" {
   source           = "./tdr-terraform-modules/ecr"
   name             = "jenkins-build-transfer-frontend"
+  image_source_url = "https://github.com/nationalarchives/tdr-jenkins/blob/master/docker/transfer-frontend/Dockerfile"
   common_tags      = local.common_tags
   policy_name      = "jenkins_policy"
   policy_variables = { role_arn = module.jenkins_build_transfer_frontend_execution_role.role_arn }
@@ -147,6 +152,7 @@ module "jenkins_build_transfer_frontend_execution_role" {
 module "ecr_jenkins_build_postgres_repository" {
   source           = "./tdr-terraform-modules/ecr"
   name             = "jenkins-build-postgres"
+  image_source_url = "https://github.com/nationalarchives/tdr-jenkins/blob/master/docker/postgres/Dockerfile"
   common_tags      = local.common_tags
   policy_name      = "jenkins_policy"
   policy_variables = { role_arn = module.jenkins_build_postgres_execution_role.role_arn }
