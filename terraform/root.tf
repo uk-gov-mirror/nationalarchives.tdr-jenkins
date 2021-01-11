@@ -173,3 +173,12 @@ module "jenkins_backup_maintenance_window" {
   schedule        = "cron(0 0 18 ? * MON-FRI *)"
   common_tags     = local.common_tags
 }
+
+module "jenkins_maintenance_window_event" {
+  source                  = "./tdr-terraform-modules/cloudwatch_events"
+  event_pattern           = "jenkins_maintenance_event_window"
+  lambda_event_target_arn = list(data.aws_lambda_function.notifications_function.arn)
+  rule_name               = "jenkins-backup-maintenance-window"
+  rule_description        = "Capture failed runs of the jenkins backup"
+  event_variables         = { window_id = module.jenkins_backup_maintenance_window.window_id }
+}
