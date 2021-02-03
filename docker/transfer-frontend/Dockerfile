@@ -6,6 +6,6 @@ RUN apk update && apk add curl chromium firefox-esr tar && \
     apk upgrade openssl && \
     curl -Ls https://github.com/sbt/sbt/releases/download/v1.4.1/sbt-1.4.1.tgz | tar --strip-components=1 -xzvf - && \
     mv /opt/bin/* /usr/local/bin/ && \
-    wget -q https://nodejs.org/dist/v12.13.1/node-v12.13.1-linux-x64.tar.xz && \
-                    tar -xf node-v12.13.1-linux-x64.tar.xz --directory /usr/local --strip-components 1
+    wget -q https://nodejs.org/dist/v15.7.0/node-v15.7.0-linux-x64.tar.xz && \
+                    tar -xf node-v15.7.0-linux-x64.tar.xz --directory /usr/local --strip-components 1
 USER jenkins
