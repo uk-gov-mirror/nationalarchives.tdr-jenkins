@@ -1,25 +1,17 @@
-library("tdr-jenkinslib")
-
-def versionTag = "v${env.BUILD_NUMBER}"
-def repo = "tdr-consignment-export"
-
 pipeline {
   agent {
     ecs {
-      inheritFrom 'transfer-frontend'
+      inheritFrom 'plugin-updates'
     }
   }
 
   stages {
     stage('Test') {
-      agent {
-        ecs {
-          inheritFrom 'transfer-frontend'
-        }
-      }
       steps {
         checkout scm
+        sh 'ls -la /usr/bin'
         sh 'plugin-updates'
+        sh 'git status'
       }
     }
   }
