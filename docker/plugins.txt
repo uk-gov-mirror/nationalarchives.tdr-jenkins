@@ -27,12 +27,12 @@ github:1.32.0
 github-api:1.116
 github-branch-source:2.9.1
 handlebars:1.1.1
-jackson2-api:2.11.3
+jackson2-api:2.12.1
 jdk-tool:1.4
 jquery-detached:1.2.1
 jquery3-api:3.5.1-2
 jsch:0.1.55.2
-junit:1.44
+junit:1.48
 lockable-resources:2.10
 mailer:1.32.1
 matrix-auth:2.6.4
@@ -53,11 +53,11 @@ pipeline-stage-step:2.5
 pipeline-stage-tags-metadata:1.7.2
 pipeline-stage-view:2.18
 plain-credentials:1.7
-plugin-util-api:1.4.0
+plugin-util-api:1.7.1
 resource-disposer:0.14
 scm-api:2.6.4
 script-security:1.75
-slack:2.44
+slack:2.45
 snakeyaml-api:1.27.0
 ssh-agent:1.20
 ssh-credentials:1.18.1
@@ -78,3 +78,4 @@ workflow-scm-step:2.11
 workflow-step-api:2.23
 workflow-support:3.6
 ws-cleanup:0.38
+
