@@ -2,24 +2,23 @@ package uk.gov.nationalarchives.pluginupdates
 
 import java.io.{File, FileOutputStream}
 import java.nio.charset.Charset
-
 import cats.effect._
+import com.typesafe.config.ConfigFactory
 import io.circe.{Decoder, HCursor, Json}
 import sttp.client3._
 import sttp.client3.asynchttpclient.cats.AsyncHttpClientCatsBackend
 import sttp.client3.circe._
+import uk.gov.nationalarchives.pluginupdates.Decoders._
 
 object Main extends IOApp {
   implicit val cs: ContextShift[IO] = IO.contextShift(scala.concurrent.ExecutionContext.global)
-
-  case class PluginUpdates(pluginName: String, oldVersion: String, newVersion: String, warning: List[PluginWarning])
-
-  case class Plugin(name: String, version: String)
+  private val config = ConfigFactory.load()
 
   def getCurrentPlugins(): IO[List[Plugin]] = {
+    val url = config.getString("urls.github.plugins")
     AsyncHttpClientCatsBackend.resource[IO]().use { backend =>
       for {
-        response <- backend.send(basicRequest.get(uri"https://raw.githubusercontent.com/nationalarchives/tdr-jenkins/master/docker/plugins.txt"))
+        response <- backend.send(basicRequest.get(uri"$url"))
         extractedBody <- IO.fromEither(response.body.left.map(err => new Exception(err)))
       } yield extractedBody.split("\n").toList.map(line => {
         val splitLine = line.split(":")
@@ -28,46 +27,21 @@ object Main extends IOApp {
     }
   }
 
-  case class PluginVersions(pattern: String)
-
-  case class PluginWarning(message: String, name: String, versionPatterns: List[PluginVersions])
-
-  case class JenkinsPlugins(warnings: List[PluginWarning])
-
-  implicit val decodePluginVersion: Decoder[PluginVersions] = (c: HCursor) => for {
-    pattern <- c.downField("pattern").as[String]
-  } yield {
-    PluginVersions(pattern)
-  }
-
-  implicit val decodePluginWarning: Decoder[PluginWarning] = (c: HCursor) => for {
-    message <- c.downField("message").as[String]
-    name <- c.downField("name").as[String]
-    versions <- c.downField("versions").as[List[PluginVersions]]
-  } yield {
-    PluginWarning(message, name, versions)
-  }
-
-  implicit val decodePlugins: Decoder[JenkinsPlugins] = (c: HCursor) => for {
-    warnings <- c.downField("warnings").as[List[PluginWarning]]
-  } yield {
-    JenkinsPlugins(warnings)
-  }
-
-
   def getPluginWarnings(currentPluginNames: List[String]): IO[List[PluginWarning]] = {
+    val url = config.getString("urls.jenkins.plugins")
     AsyncHttpClientCatsBackend.resource[IO]().use { backend =>
       for {
-        response <- backend.send(basicRequest.get(uri"https://updates.jenkins.io/current/update-center.actual.json").response(asJson[JenkinsPlugins]))
+        response <- backend.send(basicRequest.get(uri"$url").response(asJson[JenkinsPlugins]))
         extractedBody <- IO.fromEither(response.body.left.map(err => new Exception(err)))
       } yield extractedBody.warnings.filter(w => currentPluginNames.contains(w.name))
     }
   }
 
   def getLatestPluginVersions(existingPlugins: List[String]): IO[List[Plugin]] = {
+    val url = config.getString("urls.jenkins.plugins")
     AsyncHttpClientCatsBackend.resource[IO]().use { backend =>
       for {
-        response <- backend.send(basicRequest.get(uri"https://updates.jenkins.io/current/update-center.actual.json").response(asJson[Json]))
+        response <- backend.send(basicRequest.get(uri"$url").response(asJson[Json]))
         extractedBody <- IO.fromEither(response.body.left.map(err => new Exception(err)))
       } yield {
         val keys = extractedBody.hcursor.downField("plugins").keys.getOrElse(List())
@@ -90,8 +64,9 @@ object Main extends IOApp {
   }
 
   def writePluginUpdates(pluginUpdates: List[PluginUpdates]) = {
+    val config = ConfigFactory.load()
     val newPluginsTxt = pluginUpdates.map(pu => s"${pu.pluginName}:${pu.newVersion}").mkString("\n")
-    Resource.fromAutoCloseable(IO(new FileOutputStream(new File("docker/plugins.txt")))).use(outputStream => {
+    Resource.fromAutoCloseable(IO(new FileOutputStream(new File(config.getString("paths.plugins"))))).use(outputStream => {
       outputStream.write(s"$newPluginsTxt\n".getBytes(Charset.defaultCharset()))
       IO(outputStream)
     })
@@ -101,7 +76,7 @@ object Main extends IOApp {
     val notes = pluginUpdates.filter(pu => pu.newVersion > pu.oldVersion).map(plugin => {
       val warningString = plugin.warning
         .map(_.message).toSet.mkString("\n")
-      val warningMessage = if (!warningString.isEmpty) {
+      val warningMessage = if (warningString.nonEmpty) {
         s"""
            |The following security warnings have been issued:
            |$warningString
@@ -118,8 +93,6 @@ object Main extends IOApp {
       IO(outputStream)
     })
   }
-
-
 
   def run(args: List[String]): IO[ExitCode] = for {
     currentPlugins <- getCurrentPlugins()

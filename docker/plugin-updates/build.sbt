@@ -13,6 +13,8 @@ lazy val root = (project in file("."))
       catsEffect,
       sttp,
       sttpCirce,
-      scalaTest % Test
-),
+      typesafeConfig,
+      scalaTest % Test,
+      wiremock % Test
+    ),
   ).enablePlugins(JavaAppPackaging, UniversalPlugin)
