@@ -25,12 +25,15 @@ pipeline {
                     steps {
                         echo 'Running Terraform plan...'
                         sh 'terraform plan -out terraform.out'
-                        def isUpdate = sh(script: """terraform show -json terraform.out | jq -r '.resource_changes[] | select(.address=="module.jenkins.aws_security_group.jenkins_alb_group") | .change.actions[0] | contains("update")'""", returnStdout: true)
-                        if(isUpdate == "true") {
-                            echo "Is update"
-                        } else {
-                            echo "Is not update"
+                        script {
+                            def isUpdate = sh(script: """terraform show -json terraform.out | jq -r '.resource_changes[] | select(.address=="module.jenkins.aws_security_group.jenkins_alb_group") | .change.actions[0] | contains("update")'""", returnStdout: true)
+                            if(isUpdate == "true") {
+                                echo "Is update"
+                            } else {
+                                echo "Is not update"
+                            }
                         }
+
                     }
                 }
             }
