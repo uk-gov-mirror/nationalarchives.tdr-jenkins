@@ -166,6 +166,22 @@ jenkins:
         sharedMemorySize: 0
         subnets: "${/mgmt/fargate_subnet}"
         templateName: "base"
+      - assignPublicIp: true
+        cpu: 2048
+        image: "${/mgmt/management_account}.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-plugin-updates"
+        executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildPluginUpdatesExecutionRole"
+        label: "plugin-updates"
+        launchType: "FARGATE"
+        memory: 0
+        memoryReservation: 4096
+        networkMode: "awsvpc"
+        privileged: false
+        remoteFSRoot: "/home/jenkins"
+        securityGroups: "${/mgmt/fargate_security_group}"
+        sharedMemorySize: 0
+        subnets: "${/mgmt/fargate_subnet}"
+        taskrole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsPublishRole"
+        templateName: "plugin-updates"
   crumbIssuer:
     standard:
       excludeClientIPFromCrumb: false
