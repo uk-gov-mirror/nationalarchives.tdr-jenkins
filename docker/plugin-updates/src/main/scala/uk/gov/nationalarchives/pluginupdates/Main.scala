@@ -1,14 +1,15 @@
 package uk.gov.nationalarchives.pluginupdates
 
-import java.io.{File, FileOutputStream}
-import java.nio.charset.Charset
 import cats.effect._
 import com.typesafe.config.ConfigFactory
-import io.circe.{Decoder, HCursor, Json}
+import io.circe.Json
 import sttp.client3._
 import sttp.client3.asynchttpclient.cats.AsyncHttpClientCatsBackend
 import sttp.client3.circe._
 import uk.gov.nationalarchives.pluginupdates.Decoders._
+
+import java.io.{File, FileOutputStream}
+import java.nio.charset.Charset
 
 object Main extends IOApp {
   implicit val cs: ContextShift[IO] = IO.contextShift(scala.concurrent.ExecutionContext.global)
