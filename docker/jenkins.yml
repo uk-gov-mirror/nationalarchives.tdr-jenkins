@@ -237,3 +237,7 @@ tool:
     installations:
     - home: "git"
       name: "Default"
+security:
+  scriptApproval:
+    approvedSignatures:
+      - method jenkins.model.Jenkins getVersion
