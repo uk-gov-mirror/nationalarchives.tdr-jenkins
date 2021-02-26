@@ -15,7 +15,9 @@ RUN apk update && \
 #       Additional git secrets rule to check for AWS account numbers (any set of 12 digits)
         git-secrets --add --global '([^0-9])*[0-9]{12}([^0-9])*' && \
 #       Additional git secrets exclusion rule to allow dummy AWS account number 1234 for documentation
-        git-secrets --add --global --allowed '1234'
+        git-secrets --add --global --allowed '1234' && \
+        wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -O /usr/local/bin/jq && \
+        chmod +x /usr/local/bin/jq
 
 ENV CASC_JENKINS_CONFIG /usr/share/jenkins/ref/jenkins.yaml
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
