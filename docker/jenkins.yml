@@ -241,3 +241,4 @@ security:
   scriptApproval:
     approvedSignatures:
       - method jenkins.model.Jenkins getVersion
+      - staticMethod jenkins.model.Jenkins getInstance
