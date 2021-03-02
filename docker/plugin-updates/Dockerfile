@@ -14,3 +14,5 @@ RUN sbt universal:packageZipTarball && \
               cp tdr-plugin-updates/lib/* /usr/lib/ && \
               rm -rf /opt/plugin-updates
 USER jenkins
+RUN git config --global user.email tna-digital-archiving-jenkins@nationalarchives.gov.uk
+RUN git config --global user.name tna-digital-archiving-jenkins
