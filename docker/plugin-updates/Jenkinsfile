@@ -16,8 +16,6 @@ pipeline {
           sh 'git status'
           sh "git checkout -b ${branch}"
           sh 'git add  docker/plugins.txt'
-          sh "git config --global user.email tna-digital-archiving-jenkins@nationalarchives.gov.uk"
-          sh "git config --global user.name tna-digital-archiving-jenkins"
           def notes = sh(script: "cat pr-notes", returnStdout: true).trim()
           sh "git commit -m '${notes}'"
           sshagent(['github-jenkins']) {
