@@ -16,13 +16,15 @@ pipeline {
           sh 'git status'
           sh "git checkout -b ${branch}"
           sh 'git add  docker/plugins.txt'
-          sh "git commit -m 'Update plugins'"
+          sh "git config --global user.email tna-digital-archiving-jenkins@nationalarchives.gov.uk"
+          sh "git config --global user.name tna-digital-archiving-jenkins"
+          def notes = sh(script: "cat pr-notes", returnStdout: true).trim()
+          sh "git commit -m '${notes}'"
           sshagent(['github-jenkins']) {
             sh "git push -u origin plugin-updates-${versionTag}"
           }
-          def notes = sh(script: "cat pr-notes", returnStdout: true).trim()
-          withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_ACCESS_TOKEN')]) {
-            sh "curl -XPOST 'https://api.github.com/repos/nationalarchives/tdr-jenkins/pulls' -H 'Authorization: bearer ${env.GITHUB_ACCESS_TOKEN}' --data '{\"title\":\"Jenkins plugin updates\",\"base\":\"master\",\"head\":\"${branch}\",\"body\":\"${notes}\"}'"
+          withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_TOKEN')]) {
+            sh 'gh pr create -B jenkins-plugin-updates --fill'
           }
         }
       }
