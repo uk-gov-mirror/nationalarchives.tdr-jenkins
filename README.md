@@ -100,7 +100,7 @@ into ECR and build and push the image:
 ```bash
 cd docker
 aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com
-docker build -t nationalarchives/jenkins .
+docker build --pull --no-cache -t nationalarchives/jenkins .
 docker tag nationalarchives/jenkins:latest $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins:latest
 docker push $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins:latest
 ```
