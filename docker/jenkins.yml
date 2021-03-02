@@ -180,7 +180,6 @@ jenkins:
         securityGroups: "${/mgmt/fargate_security_group}"
         sharedMemorySize: 0
         subnets: "${/mgmt/fargate_subnet}"
-        taskrole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsPublishRole"
         templateName: "plugin-updates"
   crumbIssuer:
     standard:
