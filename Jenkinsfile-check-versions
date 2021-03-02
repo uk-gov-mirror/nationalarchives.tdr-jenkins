@@ -4,16 +4,13 @@ pipeline {
   agent {
     label "master"
   }
-  parameters {
-    choice(name: "STAGE", choices: ["intg", "staging", "prod"], description: "The stage you are deploying Terraform changes to")
-  }
   stages {
     stage("Get version") {
       steps {
         script {
           sh "docker pull jenkins/jenkins:alpine"
-          def latestVersion = sh(script: """docker inspect jenkins/jenkins:alpine | jq -r '.[0].ContainerConfig.Env[]' | grep JENKINS_VERSION | awk -F "=" '{print \$2}'""", returnStdout: true).trim()
-          def currentVersion = Jenkins.instance.getVersion().toString().trim()
+          def currentVersion = sh(script: """docker inspect jenkins/jenkins:alpine | jq -r '.[0].ContainerConfig.Env[]' | grep JENKINS_VERSION | awk -F "=" '{print \$2}'""", returnStdout: true).trim()
+          def latestVersion = Jenkins.instance.getVersion().toString().trim()
           if(currentVersion != latestVersion) {
             slackSend color: "good", message: """Version ${latestVersion} is available for Jenkins
 See the developer manual for a guide on updating it
@@ -22,7 +19,7 @@ https://github.com/nationalarchives/tdr-dev-documentation/blob/master/manual/upd
         }
       }
     }
-    stage('Run Terraform build') {
+    stage('AMI Updates') {
       agent {
         ecs {
           inheritFrom 'aws'
@@ -30,7 +27,7 @@ https://github.com/nationalarchives/tdr-dev-documentation/blob/master/manual/upd
         }
       }
       stages {
-        stage('Check for ami updates') {
+        stage('Send slack message') {
           steps {
             script {
               def currentAmiId = sh(script: """aws s3 cp s3://tdr-terraform-state-jenkins/jenkins-terraform-state - | jq -r '.resources[] | select(.module=="module.jenkins_ami") | .instances[0].attributes.source_ami_id'""", returnStdout: true).trim()
@@ -45,12 +42,6 @@ https://github.com/nationalarchives/tdr-dev-documentation/blob/master/manual/upd
           }
         }
       }
-    }
-  }
-  post {
-    always {
-      echo 'Deleting Jenkins workspace...'
-      deleteDir()
     }
   }
 }
