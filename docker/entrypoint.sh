@@ -5,4 +5,7 @@ FILENAME=$(aws s3 ls s3://tdr-jenkins-backup-mgmt | awk '{print $4}' | sort -r |
 aws s3 cp s3://tdr-jenkins-backup-mgmt/"$FILENAME" /var/jenkins_home/jenkins-backup.tar.gz
 tar xzf /var/jenkins_home/jenkins-backup.tar.gz -C /var/jenkins_home
 rm -f /var/jenkins_home/jenkins-backup.tar.gz
+git-secrets --register-aws --global
+git-secrets --add --global '([^0-9])*[0-9]{12}([^0-9])*'
+git-secrets --add --global --allowed '1234'
 /sbin/tini -- /usr/local/bin/jenkins.sh
