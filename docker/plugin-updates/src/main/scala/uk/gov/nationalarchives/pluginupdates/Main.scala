@@ -6,14 +6,23 @@ import io.circe.Json
 import sttp.client3._
 import sttp.client3.asynchttpclient.cats.AsyncHttpClientCatsBackend
 import sttp.client3.circe._
-import uk.gov.nationalarchives.pluginupdates.Decoders._
+import io.circe.generic.extras.Configuration
+import io.circe.generic.extras.auto._
 
 import java.io.{File, FileOutputStream}
 import java.nio.charset.Charset
 
+
 object Main extends IOApp {
+  implicit val customConfig: Configuration = Configuration.default.withDefaults
   implicit val cs: ContextShift[IO] = IO.contextShift(scala.concurrent.ExecutionContext.global)
   private val config = ConfigFactory.load()
+
+  case class PluginUpdates(pluginName: String, oldVersion: String, newVersion: String, warning: List[PluginWarning])
+  case class Plugin(name: String, version: String)
+  case class PluginVersions(pattern: String)
+  case class PluginWarning(message: String, name: String, versions: List[PluginVersions] = Nil)
+  case class JenkinsPlugins(warnings: List[PluginWarning])
 
   def getCurrentPlugins(): IO[List[Plugin]] = {
     val url = config.getString("urls.github.plugins")
@@ -55,7 +64,7 @@ object Main extends IOApp {
 
   def getPluginUpdates(plugins: List[Plugin], warnings: List[PluginWarning], latestVersions: List[Plugin]): List[PluginUpdates] = {
     def doesVersionMatch(plugin: Plugin, warning: PluginWarning): Boolean =
-      warning.versionPatterns.map(_.pattern).exists(pattern => plugin.version.matches(pattern))
+      warning.versions.map(_.pattern).exists(pattern => plugin.version.matches(pattern))
 
     plugins.flatMap(plugin => {
       val filteredWarnings = warnings.filter(warning => warning.name == plugin.name && doesVersionMatch(plugin, warning))

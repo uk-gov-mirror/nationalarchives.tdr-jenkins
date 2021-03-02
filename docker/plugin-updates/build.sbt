@@ -11,6 +11,8 @@ lazy val root = (project in file("."))
     packageName in Universal := "tdr-plugin-updates",
     libraryDependencies ++= Seq(
       catsEffect,
+      circeGeneric,
+      circeGenericExtras,
       sttp,
       sttpCirce,
       typesafeConfig,
