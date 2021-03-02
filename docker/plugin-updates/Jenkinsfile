@@ -10,7 +10,7 @@ pipeline {
     stage('Test') {
       steps {
         script {
-          def branch = plugin-updates-${versionTag}
+          def branch = "plugin-updates-${versionTag}"
           checkout scm
           sh 'plugin-updates'
           sh 'git status'
