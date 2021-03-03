@@ -1,0 +1,11 @@
+{
+  "warnings": [],
+  "plugins": {
+    "plugin1" : {
+      "version": "1.0.0"
+    },
+    "plugin2": {
+      "version": "1.0.1"
+    }
+  }
+}

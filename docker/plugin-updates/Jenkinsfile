@@ -1,0 +1,31 @@
+def versionTag = "v${env.BUILD_NUMBER}"
+pipeline {
+  agent {
+    ecs {
+      inheritFrom 'plugin-updates'
+    }
+  }
+
+  stages {
+    stage('Test') {
+      steps {
+        script {
+          def branch = "plugin-updates-${versionTag}"
+          checkout scm
+          sh 'plugin-updates'
+          sh 'git status'
+          sh "git checkout -b ${branch}"
+          sh 'git add  docker/plugins.txt'
+          def notes = sh(script: "cat pr-notes", returnStdout: true).trim()
+          sh "git commit -m '${notes}'"
+          sshagent(['github-jenkins']) {
+            sh "git push -u origin plugin-updates-${versionTag}"
+          }
+          withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_TOKEN')]) {
+            sh 'gh pr create -B jenkins-plugin-updates --fill'
+          }
+        }
+      }
+    }
+  }
+}
