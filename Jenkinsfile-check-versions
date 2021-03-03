@@ -9,8 +9,8 @@ pipeline {
       steps {
         script {
           sh "docker pull jenkins/jenkins:alpine"
-          def currentVersion = sh(script: """docker inspect jenkins/jenkins:alpine | jq -r '.[0].ContainerConfig.Env[]' | grep JENKINS_VERSION | awk -F "=" '{print \$2}'""", returnStdout: true).trim()
-          def latestVersion = Jenkins.instance.getVersion().toString().trim()
+          def latestVersion = sh(script: """docker inspect jenkins/jenkins:alpine | jq -r '.[0].ContainerConfig.Env[]' | grep JENKINS_VERSION | awk -F "=" '{print \$2}'""", returnStdout: true).trim()
+          def currentVersion = Jenkins.instance.getVersion().toString().trim()
           if(currentVersion != latestVersion) {
             slackSend color: "good", message: """Version ${latestVersion} is available for Jenkins
 See the developer manual for a guide on updating it
