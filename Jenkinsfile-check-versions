@@ -44,4 +44,20 @@ https://github.com/nationalarchives/tdr-dev-documentation/blob/master/manual/upd
       }
     }
   }
+  post {
+    failure {
+      script {
+        tdr.postToDaTdrSlackChannel(colour: "danger",
+            message: "*Jenkins version check* :warning: The version check for Jenkins has failed"
+        )
+      }
+    }
+    unstable {
+      script {
+        tdr.postToDaTdrSlackChannel(colour: "warning",
+            message: "*Jenkins version check* :warning: The version check for Jenkins was marked as unstable"
+        )
+      }
+    }
+  }
 }
