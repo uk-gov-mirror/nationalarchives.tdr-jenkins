@@ -237,3 +237,8 @@ tool:
     installations:
     - home: "git"
       name: "Default"
+security:
+  scriptApproval:
+    approvedSignatures:
+      - method org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper getRawBuild
+      - staticMethod hudson.model.Hudson getInstance 
