@@ -10,12 +10,8 @@ RUN apk update && \
         pip3 install awscli && \
         mkdir -p /var/jenkins_home/init.groovy.d && \
         git clone https://github.com/awslabs/git-secrets.git && \
-        make install -C git-secrets && \
-        git-secrets --register-aws --global && \
-#       Additional git secrets rule to check for AWS account numbers (any set of 12 digits)
-        git-secrets --add --global '([^0-9])*[0-9]{12}([^0-9])*' && \
-#       Additional git secrets exclusion rule to allow dummy AWS account number 1234 for documentation
-        git-secrets --add --global --allowed '1234'
+        make install -C git-secrets
+
 
 ENV CASC_JENKINS_CONFIG /usr/share/jenkins/ref/jenkins.yaml
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
