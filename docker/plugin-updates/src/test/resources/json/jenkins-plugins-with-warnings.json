@@ -1,0 +1,21 @@
+{
+  "warnings": [
+    {
+      "name": "plugin1",
+      "message": "Some warning",
+      "versions": [
+        {
+          "pattern": "1.0.0"
+        }
+      ]
+    }
+  ],
+  "plugins": {
+    "plugin1": {
+      "version": "1.0.1"
+    },
+    "plugin2": {
+      "version": "1.0.2"
+    }
+  }
+}

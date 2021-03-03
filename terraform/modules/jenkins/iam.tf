@@ -63,6 +63,7 @@ data "aws_iam_policy_document" "jenkins_fargate_policy_document" {
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsBuildAwsExecutionRole",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsBuildTerraformExecutionRole",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsBuildTransferFrontendExecutionRole",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsBuildPluginUpdatesExecutionRole",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRJenkinsBuildPostgresExecutionRole",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRScriptsTerraformRoleIntg",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TDRScriptsTerraformRoleStaging",
