@@ -257,5 +257,6 @@ security:
     approvedSignatures:
       - method jenkins.model.Jenkins getVersion
       - staticMethod hudson.model.Hudson getInstance
+      - staticMethod jenkins.model.Jenkins getInstance
       - method org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper getRawBuild
       - method hudson.model.Run getEnvironment
