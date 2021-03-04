@@ -255,6 +255,7 @@ tool:
 security:
   scriptApproval:
     approvedSignatures:
+      - method jenkins.model.Jenkins getVersion
+      - staticMethod hudson.model.Hudson getInstance
       - method org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper getRawBuild
-      - staticMethod hudson.model.Hudson getInstance 
-      - method hudson.model.Run getEnvironment 
+      - method hudson.model.Run getEnvironment

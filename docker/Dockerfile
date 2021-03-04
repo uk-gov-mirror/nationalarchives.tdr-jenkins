@@ -10,8 +10,9 @@ RUN apk update && \
         pip3 install awscli && \
         mkdir -p /var/jenkins_home/init.groovy.d && \
         git clone https://github.com/awslabs/git-secrets.git && \
-        make install -C git-secrets
-
+        make install -C git-secrets && \
+        wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -O /usr/local/bin/jq && \
+        chmod +x /usr/local/bin/jq
 
 ENV CASC_JENKINS_CONFIG /usr/share/jenkins/ref/jenkins.yaml
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
