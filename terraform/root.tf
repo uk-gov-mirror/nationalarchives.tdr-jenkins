@@ -76,8 +76,8 @@ module "jenkins_backup_s3" {
   common_tags = local.common_tags
 }
 
-module "s3_publish" {
-  source = "./modules/s3-publish-build-task"
+module "sbt_with_postgres" {
+  source = "./modules/sbt-with-postgres-task"
 }
 
 module "ecr_jenkins_repository" {
