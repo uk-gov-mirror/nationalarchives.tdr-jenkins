@@ -1,6 +1,6 @@
 data "aws_caller_identity" "current" {}
 
-data "template_file" "s3_publish_template" {
+data "template_file" "sbt_with_postgres_template" {
   template = file("./modules/jenkins/templates/s3publish.json.tpl")
 
   vars = {
@@ -8,9 +8,9 @@ data "template_file" "s3_publish_template" {
   }
 }
 
-resource "aws_ecs_task_definition" "s3_publish_task" {
-  container_definitions    = data.template_file.s3_publish_template.rendered
-  family                   = "s3publish"
+resource "aws_ecs_task_definition" "sbt_with_postgres_task" {
+  container_definitions    = data.template_file.sbt_with_postgres_template.rendered
+  family                   = "sbtwithpostgres"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = "2048"
