@@ -11,4 +11,4 @@ client = boto_session.client('ssm', region_name='eu-west-2')
 
 parameter = client.send_command(Targets=[{'Key': 'tag:Name','Values': [instance_name]}], DocumentName=command_name)
 
-print(parameter)
+print("Command " + command_name + "has been run on instance " + instance_name)
