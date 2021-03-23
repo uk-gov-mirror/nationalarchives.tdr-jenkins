@@ -1,3 +1,5 @@
+library("tdr-jenkinslib")
+
 def versionTag = "v${env.BUILD_NUMBER}"
 pipeline {
   agent {
@@ -22,9 +24,18 @@ pipeline {
             sh "git push -u origin plugin-updates-${versionTag}"
           }
           withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_TOKEN')]) {
-            sh 'gh pr create -B jenkins-plugin-updates --fill'
+            sh 'gh pr create --fill'
           }
         }
+      }
+    }
+  }
+  post {
+    failure {
+      script {
+        tdr.postToDaTdrSlackChannel(colour: "danger",
+            message: "*Jenkins plugin updates* :warning: The plugin update job for Jenkins has failed"
+        )
       }
     }
   }
