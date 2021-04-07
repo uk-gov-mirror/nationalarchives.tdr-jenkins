@@ -5,11 +5,11 @@ apache-httpcomponents-client-4-api:4.5.13-1.0
 authentication-tokens:1.4
 aws-credentials:1.28.1
 aws-java-sdk:1.11.976
-bootstrap4-api:4.6.0-2
+bootstrap4-api:4.6.0-3
 bouncycastle-api:2.20
 branch-api:2.6.3
 build-timeout:1.20
-checks-api:1.6.1
+checks-api:1.6.2
 cloudbees-folder:6.15
 command-launcher:1.5
 configuration-as-code:1.47
@@ -23,8 +23,8 @@ docker-workflow:1.26
 durable-task:1.35
 echarts-api:5.0.1-1
 font-awesome-api:5.15.2-2
-git:4.7.0
-git-client:3.7.0
+git:4.7.1
+git-client:3.7.1
 git-server:1.9
 github:1.33.1
 github-api:1.123
