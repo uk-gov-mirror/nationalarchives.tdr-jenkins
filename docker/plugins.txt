@@ -3,7 +3,7 @@ amazon-ecs:1.37
 antisamy-markup-formatter:2.1
 apache-httpcomponents-client-4-api:4.5.13-1.0
 authentication-tokens:1.4
-aws-credentials:1.28.1
+aws-credentials:1.29
 aws-java-sdk:1.11.995
 bootstrap4-api:4.6.0-3
 bouncycastle-api:2.20
@@ -62,7 +62,7 @@ popper-api:1.16.1-2
 resource-disposer:0.15
 scm-api:2.6.4
 script-security:1.76
-slack:2.46
+slack:2.47
 snakeyaml-api:1.27.0
 ssh-agent:1.22
 ssh-credentials:1.18.2
