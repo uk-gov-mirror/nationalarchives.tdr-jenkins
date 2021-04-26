@@ -14,14 +14,14 @@ cloudbees-folder:6.15
 command-launcher:1.5
 configuration-as-code:1.47
 configuration-as-code-secret-ssm:1.0.1
-credentials:2.3.17
+credentials:2.3.18
 credentials-binding:1.24
 cucumber-reports:5.5.0
 display-url-api:2.3.4
 docker-commons:1.17
 docker-workflow:1.26
 durable-task:1.35
-echarts-api:5.0.2-1
+echarts-api:5.1.0-2
 font-awesome-api:5.15.2-2
 git:4.7.1
 git-client:3.7.1
@@ -30,7 +30,7 @@ github:1.33.1
 github-api:1.123
 github-branch-source:2.10.2
 handlebars:3.0.8
-jackson2-api:2.12.2
+jackson2-api:2.12.3
 jdk-tool:1.5
 jjwt-api:0.11.2-9.c8b45b8bb173
 jquery-detached:1.2.1
