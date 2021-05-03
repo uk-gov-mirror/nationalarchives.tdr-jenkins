@@ -12,7 +12,7 @@ build-timeout:1.20
 checks-api:1.7.0
 cloudbees-folder:6.15
 command-launcher:1.5
-configuration-as-code:1.47
+configuration-as-code:1.49
 configuration-as-code-secret-ssm:1.0.1
 credentials:2.3.18
 credentials-binding:1.24
@@ -75,7 +75,7 @@ workflow-aggregator:2.6
 workflow-api:2.42
 workflow-basic-steps:2.23
 workflow-cps:2.90
-workflow-cps-global-lib:2.18
+workflow-cps-global-lib:2.19
 workflow-durable-task-step:2.38
 workflow-job:2.40
 workflow-multibranch:2.23
