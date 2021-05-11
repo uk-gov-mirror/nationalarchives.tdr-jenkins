@@ -24,6 +24,10 @@ variable "encrypted_ami_id" {}
 
 variable "environment" {}
 
+variable "ip_allowlist" {
+  type = list
+}
+
 variable "jenkins_log_bucket" {}
 
 variable "repository" {}
