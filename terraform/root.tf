@@ -1,3 +1,7 @@
+module "global_parameters" {
+  source = "./tdr-configurations/terraform"
+}
+
 module "encryption_key" {
   source      = "./tdr-terraform-modules/kms"
   project     = var.project
@@ -31,6 +35,7 @@ module "jenkins" {
   ec2_instance_name   = local.ec2_instance_name
   encrypted_ami_id    = module.jenkins_ami.encrypted_ami_id
   environment         = local.environment
+  ip_allowlist        = local.ip_allowlist
   jenkins_log_bucket  = module.jenkins_logs_s3.s3_bucket_id
   repository          = module.ecr_jenkins_repository.repository
 }

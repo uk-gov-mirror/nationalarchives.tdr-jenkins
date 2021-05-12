@@ -9,4 +9,8 @@ locals {
     "CostCentre", data.aws_ssm_parameter.cost_centre.value
   )
   ec2_instance_name = "jenkins-task-definition-${local.environment}"
+
+  developer_ip_list = split(",", module.global_parameters.developer_ips)
+  trusted_ip_list   = split(",", module.global_parameters.trusted_ips)
+  ip_allowlist      = concat(local.developer_ip_list, local.trusted_ip_list)
 }

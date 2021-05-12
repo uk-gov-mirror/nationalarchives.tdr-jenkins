@@ -11,7 +11,8 @@ This creates the jenkins docker image which we run as part of the ECS service. I
 
 Each folder within the docker directory builds a Jenkins node image which is used to build some part of our infrastructure. The aws directory contains some python scripts which are used by the builds. Using python scripts makes assuming a role in the sub accounts easier than using the cli.
 
-### terraform
+### Terraform
+
 This creates
 * The EC2 instance for the master to run on
 * The VPC and subnets
@@ -21,14 +22,11 @@ This creates
 * The security group
 * The AWS SSM parameters
 
-### terraform modules
-* Certain terraform modules are in the tdr-terraform-modules repository
-```
-cd terraform
-git clone git@github.com:nationalarchives/tdr-terraform-modules.git
-```
+#### Terraform modules
 
-### terraform task modules
+Some terraform modules are in the shared tdr-terraform-modules repository. See the deployment section below.
+
+#### Terraform task modules
 Some builds need a task definition with more than one container. These are defined here and then used within the Jenkins pipeline file.
 
 ## Sample job
@@ -123,6 +121,22 @@ EC2 instance, manually stop the current Jenkins ECS task in the AWS console. ECS
 will automatically deploy a new container when the first one has stopped.
 
 ### Deploy Jenkins EC2 instance and Terraform config
+
+#### Set up sub-projects
+
+Clone the Terraform modules and the configurations project, which contains
+sensitive information like IP addresses:
+
+```bash
+cd terraform
+git clone git@github.com:nationalarchives/tdr-terraform-modules.git
+git clone git@github.com:nationalarchives/tdr-configurations.git
+```
+
+If these subfolders already exist, pull the latest version of the master branch
+for each one.
+
+#### Run Terraform
 
 ```bash
 cd terraform
