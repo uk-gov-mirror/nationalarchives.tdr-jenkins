@@ -31,3 +31,9 @@ variable "ip_allowlist" {
 variable "jenkins_log_bucket" {}
 
 variable "repository" {}
+variable "task_role_arn" {}
+variable "execution_role_arn" {}
+variable "vpc_id" {}
+variable "private_subnets" {
+  default = []
+}

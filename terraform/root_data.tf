@@ -20,3 +20,5 @@ data "aws_ssm_parameter" "jenkins_backup_healthcheck_url" {
 data "aws_lambda_function" "notifications_function" {
   function_name = "tdr-notifications-mgmt"
 }
+
+data "aws_caller_identity" "current" {}

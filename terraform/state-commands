@@ -1,0 +1,57 @@
+terraform state mv module.jenkins.aws_iam_policy.jenkins_fargate_policy module.jenkins_integration_fargate_policy.aws_iam_policy.iam_policy
+terraform state mv module.jenkins.aws_iam_policy.api_ecs_execution module.jenkins_integration_execution_policy.aws_iam_policy.iam_policy 
+terraform state mv module.jenkins.aws_iam_policy.api_ecs_task_policy module.jenkins_integration_task_policy.aws_iam_policy.iam_policy 
+terraform state mv module.jenkins.aws_iam_policy.jenkins_cloudwatch_policy module.jenkins_integration_task_cloudwatch_policy.aws_iam_policy.iam_policy
+terraform state mv module.jenkins.aws_iam_role.api_ecs_execution module.jenkins_integration_execution_role.aws_iam_role.iam_role 
+terraform state mv module.jenkins.aws_iam_role.api_ecs_task module.jenkins_integration_ecs_task_role.aws_iam_role.iam_role 
+terraform state mv module.jenkins.aws_iam_role.jenkins_ecs_role module.jenkins_integration_fargate_role.aws_iam_role.iam_role
+
+# Run terraform here
+
+terraform state mv module.jenkins.aws_subnet.private[0] module.jenkins_vpc.aws_subnet.private[0]
+terraform state mv 'module.jenkins.aws_subnet.private[1]' 'module.jenkins_vpc.aws_subnet.private[1]'
+terraform state mv 'module.jenkins.aws_subnet.public[0]' 'module.jenkins_vpc.aws_subnet.public[0]'
+terraform state mv 'module.jenkins.aws_subnet.public[1]' 'module.jenkins_vpc.aws_subnet.public[1]'
+terraform state mv module.jenkins.aws_vpc.main module.jenkins_vpc.aws_vpc.main
+
+
+terraform state mv module.jenkins.aws_instance.jenkins module.jenkins_ec2.aws_instance.instance
+
+terraform state mv module.jenkins.aws_security_group.ec2_internal module.jenkins_ec2_security_group.aws_security_group.security_group
+terraform state mv module.jenkins.aws_security_group.jenkins_alb_group module.jenkins_alb_security_group.aws_security_group.security_group
+terraform state mv module.jenkins.aws_security_group.ecs_tasks module.jenkins_ecs_task_security_group.aws_security_group.security_group
+
+terraform import 'module.jenkins_alb_security_group.aws_security_group_rule.egress_cidr_rule[\"Allow\ outbound\ access\ on\ all\ ports\"]' sg-007cf15d9e3fe5164_egress_-1_0_0_0.0.0.0/0
+terraform import 'module.jenkins_ecs_task_security_group.aws_security_group_rule.egress_cidr_rule[\"Allow\ outbound\ access\ on\ all\ ports\"]' sg-02cf82dd5e30319a3_egress_-1_0_0_0.0.0.0/0
+terraform import 'module.jenkins_ec2_security_group.aws_security_group_rule.egress_cidr_rule[\"Allow\ outbound\ access\ on\ all\ ports\"]' sg-08e7d94422c326878_egress_-1_0_0_0.0.0.0/0
+
+terraform import 'module.jenkins_alb_security_group.aws_security_group_rule.ingress_cidr_rule[\"Allow\ trusted\ IPs\ on\ port\ 443\"]' sg-007cf15d9e3fe5164_ingress_tcp_443_443_81.110.229.254/32_167.98.197.202/32_2.223.214.102/32_81.107.169.121/32_86.13.160.237/32_86.13.162.129/32_95.150.191.83/32_137.221.134.185/32_137.221.134.222/32_137.221.134.132/32_89.197.114.197/32_89.197.114.196/32_89.197.114.132/32_3.11.62.116/32_35.176.203.51/32_34.105.192.9/32_35.246.65.251/32_94.126.208.48/28_213.86.23.216/29_217.111.197.112/28
+terraform import 'module.jenkins_alb_security_group.aws_security_group_rule.ingress_cidr_rule[\"Allow\ trusted\ IPs\ on\ port\ 80\"]' sg-007cf15d9e3fe5164_ingress_tcp_80_80_81.110.229.254/32_167.98.197.202/32_2.223.214.102/32_81.107.169.121/32_86.13.160.237/32_86.13.162.129/32_95.150.191.83/32_137.221.134.185/32_137.221.134.222/32_137.221.134.132/32_89.197.114.197/32_89.197.114.196/32_89.197.114.132/32_3.11.62.116/32_35.176.203.51/32_34.105.192.9/32_35.246.65.251/32_94.126.208.48/28_213.86.23.216/29_217.111.197.112/28
+
+
+terraform import 'module.jenkins_ec2_security_group.aws_security_group_rule.ingress_security_group_rule[\"Allow\ jenkins\ nodes\ to\ access\ the\ ec2\ instance\"]' sg-08e7d94422c326878_ingress_tcp_80_80_sg-02cf82dd5e30319a3
+terraform import 'module.jenkins_ec2_security_group.aws_security_group_rule.ingress_security_group_rule[\"Allows\ nodes\ to\ connect\ on\ port\ 50000\"]' sg-08e7d94422c326878_ingress_tcp_50000_50000_sg-02cf82dd5e30319a3
+terraform import 'module.jenkins_ec2_security_group.aws_security_group_rule.ingress_security_group_rule[\"Allows\ the\ load\ balancer\ to\ access\ the\ instance\ for\ health\ checks\"]' sg-08e7d94422c326878_ingress_tcp_80_80_sg-007cf15d9e3fe5164
+
+
+terraform state mv 'module.jenkins.aws_route_table.private[0]' 'module.jenkins_vpc.aws_route_table.private[0]'
+terraform state mv 'module.jenkins.aws_route_table.private[1]' 'module.jenkins_vpc.aws_route_table.private[1]'
+terraform state mv module.jenkins.aws_route.internet_access module.jenkins_vpc.aws_route.internet_access
+terraform state mv 'module.jenkins.aws_route_table_association.private[0]' 'module.jenkins_vpc.aws_route_table_association.private[0]'
+terraform state mv 'module.jenkins.aws_route_table_association.private[1]' 'module.jenkins_vpc.aws_route_table_association.private[1]'
+
+terraform state mv 'module.jenkins.aws_nat_gateway.gw[0]' 'module.jenkins_vpc.aws_nat_gateway.gw[0]'
+terraform state mv 'module.jenkins.aws_nat_gateway.gw[1]' 'module.jenkins_vpc.aws_nat_gateway.gw[1]'
+
+terraform state mv 'module.jenkins.aws_internet_gateway.gw' 'module.jenkins_vpc.aws_internet_gateway.gw'
+
+terraform state mv 'module.jenkins.aws_eip.gw[0]' 'module.jenkins_vpc.aws_eip.gw[0]'
+terraform state mv 'module.jenkins.aws_eip.gw[1]' 'module.jenkins_vpc.aws_eip.gw[1]'
+terraform state mv module.jenkins.aws_default_security_group.default module.jenkins_vpc.aws_default_security_group.default
+
+
+terraform state mv module.jenkins.aws_iam_instance_profile.jenkins_profile module.jenkins_ec2.aws_iam_instance_profile.instance_profile
+terraform state mv module.jenkins.aws_iam_policy.jenkins_ec2_policy module.jenkins_ec2_policy.aws_iam_policy.iam_policy
+
+terraform state mv module.jenkins.aws_iam_role.jenkins_ec2_role module.jenkins_ec2.aws_iam_role.ec2_role
+terraform state mv module.jenkins.aws_iam_role_policy_attachment.invoke_api_attach module.jenkins_ec2.aws_iam_role_policy_attachment.ec2_variable_policy_attachment["ec2_policy"]

@@ -2,14 +2,14 @@ resource "aws_flow_log" "jenkins_flowlog" {
   iam_role_arn    = aws_iam_role.jenkins_flowlog_role.arn
   log_destination = aws_cloudwatch_log_group.jenkins_flowlog_log_group.arn
   traffic_type    = "ALL"
-  vpc_id          = aws_vpc.main.id
+  vpc_id          = var.vpc_id
 }
 
 resource "aws_flow_log" "jenkins_flowlog_s3" {
   log_destination_type = "s3"
   log_destination      = "arn:aws:s3:::tdr-log-data-mgmt/flowlogs/${var.environment}/jenkins/"
   traffic_type         = "ALL"
-  vpc_id               = aws_vpc.main.id
+  vpc_id               = var.vpc_id
 }
 
 resource "aws_cloudwatch_log_group" "jenkins_flowlog_log_group" {
