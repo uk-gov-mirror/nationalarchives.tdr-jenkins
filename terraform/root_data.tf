@@ -17,6 +17,10 @@ data "aws_ssm_parameter" "jenkins_backup_healthcheck_url" {
   name = "/mgmt/jenkins/backup/healthcheck/url"
 }
 
+data "aws_ssm_parameter" "jenkins_backup_prod_healthcheck_url" {
+  name = "/mgmt/jenkins/prod/backup/healthcheck/url"
+}
+
 data "aws_lambda_function" "notifications_function" {
   function_name = "tdr-notifications-mgmt"
 }

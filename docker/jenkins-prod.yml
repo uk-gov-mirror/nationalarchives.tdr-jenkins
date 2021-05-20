@@ -1,0 +1,280 @@
+credentials:
+  system:
+    domainCredentials:
+    - credentials:
+      - aws:
+          iamRoleArn: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsFargateRoleProdMgmt"
+          id: "aws"
+          scope: GLOBAL
+      - basicSSHUserPrivateKey:
+          scope: GLOBAL
+          id: "github-jenkins"
+          username: "${/mgmt/github/jenkins-ssh-username}"
+          passphrase: ""
+          description: "SSH Credentials for github Jenkins user"
+          privateKeySource:
+            directEntry:
+              privateKey: "${/mgmt/github/jenkins-ssh-key}"
+      - string:
+          id: "github-jenkins-api-key"
+          scope: GLOBAL
+          secret: ${/mgmt/github/jenkins-api-key}
+      - string:
+          id: "slack"
+          scope: GLOBAL
+          secret: ${/mgmt/slack/token}
+      - string:
+          id: "slack-pr-monitor"
+          scope: GLOBAL
+          secret: ${/mgmt/pr_monitor/slack/webhook}
+      - string:
+          id: "npm-login"
+          scope: GLOBAL
+          secret: ${/mgmt/npm_token}
+jenkins:
+  securityRealm:
+    github:
+      clientID: "${/mgmt/github/prod/client}"
+      clientSecret: "${/mgmt/github/prod/secret}"
+      githubApiUri: "https://api.github.com"
+      githubWebUri: "https://github.com"
+      oauthScopes: "read:org,user:email,repo"
+
+  agentProtocols:
+  - "JNLP4-connect"
+  - "Ping"
+  authorizationStrategy:
+    globalMatrix:
+      permissions:
+      # Give admin permissions to TDR admin team
+      - "Overall/Administer:nationalarchives*transfer-digital-records-admins"
+      # Give temporary admin permissions to pen testing team
+      - "Overall/Administer:nationalarchives*tdr-security-check"
+      # Allow TDR dev team to create jobs and run them
+      - "Agent/Build:nationalarchives*transfer-digital-records"
+      - "Job/Build:nationalarchives*transfer-digital-records"
+      - "Job/Cancel:nationalarchives*transfer-digital-records"
+      - "Job/Configure:nationalarchives*transfer-digital-records"
+      - "Job/Create:nationalarchives*transfer-digital-records"
+      - "Job/Discover:nationalarchives*transfer-digital-records"
+      - "Job/Read:nationalarchives*transfer-digital-records"
+      - "Lockable Resources/View:nationalarchives*transfer-digital-records"
+      - "Overall/Read:nationalarchives*transfer-digital-records"
+      - "Run/Update:nationalarchives*transfer-digital-records"
+      - "SCM/Tag:nationalarchives*transfer-digital-records"
+      - "View/Configure:nationalarchives*transfer-digital-records"
+      - "View/Create:nationalarchives*transfer-digital-records"
+      - "View/Read:nationalarchives*transfer-digital-records"
+  clouds:
+  - ecs:
+      allowedOverrides: "all"
+      cluster: "${/mgmt/jenkins_cluster_arn}"
+      jenkinsUrl: "${/mgmt/jenkins_master_url}"
+      credentialsId: "aws"
+      name: "ecs"
+      regionName: "eu-west-2"
+      templates:
+      - assignPublicIp: true
+        cpu: 2048
+        image: "${/mgmt/management_account}.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-transfer-frontend"
+        environments:
+        - name: "TDR_IDENTITY_POOL_ID"
+          value: "${/mgmt/identitypoolid_intg}"
+        - name: "INTG_AWS_ACCOUNT_NUMBER"
+          value: "${/mgmt/intg_account}"
+        - name: "STAGING_AWS_ACCOUNT_NUMBER"
+          value: "${/mgmt/staging_account}"
+        executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildTransferFrontendExecutionRole"
+        label: "transfer-frontend"
+        launchType: "FARGATE"
+        memory: 0
+        memoryReservation: 4096
+        networkMode: "awsvpc"
+        privileged: false
+        remoteFSRoot: "/home/jenkins"
+        securityGroups: "${/mgmt/fargate_security_group}"
+        sharedMemorySize: 0
+        subnets: "${/mgmt/fargate_subnet}"
+        taskrole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsPublishRole"
+        templateName: "transfer-frontend"
+      - assignPublicIp: false
+        cpu: 2048
+        environments:
+        - name: "INTG_ACCOUNT"
+          value: "${/mgmt/intg_account}"
+        - name: "STAGING_ACCOUNT"
+          value: "${/mgmt/staging_account}"
+        - name: "PROD_ACCOUNT"
+          value: "${/mgmt/prod_account}"
+        - name: "MANAGEMENT_ACCOUNT"
+          value: "${/mgmt/management_account}"
+        image: "${/mgmt/management_account}.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-terraform"
+        executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildTerraformExecutionRole"
+        label: "terraform"
+        launchType: "FARGATE"
+        memory: 0
+        memoryReservation: 4096
+        networkMode: "awsvpc"
+        privileged: false
+        remoteFSRoot: "/home/jenkins"
+        securityGroups: "${/mgmt/fargate_security_group}"
+        sharedMemorySize: 0
+        subnets: "${/mgmt/fargate_subnet}"
+        templateName: "terraform"
+      - assignPublicIp: false
+        cpu: 1024
+        environments:
+        - name: "INTG_ACCOUNT"
+          value: "${/mgmt/intg_account}"
+        - name: "STAGING_ACCOUNT"
+          value: "${/mgmt/staging_account}"
+        - name: "PROD_ACCOUNT"
+          value: "${/mgmt/prod_account}"
+        - name: "MANAGEMENT_ACCOUNT"
+          value: "${/mgmt/management_account}"
+        image: "${/mgmt/management_account}.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-aws"
+        label: "aws"
+        launchType: "FARGATE"
+        memory: 0
+        memoryReservation: 2048
+        networkMode: "awsvpc"
+        privileged: false
+        remoteFSRoot: "/home/jenkins"
+        securityGroups: "${/mgmt/fargate_security_group}"
+        sharedMemorySize: 0
+        subnets: "${/mgmt/fargate_subnet}"
+        taskrole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsNodeRole"
+        executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildAwsExecutionRole"
+        templateName: "aws"
+      - assignPublicIp: false
+        cpu: 2048
+        environments:
+        - name: "INTG_ACCOUNT"
+          value: "${/mgmt/intg_account}"
+        - name: "STAGING_ACCOUNT"
+          value: "${/mgmt/staging_account}"
+        - name: "PROD_ACCOUNT"
+          value: "${/mgmt/prod_account}"
+        - name: "MANAGEMENT_ACCOUNT"
+          value: "${/mgmt/management_account}"
+        image: "${/mgmt/management_account}.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-npm"
+        label: "npm"
+        launchType: "FARGATE"
+        memory: 0
+        memoryReservation: 4096
+        executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildNpmExecutionRole"
+        networkMode: "awsvpc"
+        privileged: false
+        remoteFSRoot: "/home/jenkins"
+        securityGroups: "${/mgmt/fargate_security_group}"
+        sharedMemorySize: 0
+        subnets: "${/mgmt/fargate_subnet}"
+        templateName: "npm"
+      - assignPublicIp: false
+        cpu: 2048
+        image: "jenkins/jnlp-slave"
+        label: "base"
+        launchType: "FARGATE"
+        memory: 0
+        memoryReservation: 4096
+        networkMode: "awsvpc"
+        privileged: false
+        remoteFSRoot: "/home/jenkins"
+        securityGroups: "${/mgmt/fargate_security_group}"
+        sharedMemorySize: 0
+        subnets: "${/mgmt/fargate_subnet}"
+        templateName: "base"
+      - assignPublicIp: true
+        cpu: 2048
+        image: "${/mgmt/management_account}.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-plugin-updates"
+        executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildPluginUpdatesExecutionRole"
+        label: "plugin-updates"
+        launchType: "FARGATE"
+        memory: 0
+        memoryReservation: 4096
+        networkMode: "awsvpc"
+        privileged: false
+        remoteFSRoot: "/home/jenkins"
+        securityGroups: "${/mgmt/fargate_security_group}"
+        sharedMemorySize: 0
+        subnets: "${/mgmt/fargate_subnet}"
+        templateName: "plugin-updates"
+  crumbIssuer:
+    standard:
+      excludeClientIPFromCrumb: false
+  disableRememberMe: false
+  globalNodeProperties:
+  - envVars:
+      env:
+        - key: "MANAGEMENT_ACCOUNT"
+          value: "${/mgmt/management_account}"
+  markupFormatter: "plainText"
+  mode: EXCLUSIVE
+  myViewsTabBar: "standard"
+  numExecutors: 6
+  primaryView:
+    all:
+      name: "all"
+  projectNamingStrategy: "standard"
+  quietPeriod: 5
+  remotingSecurity:
+    enabled: true
+  scmCheckoutRetryCount: 0
+  slaveAgentPort: 50000
+  updateCenter:
+    sites:
+    - id: "default"
+      url: "https://updates.jenkins.io/update-center.json"
+  views:
+  - all:
+      name: "all"
+  viewsTabBar: "standard"
+
+unclassified:
+  buildStepOperation:
+    enabled: false
+  gitHubPluginConfig:
+    hookUrl: "https://jenkins-prod.tdr-management.nationalarchives.gov.uk"
+  gitSCM:
+    createAccountBasedOnEmail: false
+  globalLibraries:
+    libraries:
+      - name: "tdr-jenkinslib"
+        defaultVersion: master
+        implicit: false
+        retriever:
+          modernSCM:
+            scm:
+              git:
+                remote: "https://github.com/nationalarchives/tdr-jenkinslib.git"
+  location:
+    adminAddress: "address not configured yet <nobody@nowhere>"
+    url: "https://jenkins-prod.tdr-management.nationalarchives.gov.uk"
+  mailer:
+    charset: "UTF-8"
+    useSsl: false
+  pollSCM:
+    pollingThreadCount: 10
+  slackNotifier:
+    botUser: false
+    room: "tdr"
+    sendAsText: false
+    teamDomain: "tna-digital"
+    tokenCredentialId: "slack"
+  timestamperConfig:
+    allPipelines: true
+    elapsedTimeFormat: "'<b>'HH:mm:ss.S'</b> '"
+    systemTimeFormat: "'<b>'HH:mm:ss'</b> '"
+tool:
+  git:
+    installations:
+    - home: "git"
+      name: "Default"
+security:
+  scriptApproval:
+    approvedSignatures:
+      - method jenkins.model.Jenkins getVersion
+      - staticMethod hudson.model.Hudson getInstance
+      - staticMethod jenkins.model.Jenkins getInstance
+      - method org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper getRawBuild
+      - method hudson.model.Run getEnvironment

@@ -31,30 +31,6 @@ module "jenkins_logs_s3" {
   common_tags   = local.common_tags
 }
 
-module "jenkins_backup_s3" {
-  source      = "./tdr-terraform-modules/s3"
-  project     = "tdr"
-  function    = "jenkins-backup"
-  common_tags = local.common_tags
-}
-
-module "ecr_jenkins_repository" {
-  source           = "./tdr-terraform-modules/ecr"
-  name             = "jenkins"
-  image_source_url = "https://github.com/nationalarchives/tdr-jenkins/blob/master/docker/Dockerfile"
-  common_tags      = local.common_tags
-  policy_name      = "jenkins_policy"
-  policy_variables = { role_arn = module.jenkins_integration_execution_role.role.arn }
-}
-
-module "jenkins_integration_ecs_task_role" {
-  source             = "./tdr-terraform-modules/iam_role"
-  common_tags        = local.common_tags
-  assume_role_policy = templatefile("./tdr-terraform-modules/ecs/templates/ecs_assume_role_policy.json.tpl", {})
-  name               = "TDRJenkinsAppTaskRole${title(local.environment)}"
-  policy_attachments = { task_policy = module.jenkins_integration_task_policy.policy_arn, cloudwatch_policy = module.jenkins_integration_task_cloudwatch_policy.policy_arn }
-}
-
 module "jenkins_integration_task_policy" {
   source        = "./tdr-terraform-modules/iam_policy"
   name          = "TDRJenkinsTaskPolicy${title(local.environment)}"

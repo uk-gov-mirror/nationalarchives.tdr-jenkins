@@ -3,18 +3,20 @@ module "jenkins_ecs" {
   common_tags          = local.common_tags
   project              = "tdr"
   vpc_id               = module.jenkins_vpc.vpc_id
+  name = "jenkins"
   jenkins              = true
   task_role_arn        = module.jenkins_integration_ecs_task_role.role.arn
   execution_role_arn   = module.jenkins_integration_execution_role.role.arn
   alb_target_group_arn = module.jenkins_alb.alb_target_group_arn
 }
 
-module "jenkins_ssm_parameters" {
-  source      = "./tdr-terraform-modules/ssm_parameter"
-  common_tags = local.common_tags
-  parameters = [
-    { name = "/${local.environment}/jenkins_url", description = "The url for the jenkins server", type = "SecureString", value = "http://${module.jenkins_alb.alb_dns_name}" }
-  ]
+module "ecr_jenkins_repository" {
+  source           = "./tdr-terraform-modules/ecr"
+  name             = "jenkins"
+  image_source_url = "https://github.com/nationalarchives/tdr-jenkins/blob/master/docker/Dockerfile"
+  common_tags      = local.common_tags
+  policy_name      = "jenkins_policy"
+  policy_variables = { role_arn = module.jenkins_integration_execution_role.role.arn }
 }
 
 module "jenkins_dns" {
@@ -76,6 +78,19 @@ module "jenkins_integration_fargate_role" {
   policy_attachments = { fargate_policy = module.jenkins_integration_fargate_policy.policy_arn, ssm_core = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore" }
 }
 
+module "jenkins_backup_s3" {
+  source      = "./tdr-terraform-modules/s3"
+  project     = "tdr"
+  function    = "jenkins-backup"
+  common_tags = local.common_tags
+}
+
+module "jenkins_s3_backup_policy" {
+  source = "./tdr-terraform-modules/iam_policy"
+  name = "TDRJenkinsS3BackupPolicy"
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_backup_s3_policy.json.tpl", {})
+}
+
 module "jenkins_certificate" {
   source      = "./tdr-terraform-modules/certificatemanager"
   project     = var.project
@@ -99,4 +114,12 @@ module "jenkins_alb" {
   target_id                        = module.jenkins_ec2.instance_id
   vpc_id                           = module.jenkins_vpc.vpc_id
   common_tags                      = local.common_tags
+}
+
+module "jenkins_integration_ecs_task_role" {
+  source             = "./tdr-terraform-modules/iam_role"
+  common_tags        = local.common_tags
+  assume_role_policy = templatefile("./tdr-terraform-modules/ecs/templates/ecs_assume_role_policy.json.tpl", {})
+  name               = "TDRJenkinsAppTaskRole${title(local.environment)}"
+  policy_attachments = { task_policy = module.jenkins_integration_task_policy.policy_arn, cloudwatch_policy = module.jenkins_integration_task_cloudwatch_policy.policy_arn, s3_policy = module.jenkins_s3_backup_policy.policy_arn }
 }
