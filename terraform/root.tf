@@ -22,30 +22,6 @@ module "jenkins_ami" {
   source_ami  = data.aws_ami.ecs_ami.id
 }
 
-module "jenkins" {
-  source                   = "./modules/jenkins"
-  alb_dns_name             = module.jenkins_alb.alb_dns_name
-  alb_target_group_id      = module.jenkins_alb.alb_target_group_id
-  alb_zone_id              = module.jenkins_alb.alb_zone_id
-  app_name                 = "${var.project}-${var.function}"
-  az_count                 = 2
-  common_tags              = local.common_tags
-  container_name           = var.function
-  dns_zone                 = var.dns_zone
-  domain_name              = var.domain_name
-  ec2_instance_name        = local.ec2_instance_name
-  encrypted_ami_id         = module.jenkins_ami.encrypted_ami_id
-  environment              = local.environment
-  ip_allowlist             = local.ip_allowlist
-  jenkins_log_bucket       = module.jenkins_logs_s3.s3_bucket_id
-  repository               = module.ecr_jenkins_repository.repository
-  execution_role_arn       = module.jenkins_integration_execution_role.role.arn
-  task_role_arn            = module.jenkins_integration_ecs_task_role.role.arn
-  vpc_id                   = module.jenkins_vpc.vpc_id
-  private_subnets          = module.jenkins_vpc.private_subnets
-  ecs_tasks_security_group = module.jenkins_ecs_task_security_group.security_group_id
-}
-
 module "jenkins_certificate" {
   source      = "./tdr-terraform-modules/certificatemanager"
   project     = var.project
@@ -87,10 +63,6 @@ module "jenkins_backup_s3" {
   common_tags = local.common_tags
 }
 
-module "sbt_with_postgres" {
-  source = "./modules/sbt-with-postgres-task"
-}
-
 module "ecr_jenkins_repository" {
   source           = "./tdr-terraform-modules/ecr"
   name             = "jenkins"
@@ -106,13 +78,21 @@ module "ecr_jenkins_build_npm_repository" {
   image_source_url = "https://github.com/nationalarchives/tdr-jenkins/blob/master/docker/npm/Dockerfile"
   common_tags      = local.common_tags
   policy_name      = "jenkins_policy"
-  policy_variables = { role_arn = module.jenkins_build_npm_execution_role.role_arn }
+  policy_variables = { role_arn = module.jenkins_build_npm_execution_role.role.arn }
+}
+
+module "jenkins_build_npm_execution_policy" {
+  source        = "./tdr-terraform-modules/iam_policy"
+  name          = "TDRJenkinsBuildNpmExecutionPolicy"
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecr_policy.json.tpl", { repository_arn = module.ecr_jenkins_build_npm_repository.repository.arn })
 }
 
 module "jenkins_build_npm_execution_role" {
-  source         = "./modules/build-role"
-  name           = "npm"
-  repository_arn = module.ecr_jenkins_build_npm_repository.repository.arn
+  source             = "./tdr-terraform-modules/iam_role"
+  assume_role_policy = templatefile("./tdr-terraform-modules/ecs/templates/ecs_assume_role_policy.json.tpl", {})
+  common_tags        = local.common_tags
+  name               = "TDRJenkinsBuildNpmExecutionRole"
+  policy_attachments = { ecr_policy = module.jenkins_build_npm_execution_policy.policy_arn }
 }
 
 module "ecr_jenkins_build_aws_repository" {
@@ -121,13 +101,21 @@ module "ecr_jenkins_build_aws_repository" {
   image_source_url = "https://github.com/nationalarchives/tdr-jenkins/blob/master/docker/aws/Dockerfile"
   common_tags      = local.common_tags
   policy_name      = "jenkins_policy"
-  policy_variables = { role_arn = module.jenkins_build_aws_execution_role.role_arn }
+  policy_variables = { role_arn = module.jenkins_build_aws_execution_role.role.arn }
+}
+
+module "jenkins_build_aws_execution_policy" {
+  source        = "./tdr-terraform-modules/iam_policy"
+  name          = "TDRJenkinsBuildAwsExecutionPolicy"
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecr_policy.json.tpl", { repository_arn = module.ecr_jenkins_build_aws_repository.repository.arn })
 }
 
 module "jenkins_build_aws_execution_role" {
-  source         = "./modules/build-role"
-  name           = "aws"
-  repository_arn = module.ecr_jenkins_build_aws_repository.repository.arn
+  source             = "./tdr-terraform-modules/iam_role"
+  assume_role_policy = templatefile("./tdr-terraform-modules/ecs/templates/ecs_assume_role_policy.json.tpl", {})
+  common_tags        = local.common_tags
+  name               = "TDRJenkinsBuildAwsExecutionRole"
+  policy_attachments = { ecr_policy = module.jenkins_build_aws_execution_policy.policy_arn }
 }
 
 module "ecr_jenkins_build_terraform_repository" {
@@ -136,13 +124,21 @@ module "ecr_jenkins_build_terraform_repository" {
   image_source_url = "https://github.com/nationalarchives/tdr-jenkins/blob/master/docker/terraform/Dockerfile"
   common_tags      = local.common_tags
   policy_name      = "jenkins_policy"
-  policy_variables = { role_arn = module.jenkins_build_terraform_execution_role.role_arn }
+  policy_variables = { role_arn = module.jenkins_build_terraform_execution_role.role.arn }
+}
+
+module "jenkins_build_terraform_execution_policy" {
+  source        = "./tdr-terraform-modules/iam_policy"
+  name          = "TDRJenkinsBuildTerraformExecutionPolicy"
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecr_policy.json.tpl", { repository_arn = module.ecr_jenkins_build_terraform_repository.repository.arn })
 }
 
 module "jenkins_build_terraform_execution_role" {
-  source         = "./modules/build-role"
-  name           = "terraform"
-  repository_arn = module.ecr_jenkins_build_terraform_repository.repository.arn
+  source             = "./tdr-terraform-modules/iam_role"
+  assume_role_policy = templatefile("./tdr-terraform-modules/ecs/templates/ecs_assume_role_policy.json.tpl", {})
+  common_tags        = local.common_tags
+  name               = "TDRJenkinsBuildTerraformExecutionRole"
+  policy_attachments = { ecr_policy = module.jenkins_build_terraform_execution_policy.policy_arn }
 }
 
 module "ecr_jenkins_build_transfer_frontend_repository" {
@@ -151,13 +147,21 @@ module "ecr_jenkins_build_transfer_frontend_repository" {
   image_source_url = "https://github.com/nationalarchives/tdr-jenkins/blob/master/docker/transfer-frontend/Dockerfile"
   common_tags      = local.common_tags
   policy_name      = "jenkins_policy"
-  policy_variables = { role_arn = module.jenkins_build_transfer_frontend_execution_role.role_arn }
+  policy_variables = { role_arn = module.jenkins_build_transfer_frontend_execution_role.role.arn }
+}
+
+module "jenkins_build_transfer_frontend_execution_policy" {
+  source        = "./tdr-terraform-modules/iam_policy"
+  name          = "TDRJenkinsBuildTransferFrontendExecutionPolicy"
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecr_policy.json.tpl", { repository_arn = module.ecr_jenkins_build_transfer_frontend_repository.repository.arn })
 }
 
 module "jenkins_build_transfer_frontend_execution_role" {
-  source         = "./modules/build-role"
-  name           = "transfer-frontend"
-  repository_arn = module.ecr_jenkins_build_transfer_frontend_repository.repository.arn
+  source             = "./tdr-terraform-modules/iam_role"
+  assume_role_policy = templatefile("./tdr-terraform-modules/ecs/templates/ecs_assume_role_policy.json.tpl", {})
+  common_tags        = local.common_tags
+  name               = "TDRJenkinsBuildTransferFrontendExecutionRole"
+  policy_attachments = { ecr_policy = module.jenkins_build_transfer_frontend_execution_policy.policy_arn }
 }
 
 module "ecr_jenkins_build_postgres_repository" {
@@ -166,13 +170,21 @@ module "ecr_jenkins_build_postgres_repository" {
   image_source_url = "https://github.com/nationalarchives/tdr-jenkins/blob/master/docker/postgres/Dockerfile"
   common_tags      = local.common_tags
   policy_name      = "jenkins_policy"
-  policy_variables = { role_arn = module.jenkins_build_postgres_execution_role.role_arn }
+  policy_variables = { role_arn = module.jenkins_build_postgres_execution_role.role.arn }
+}
+
+module "jenkins_build_postgres_execution_policy" {
+  source        = "./tdr-terraform-modules/iam_policy"
+  name          = "TDRJenkinsBuildPostgresExecutionPolicy"
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecr_policy.json.tpl", { repository_arn = module.ecr_jenkins_build_postgres_repository.repository.arn })
 }
 
 module "jenkins_build_postgres_execution_role" {
-  source         = "./modules/build-role"
-  name           = "postgres"
-  repository_arn = module.ecr_jenkins_build_postgres_repository.repository.arn
+  source             = "./tdr-terraform-modules/iam_role"
+  assume_role_policy = templatefile("./tdr-terraform-modules/ecs/templates/ecs_assume_role_policy.json.tpl", {})
+  common_tags        = local.common_tags
+  name               = "TDRJenkinsBuildPostgresExecutionRole"
+  policy_attachments = { ecr_policy = module.jenkins_build_postgres_execution_policy.policy_arn }
 }
 
 module "ecr_jenkins_build_plugin_updates_repository" {
@@ -181,13 +193,21 @@ module "ecr_jenkins_build_plugin_updates_repository" {
   image_source_url = "https://github.com/nationalarchives/tdr-jenkins/blob/master/docker/plugin-updates/Dockerfile"
   common_tags      = local.common_tags
   policy_name      = "jenkins_policy"
-  policy_variables = { role_arn = module.jenkins_build_plugin_updates_execution_role.role_arn }
+  policy_variables = { role_arn = module.jenkins_build_plugin_updates_execution_role.role.arn }
+}
+
+module "jenkins_build_plugin_updates_execution_policy" {
+  source        = "./tdr-terraform-modules/iam_policy"
+  name          = "TDRJenkinsBuildPluginUpdatesExecutionPolicy"
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecr_policy.json.tpl", { repository_arn = module.ecr_jenkins_build_plugin_updates_repository.repository.arn })
 }
 
 module "jenkins_build_plugin_updates_execution_role" {
-  source         = "./modules/build-role"
-  name           = "plugin-updates"
-  repository_arn = module.ecr_jenkins_build_plugin_updates_repository.repository.arn
+  source             = "./tdr-terraform-modules/iam_role"
+  assume_role_policy = templatefile("./tdr-terraform-modules/ecs/templates/ecs_assume_role_policy.json.tpl", {})
+  common_tags        = local.common_tags
+  name               = "TDRJenkinsBuildPluginUpdatesExecutionRole"
+  policy_attachments = { ecr_policy = module.jenkins_build_plugin_updates_execution_policy.policy_arn }
 }
 
 # Configure Jenkins backup using Systems Manager Maintenance Windows
@@ -212,13 +232,13 @@ module "jenkins_maintenance_window_event" {
 module "jenkins_integration_fargate_policy" {
   source        = "./tdr-terraform-modules/iam_policy"
   name          = "TDRJenkinsFargatePolicy${title(local.environment)}"
-  policy_string = templatefile("./modules/jenkins/templates/jenkins_fargate_integration.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_fargate_integration.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
 }
 
 module "jenkins_integration_fargate_role" {
   source             = "./tdr-terraform-modules/iam_role"
   common_tags        = local.common_tags
-  assume_role_policy = templatefile("./modules/jenkins/templates/assume_role_policy.json.tpl", { role_arn = module.jenkins_integration_ecs_task_role.role.arn })
+  assume_role_policy = templatefile("./tdr-terraform-modules/iam_policy/templates/assume_role_policy.json.tpl", { role_arn = module.jenkins_integration_ecs_task_role.role.arn })
   name               = "TDRJenkinsFargateRole${title(local.environment)}"
   policy_attachments = { fargate_policy = module.jenkins_integration_fargate_policy.policy_arn, ssm_core = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore" }
 }
@@ -234,13 +254,13 @@ module "jenkins_integration_ecs_task_role" {
 module "jenkins_integration_task_policy" {
   source        = "./tdr-terraform-modules/iam_policy"
   name          = "TDRJenkinsTaskPolicy${title(local.environment)}"
-  policy_string = templatefile("./modules/jenkins/templates/jenkins_ecs_task_integration.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecs_task_integration.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
 }
 
 module "jenkins_integration_task_cloudwatch_policy" {
   source        = "./tdr-terraform-modules/iam_policy"
   name          = "TDRJenkinsCloudwatchPolicyMgmt"
-  policy_string = templatefile("./modules/jenkins/templates/jenkins_ecs_task_integration_cloudwatch.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecs_task_integration_cloudwatch.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
 }
 
 module "jenkins_integration_execution_role" {
@@ -254,7 +274,7 @@ module "jenkins_integration_execution_role" {
 module "jenkins_integration_execution_policy" {
   source        = "./tdr-terraform-modules/iam_policy"
   name          = "TDRJenkinsExecutionPolicyMgmt"
-  policy_string = templatefile("./modules/jenkins/templates/jenkins_ecs_execution_integration.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecs_execution_integration.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
 }
 
 module "jenkins_vpc" {
@@ -268,7 +288,7 @@ module "jenkins_vpc" {
 module "jenkins_ec2_policy" {
   source        = "./tdr-terraform-modules/iam_policy"
   name          = "jenkins_ec2_policy_${local.environment}"
-  policy_string = templatefile("./modules/jenkins/templates/jenkins_ec2.json.tpl", {})
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ec2.json.tpl", {})
 }
 
 module "jenkins_ec2_security_group" {
@@ -292,7 +312,6 @@ module "jenkins_ecs_task_security_group" {
   common_tags       = local.common_tags
   egress_cidr_rules = [{ port = 0, cidr_blocks = ["0.0.0.0/0"], description = "Allow outbound access on all ports", protocol = "-1" }]
 }
-
 
 module "jenkins_alb_security_group" {
   source      = "./tdr-terraform-modules/security_group"
@@ -321,4 +340,64 @@ module "jenkins_ec2" {
   user_data_variables = { jenkins_cluster_name = "jenkins-${local.environment}" }
   instance_type       = "t2.medium"
   volume_size         = 60
+}
+
+module "jenkins_flow_log_policy" {
+  source        = "./tdr-terraform-modules/iam_policy"
+  name          = "TDRJenkinsFlowlogPolicy${title(local.environment)}"
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_vpc_flow_logs.json.tpl", {})
+}
+
+module "jenkins_flow_log_role" {
+  source             = "./tdr-terraform-modules/iam_role"
+  assume_role_policy = templatefile("./tdr-terraform-modules/iam_policy/templates/flow_logs_assume_role.json.tpl", {})
+  common_tags        = local.common_tags
+  name               = "jenkins_flowlog_role_${local.environment}"
+  policy_attachments = { flow_log_policy = module.jenkins_flow_log_policy.policy_arn }
+}
+
+module "jenkins_flow_logs_cloudwatch_group" {
+  source      = "./tdr-terraform-modules/cloudwatch_logs"
+  common_tags = local.common_tags
+  name        = "/flowlogs/tdr-jenkins-vpc-${local.environment}"
+}
+
+module "jenkins_flow_logs" {
+  source        = "./tdr-terraform-modules/flowlogs"
+  log_group_arn = module.jenkins_flow_logs_cloudwatch_group.log_group_arn
+  role_arn      = module.jenkins_flow_log_role.role.arn
+  s3_arn        = "arn:aws:s3:::tdr-log-data-mgmt/flowlogs/${local.environment}/jenkins/"
+  vpc_id        = module.jenkins_vpc.vpc_id
+}
+
+module "jenkins_ecs" {
+  source               = "./tdr-terraform-modules/ecs"
+  common_tags          = local.common_tags
+  project              = "tdr"
+  vpc_id               = module.jenkins_vpc.vpc_id
+  jenkins              = true
+  task_role_arn        = module.jenkins_integration_ecs_task_role.role.arn
+  execution_role_arn   = module.jenkins_integration_execution_role.role.arn
+  alb_target_group_arn = module.jenkins_alb.alb_target_group_arn
+}
+
+module "jenkins_ssm_parameters" {
+  source      = "./tdr-terraform-modules/ssm_parameter"
+  common_tags = local.common_tags
+  parameters = [
+    { name = "/${local.environment}/jenkins_url", description = "The url for the jenkins server", type = "SecureString", value = "http://${module.jenkins_alb.alb_dns_name}" },
+    { name = "/${local.environment}/jenkins_cluster_arn", description = "The cluster arn for the jenkins ECS cluster", type = "SecureString", value = module.jenkins_ecs.jenkins_cluster_arn },
+    { name = "/${local.environment}/fargate_security_group", description = "The security group for the fargate jenkins nodes", type = "SecureString", value = module.jenkins_ecs_task_security_group.security_group_id },
+    { name = "/${local.environment}/fargate_subnet", description = "The subnet for the fargate jenkins nodes", type = "SecureString", value = module.jenkins_vpc.private_subnets[1] }
+  ]
+}
+
+module "jenkins_dns" {
+  source                = "./tdr-terraform-modules/route53"
+  common_tags           = local.common_tags
+  environment_full_name = "management"
+  project               = "tdr"
+  alb_dns_name          = module.jenkins_alb.alb_dns_name
+  alb_zone_id           = module.jenkins_alb.alb_zone_id
+  a_record_name         = "jenkins"
 }
