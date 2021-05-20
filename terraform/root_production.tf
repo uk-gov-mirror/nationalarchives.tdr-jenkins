@@ -12,7 +12,7 @@ module "jenkins_ecs_prod" {
   common_tags          = local.common_tags
   project              = "tdr"
   vpc_id               = module.jenkins_vpc.vpc_id
-  name = "jenkins-prod"
+  name                 = "jenkins-prod"
   jenkins              = true
   task_role_arn        = module.jenkins_prod_ecs_task_role.role.arn
   execution_role_arn   = module.jenkins_integration_execution_role.role.arn
@@ -104,8 +104,8 @@ module "jenkins_alb_prod" {
 }
 
 module "jenkins_s3_backup_prod_policy" {
-  source = "./tdr-terraform-modules/iam_policy"
-  name = "TDRJenkinsS3BackupPolicyProd"
+  source        = "./tdr-terraform-modules/iam_policy"
+  name          = "TDRJenkinsS3BackupPolicyProd"
   policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_backup_prod_s3_policy.json.tpl", {})
 }
 
