@@ -255,6 +255,16 @@ module "jenkins_ecs_task_security_group" {
   egress_cidr_rules = [{ port = 0, cidr_blocks = ["0.0.0.0/0"], description = "Allow outbound access on all ports", protocol = "-1" }]
 }
 
+module "jenkins_common_ssm_parameters" {
+  source      = "./tdr-terraform-modules/ssm_parameter"
+  common_tags = local.common_tags
+  parameters = [
+    { name = "/${local.environment}/jenkins_cluster_arn", description = "The cluster arn for the jenkins ECS cluster", type = "SecureString", value = module.jenkins_ecs.jenkins_cluster_arn },
+    { name = "/${local.environment}/fargate_security_group", description = "The security group for the fargate jenkins nodes", type = "SecureString", value = module.jenkins_ecs_task_security_group.security_group_id },
+    { name = "/${local.environment}/fargate_subnet", description = "The subnet for the fargate jenkins nodes", type = "SecureString", value = module.jenkins_vpc.private_subnets[1] }
+  ]
+}
+
 module "jenkins_alb_security_group" {
   source      = "./tdr-terraform-modules/security_group"
   description = "Controls access to the Jenkins load balancer"

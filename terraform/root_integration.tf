@@ -13,10 +13,7 @@ module "jenkins_ssm_parameters" {
   source      = "./tdr-terraform-modules/ssm_parameter"
   common_tags = local.common_tags
   parameters = [
-    { name = "/${local.environment}/jenkins_url", description = "The url for the jenkins server", type = "SecureString", value = "http://${module.jenkins_alb.alb_dns_name}" },
-    { name = "/${local.environment}/jenkins_cluster_arn", description = "The cluster arn for the jenkins ECS cluster", type = "SecureString", value = module.jenkins_ecs.jenkins_cluster_arn },
-    { name = "/${local.environment}/fargate_security_group", description = "The security group for the fargate jenkins nodes", type = "SecureString", value = module.jenkins_ecs_task_security_group.security_group_id },
-    { name = "/${local.environment}/fargate_subnet", description = "The subnet for the fargate jenkins nodes", type = "SecureString", value = module.jenkins_vpc.private_subnets[1] }
+    { name = "/${local.environment}/jenkins_url", description = "The url for the jenkins server", type = "SecureString", value = "http://${module.jenkins_alb.alb_dns_name}" }
   ]
 }
 
