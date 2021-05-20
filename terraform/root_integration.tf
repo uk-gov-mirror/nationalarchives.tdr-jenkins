@@ -79,40 +79,6 @@ module "jenkins_integration_fargate_role" {
   policy_attachments = { fargate_policy = module.jenkins_integration_fargate_policy.policy_arn, ssm_core = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore" }
 }
 
-module "jenkins_integration_ecs_task_role" {
-  source             = "./tdr-terraform-modules/iam_role"
-  common_tags        = local.common_tags
-  assume_role_policy = templatefile("./tdr-terraform-modules/ecs/templates/ecs_assume_role_policy.json.tpl", {})
-  name               = "TDRJenkinsAppTaskRole${title(local.environment)}"
-  policy_attachments = { task_policy = module.jenkins_integration_task_policy.policy_arn, cloudwatch_policy = module.jenkins_integration_task_cloudwatch_policy.policy_arn }
-}
-
-module "jenkins_integration_task_policy" {
-  source        = "./tdr-terraform-modules/iam_policy"
-  name          = "TDRJenkinsTaskPolicy${title(local.environment)}"
-  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecs_task_integration.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
-}
-
-module "jenkins_integration_task_cloudwatch_policy" {
-  source        = "./tdr-terraform-modules/iam_policy"
-  name          = "TDRJenkinsCloudwatchPolicyMgmt"
-  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecs_task_integration_cloudwatch.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
-}
-
-module "jenkins_integration_execution_role" {
-  source             = "./tdr-terraform-modules/iam_role"
-  common_tags        = local.common_tags
-  name               = "TDRJenkinsAppExecutionRole${title(local.environment)}"
-  assume_role_policy = templatefile("./tdr-terraform-modules/ecs/templates/ecs_assume_role_policy.json.tpl", {})
-  policy_attachments = { execution_policy = module.jenkins_integration_execution_policy.policy_arn, cloudwatch_policy = module.jenkins_integration_task_cloudwatch_policy.policy_arn }
-}
-
-module "jenkins_integration_execution_policy" {
-  source        = "./tdr-terraform-modules/iam_policy"
-  name          = "TDRJenkinsExecutionPolicyMgmt"
-  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecs_execution_integration.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
-}
-
 module "jenkins_certificate" {
   source      = "./tdr-terraform-modules/certificatemanager"
   project     = var.project
