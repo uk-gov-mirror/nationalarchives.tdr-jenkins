@@ -70,10 +70,10 @@ module "jenkins_integration_fargate_policy_prod" {
   policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_fargate_prod.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
 }
 
-module "jenkins_integration_fargate_role_prod" {
+module "jenkins_prod_fargate_role" {
   source             = "./tdr-terraform-modules/iam_role"
   common_tags        = local.common_tags
-  assume_role_policy = templatefile("./tdr-terraform-modules/iam_policy/templates/assume_role_policy.json.tpl", { role_arn = module.jenkins_integration_ecs_task_role.role.arn })
+  assume_role_policy = templatefile("./tdr-terraform-modules/iam_policy/templates/assume_role_policy.json.tpl", { role_arn = module.jenkins_prod_ecs_task_role.role.arn })
   name               = "TDRJenkinsFargateRoleProd${title(local.environment)}"
   policy_attachments = { fargate_policy = module.jenkins_integration_fargate_policy_prod.policy_arn, ssm_core = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore" }
 }
