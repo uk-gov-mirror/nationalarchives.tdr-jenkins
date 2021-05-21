@@ -50,26 +50,11 @@ jenkins:
       - "Overall/Administer:nationalarchives*transfer-digital-records-admins"
       # Give temporary admin permissions to pen testing team
       - "Overall/Administer:nationalarchives*tdr-security-check"
-      # Allow TDR dev team to create jobs and run them
-      - "Agent/Build:nationalarchives*transfer-digital-records"
-      - "Job/Build:nationalarchives*transfer-digital-records"
-      - "Job/Cancel:nationalarchives*transfer-digital-records"
-      - "Job/Configure:nationalarchives*transfer-digital-records"
-      - "Job/Create:nationalarchives*transfer-digital-records"
-      - "Job/Discover:nationalarchives*transfer-digital-records"
-      - "Job/Read:nationalarchives*transfer-digital-records"
-      - "Lockable Resources/View:nationalarchives*transfer-digital-records"
-      - "Overall/Read:nationalarchives*transfer-digital-records"
-      - "Run/Update:nationalarchives*transfer-digital-records"
-      - "SCM/Tag:nationalarchives*transfer-digital-records"
-      - "View/Configure:nationalarchives*transfer-digital-records"
-      - "View/Create:nationalarchives*transfer-digital-records"
-      - "View/Read:nationalarchives*transfer-digital-records"
   clouds:
   - ecs:
       allowedOverrides: "all"
-      cluster: "${/mgmt/jenkins_cluster_arn}"
-      jenkinsUrl: "${/mgmt/jenkins_master_url}"
+      cluster: "jenkins-prod-mgmt"
+      jenkinsUrl: "http://10.0.1.222"
       credentialsId: "aws"
       name: "ecs"
       regionName: "eu-west-2"
