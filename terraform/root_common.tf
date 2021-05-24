@@ -31,13 +31,6 @@ module "jenkins_logs_s3" {
   common_tags   = local.common_tags
 }
 
-module "jenkins_backup_s3" {
-  source      = "./tdr-terraform-modules/s3"
-  project     = "tdr"
-  function    = "jenkins-backup"
-  common_tags = local.common_tags
-}
-
 module "jenkins_ecr_repository" {
   source           = "./tdr-terraform-modules/ecr"
   name             = "jenkins"
