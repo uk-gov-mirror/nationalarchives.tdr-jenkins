@@ -17,7 +17,7 @@ configuration-as-code-secret-ssm:1.0.1
 credentials:2.4.1
 credentials-binding:1.24
 cucumber-reports:5.5.0
-display-url-api:2.3.4
+display-url-api:2.3.5
 docker-commons:1.17
 docker-workflow:1.26
 durable-task:1.36
@@ -61,8 +61,8 @@ plugin-util-api:2.2.0
 popper-api:1.16.1-2
 resource-disposer:0.15
 scm-api:2.6.4
-script-security:1.76
-slack:2.47
+script-security:1.77
+slack:2.48
 snakeyaml-api:1.27.0
 ssh-agent:1.22
 ssh-credentials:1.18.2
