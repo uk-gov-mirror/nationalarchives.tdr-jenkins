@@ -117,14 +117,14 @@ module "jenkins_integration_alb" {
 }
 
 module "jenkins_integration_ecs_task_role" {
-  source = "./tdr-terraform-modules/iam_role"
-  common_tags = local.common_tags
+  source             = "./tdr-terraform-modules/iam_role"
+  common_tags        = local.common_tags
   assume_role_policy = templatefile("./tdr-terraform-modules/ecs/templates/ecs_assume_role_policy.json.tpl", {})
-  name = "TDRJenkinsAppTaskRole${title(local.environment)}"
+  name               = "TDRJenkinsAppTaskRole${title(local.environment)}"
   policy_attachments = {
-    task_policy = module.jenkins_integration_task_policy.policy_arn,
+    task_policy       = module.jenkins_integration_task_policy.policy_arn,
     cloudwatch_policy = module.jenkins_integration_task_cloudwatch_policy.policy_arn,
-    s3_policy = module.jenkins_s3_backup_policy.policy_arn
+    s3_policy         = module.jenkins_s3_backup_policy.policy_arn
   }
 }
 

@@ -3,10 +3,10 @@ module "global_parameters" {
 }
 
 module "sbt_with_postgres" {
-  source = "./tdr-terraform-modules/ecs"
-  common_tags = local.common_tags
-  project = var.project
-  vpc_id = module.jenkins_vpc.vpc_id
+  source            = "./tdr-terraform-modules/ecs"
+  common_tags       = local.common_tags
+  project           = var.project
+  vpc_id            = module.jenkins_vpc.vpc_id
   sbt_with_postgres = true
 }
 
