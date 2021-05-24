@@ -3,7 +3,6 @@ module "jenkins_integration_ecs" {
   common_tags          = local.common_tags
   project              = "tdr"
   vpc_id               = module.jenkins_vpc.vpc_id
-  name                 = "jenkins"
   jenkins              = true
   task_role_arn        = module.jenkins_integration_ecs_task_role.role.arn
   execution_role_arn   = module.jenkins_integration_execution_role.role.arn
