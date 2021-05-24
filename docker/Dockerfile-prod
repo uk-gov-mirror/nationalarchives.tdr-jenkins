@@ -23,8 +23,8 @@ COPY --chown=jenkins backup-prod.sh /opt/backup.sh
 COPY --chown=jenkins logging.groovy /var/jenkins_home/init.groovy.d/logging.groovy
 COPY --chown=jenkins github-oauth.hpi /var/jenkins_home/plugins/
 RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt && chmod +x /opt/backup.sh
-COPY entrypoint.sh .
+COPY entrypoint-prod.sh ./entrypoint.sh
 
 USER jenkins
 
-ENTRYPOINT ["/entrypoint.sh", "tdr-jenkins-backup-prod-mgmt"]
+ENTRYPOINT ["/entrypoint.sh"]

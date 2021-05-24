@@ -27,4 +27,4 @@ COPY entrypoint.sh .
 
 USER jenkins
 
-ENTRYPOINT ["/entrypoint.sh", "tdr-jenkins-backup-mgmt"]
+ENTRYPOINT ["/entrypoint.sh"]
