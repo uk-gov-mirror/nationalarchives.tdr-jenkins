@@ -47,14 +47,6 @@ module "jenkins_ecr_repository" {
   policy_variables = { role_arn = module.jenkins_integration_execution_role.role.arn }
 }
 
-module "jenkins_integration_ecs_task_role" {
-  source             = "./tdr-terraform-modules/iam_role"
-  common_tags        = local.common_tags
-  assume_role_policy = templatefile("./tdr-terraform-modules/ecs/templates/ecs_assume_role_policy.json.tpl", {})
-  name               = "TDRJenkinsAppTaskRole${title(local.environment)}"
-  policy_attachments = { task_policy = module.jenkins_integration_task_policy.policy_arn, cloudwatch_policy = module.jenkins_integration_task_cloudwatch_policy.policy_arn }
-}
-
 module "jenkins_vpc" {
   source      = "./tdr-terraform-modules/vpc"
   app_name    = "tdr-jenkins"
