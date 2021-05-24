@@ -2,6 +2,14 @@ module "global_parameters" {
   source = "./tdr-configurations/terraform"
 }
 
+module "sbt_with_postgres" {
+  source = "./tdr-terraform-modules/ecs"
+  common_tags = local.common_tags
+  project = var.project
+  vpc_id = module.jenkins_vpc.vpc_id
+  sbt_with_postgres = true
+}
+
 module "encryption_key" {
   source      = "./tdr-terraform-modules/kms"
   project     = var.project
@@ -29,13 +37,6 @@ module "jenkins_logs_s3" {
   access_logs   = false
   bucket_policy = "alb_logging_euwest2"
   common_tags   = local.common_tags
-}
-
-module "jenkins_backup_s3" {
-  source      = "./tdr-terraform-modules/s3"
-  project     = "tdr"
-  function    = "jenkins-backup"
-  common_tags = local.common_tags
 }
 
 module "jenkins_ecr_repository" {
