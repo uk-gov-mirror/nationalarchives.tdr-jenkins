@@ -2,6 +2,14 @@ module "global_parameters" {
   source = "./tdr-configurations/terraform"
 }
 
+module "sbt_with_postgres" {
+  source            = "./tdr-terraform-modules/ecs"
+  common_tags       = local.common_tags
+  project           = var.project
+  vpc_id            = module.jenkins_vpc.vpc_id
+  sbt_with_postgres = true
+}
+
 module "encryption_key" {
   source      = "./tdr-terraform-modules/kms"
   project     = var.project

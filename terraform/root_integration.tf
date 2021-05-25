@@ -3,6 +3,7 @@ module "jenkins_integration_ecs" {
   common_tags          = local.common_tags
   project              = "tdr"
   vpc_id               = module.jenkins_vpc.vpc_id
+  name                 = "jenkins"
   jenkins              = true
   task_role_arn        = module.jenkins_integration_ecs_task_role.role.arn
   execution_role_arn   = module.jenkins_integration_execution_role.role.arn
@@ -108,7 +109,6 @@ module "jenkins_integration_alb" {
   alb_security_group_id            = module.jenkins_alb_security_group.security_group_id
   certificate_arn                  = module.jenkins_integration_certificate.certificate_arn
   health_check_unhealthy_threshold = 5
-  domain_name                      = var.domain_name
   public_subnets                   = module.jenkins_vpc.public_subnets
   target_id                        = module.jenkins_integration_ec2.instance_id
   vpc_id                           = module.jenkins_vpc.vpc_id
@@ -130,7 +130,7 @@ module "jenkins_integration_ecs_task_role" {
 module "jenkins_integration_task_policy" {
   source        = "./tdr-terraform-modules/iam_policy"
   name          = "TDRJenkinsTaskPolicy${title(local.environment)}"
-  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecs_task_integration.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecs_task.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
 }
 
 module "jenkins_integration_task_cloudwatch_policy" {
