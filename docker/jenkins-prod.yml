@@ -48,8 +48,6 @@ jenkins:
       permissions:
       # Give admin permissions to TDR admin team
       - "Overall/Administer:nationalarchives*transfer-digital-records-admins"
-      # Give temporary admin permissions to pen testing team
-      - "Overall/Administer:nationalarchives*tdr-security-check"
   clouds:
   - ecs:
       allowedOverrides: "all"
@@ -62,13 +60,6 @@ jenkins:
       - assignPublicIp: true
         cpu: 2048
         image: "${/mgmt/management_account}.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-transfer-frontend"
-        environments:
-        - name: "TDR_IDENTITY_POOL_ID"
-          value: "${/mgmt/identitypoolid_intg}"
-        - name: "INTG_AWS_ACCOUNT_NUMBER"
-          value: "${/mgmt/intg_account}"
-        - name: "STAGING_AWS_ACCOUNT_NUMBER"
-          value: "${/mgmt/staging_account}"
         executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildTransferFrontendExecutionRole"
         label: "transfer-frontend"
         launchType: "FARGATE"
