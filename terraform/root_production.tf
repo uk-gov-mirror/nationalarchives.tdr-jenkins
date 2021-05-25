@@ -64,7 +64,7 @@ module "jenkins_maintenance_window_event_prod" {
   event_variables         = { window_id = module.jenkins_backup_maintenance_window_prod.window_id }
 }
 
-module "jenkins_integration_fargate_policy_prod" {
+module "jenkins_fargate_policy_prod" {
   source        = "./tdr-terraform-modules/iam_policy"
   name          = "TDRJenkinsFargateProdPolicy${title(local.environment)}"
   policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_fargate_prod.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
@@ -75,7 +75,7 @@ module "jenkins_fargate_role_prod" {
   common_tags        = local.common_tags
   assume_role_policy = templatefile("./tdr-terraform-modules/iam_policy/templates/assume_role_policy.json.tpl", { role_arn = module.jenkins_ecs_task_role_prod.role.arn })
   name               = "TDRJenkinsFargateRoleProd${title(local.environment)}"
-  policy_attachments = { fargate_policy = module.jenkins_integration_fargate_policy_prod.policy_arn, ssm_core = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore" }
+  policy_attachments = { fargate_policy = module.jenkins_fargate_policy_prod.policy_arn, ssm_core = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore" }
 }
 
 module "jenkins_certificate_prod" {
