@@ -48,8 +48,6 @@ jenkins:
       permissions:
       # Give admin permissions to TDR admin team
       - "Overall/Administer:nationalarchives*transfer-digital-records-admins"
-      # Give temporary admin permissions to pen testing team
-      - "Overall/Administer:nationalarchives*tdr-security-check"
       # Allow TDR dev team to create jobs and run them
       - "Agent/Build:nationalarchives*transfer-digital-records"
       - "Job/Build:nationalarchives*transfer-digital-records"
