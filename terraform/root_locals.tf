@@ -8,7 +8,7 @@ locals {
     "Terraform", true,
     "CostCentre", data.aws_ssm_parameter.cost_centre.value
   )
-  ec2_instance_name = "jenkins-task-definition-${local.environment}"
+  ec2_instance_name = "JenkinsTaskDefinition"
 
   developer_ip_list = split(",", module.global_parameters.developer_ips)
   trusted_ip_list   = split(",", module.global_parameters.trusted_ips)
