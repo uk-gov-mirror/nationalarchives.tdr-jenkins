@@ -2,12 +2,12 @@
 
 All TDR documentation is available [here](https://github.com/nationalarchives/tdr-dev-documentation)
 
-This project can be used to spin up a jenkins server using ECS. The ECS cluster is created using terraform and the jenkins configuration uses the [JCasC](https://jenkins.io/projects/jcasc/) plugin and the jenkins.yml file sets up the jenkins configuration.
+This project can be used to spin up a jenkins server using ECS. The ECS cluster is created using terraform and the jenkins configuration uses the [JCasC](https://jenkins.io/projects/jcasc/) plugin. We use this project to create two Jenkins instances. Integration Jenkins uses the jenkins.yml file for configuration and jenkins-prod.yml for the production Jenkins.
 
 ## Project components
 
 ### docker
-This creates the jenkins docker image which we run as part of the ECS service. It extends the base docker image but adds the plugins.txt and jenkins.yml and runs the command to install the plugins. This is pushed to AWS ECR.
+This creates the jenkins docker image which we run as part of the ECS service. It extends the base docker image but adds the plugins.txt and either jenkins.yml or jenkins-prod.yml  and runs the command to install the plugins. This is pushed to AWS ECR.
 
 Each folder within the docker directory builds a Jenkins node image which is used to build some part of our infrastructure. The aws directory contains some python scripts which are used by the builds. Using python scripts makes assuming a role in the sub accounts easier than using the cli.
 
@@ -18,13 +18,12 @@ This creates
 * The VPC and subnets
 * The ECS cluster
 * The ECS service
-* The ECS task definition
 * The security group
 * The AWS SSM parameters
 
 #### Terraform modules
 
-Some terraform modules are in the shared tdr-terraform-modules repository. See the deployment section below.
+All terraform modules are in the shared tdr-terraform-modules repository. See the deployment section below.
 
 #### Terraform task modules
 Some builds need a task definition with more than one container. These are defined here and then used within the Jenkins pipeline file.
@@ -83,7 +82,9 @@ Before doing any Jenkins deployments:
 
 [reset-builds]: https://github.com/nationalarchives/tdr-dev-documentation/blob/master/manual/reset-jenkins-builds.md
 
-### Deploy Jenkins Docker image
+### Deploy Jenkins Docker images
+
+There are two Jenkins instances now which need to be deployed but the process is similar.
 
 First set an environment variable with the TDR management account ID, replacing
 1234 with the real ID:
@@ -93,14 +94,25 @@ export MGMT_ACCOUNT=1234
 ```
 
 Get credentials for the TDR management account using Single Sign On. Then log
-into ECR and build and push the image:
+into ECR.
 
 ```bash
 cd docker
 aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com
-docker build --pull --no-cache -t nationalarchives/jenkins .
-docker tag nationalarchives/jenkins:latest $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins:latest
-docker push $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins:latest
+```
+
+Build and push the integration Jenkins
+
+```bash
+docker build --pull --no-cache -t $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins:latest .
+`docker push $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins:latest
+```
+
+Build and push the production Jenkins
+
+```bash
+docker build -f Dockerfile-prod --pull --no-cache -t $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins-pord:latest .
+`docker push $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins-prod:latest
 ```
 
 Then redeploy Jenkins in ECS. This will cause Jenkins downtime, so check with
