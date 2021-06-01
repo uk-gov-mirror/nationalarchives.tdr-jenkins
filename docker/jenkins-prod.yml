@@ -59,6 +59,9 @@ jenkins:
       templates:
       - assignPublicIp: true
         cpu: 2048
+        environments:
+        - name: "STAGING_AWS_ACCOUNT_NUMBER"
+          value: "${/mgmt/staging_account}"
         image: "${/mgmt/management_account}.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-transfer-frontend"
         executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildTransferFrontendExecutionRole"
         label: "transfer-frontend"
