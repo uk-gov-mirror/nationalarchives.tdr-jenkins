@@ -2,7 +2,11 @@
 
 All TDR documentation is available [here](https://github.com/nationalarchives/tdr-dev-documentation)
 
-This project can be used to spin up a jenkins server using ECS. The ECS cluster is created using terraform and the jenkins configuration uses the [JCasC](https://jenkins.io/projects/jcasc/) plugin. We use this project to create two Jenkins instances. Integration Jenkins uses the jenkins.yml file for configuration and jenkins-prod.yml for the production Jenkins.
+This project can be used to spin up a jenkins server using ECS. The ECS cluster is created using terraform and the jenkins configuration uses the [JCasC](https://jenkins.io/projects/jcasc/) plugin. 
+
+We use this project to create two Jenkins instances. For configuration:
+* Integration Jenkins uses the jenkins.yml file; and
+* Production Jenkins uses the jenkins-prod.yml
 
 ## Project components
 
@@ -84,7 +88,7 @@ Before doing any Jenkins deployments:
 
 ### Deploy Jenkins Docker images
 
-There are two Jenkins instances now which need to be deployed but the process is similar.
+There are two Jenkins instances, integration and production, which need to be deployed but the process is similar.
 
 First set an environment variable with the TDR management account ID, replacing
 1234 with the real ID:
