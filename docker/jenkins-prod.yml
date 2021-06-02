@@ -111,7 +111,7 @@ jenkins:
           value: "${/mgmt/prod_account}"
         - name: "MANAGEMENT_ACCOUNT"
           value: "${/mgmt/management_account}"
-        image: "${/mgmt/management_account}.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-terraform-latest"
+        image: "${/mgmt/management_account}.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-terraform-v13"
         executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildTerraformExecutionRole"
         label: "terraform-latest"
         launchType: "FARGATE"
@@ -123,7 +123,7 @@ jenkins:
         securityGroups: "${/mgmt/fargate_security_group}"
         sharedMemorySize: 0
         subnets: "${/mgmt/fargate_subnet}"
-        templateName: "terraform-latest"
+        templateName: "terraform-v13"
       - assignPublicIp: false
         cpu: 1024
         environments:

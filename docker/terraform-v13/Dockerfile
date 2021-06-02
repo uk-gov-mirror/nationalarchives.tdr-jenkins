@@ -5,8 +5,8 @@ RUN apk update && \
 	apk add py3-pip wget unzip curl && \
         pip3 install awscli && \
 	apk upgrade openssl && \
-	wget https://releases.hashicorp.com/terraform/0.15.4/terraform_0.15.4_linux_amd64.zip && \
-	unzip terraform_0.15.4_linux_amd64.zip && \
+	wget https://releases.hashicorp.com/terraform/0.13.7/terraform_0.13.7_linux_amd64.zip && \
+	unzip terraform_0.13.7_linux_amd64.zip && \
 	mv terraform /usr/bin && \
 	terraform --version
 
