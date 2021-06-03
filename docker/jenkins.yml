@@ -129,8 +129,8 @@ jenkins:
         - name: "MANAGEMENT_ACCOUNT"
           value: "${/mgmt/management_account}"
         image: "${/mgmt/management_account}.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-terraform-v13"
-        executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildTerraformExecutionRole"
-        label: "terraform-latest"
+        executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildTerraformV13ExecutionRole"
+        label: "terraform-v13"
         launchType: "FARGATE"
         memory: 0
         memoryReservation: 4096
