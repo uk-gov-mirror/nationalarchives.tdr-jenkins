@@ -118,6 +118,30 @@ jenkins:
         subnets: "${/mgmt/fargate_subnet}"
         templateName: "terraform"
       - assignPublicIp: false
+        cpu: 2048
+        environments:
+        - name: "INTG_ACCOUNT"
+          value: "${/mgmt/intg_account}"
+        - name: "STAGING_ACCOUNT"
+          value: "${/mgmt/staging_account}"
+        - name: "PROD_ACCOUNT"
+          value: "${/mgmt/prod_account}"
+        - name: "MANAGEMENT_ACCOUNT"
+          value: "${/mgmt/management_account}"
+        image: "${/mgmt/management_account}.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-terraform-v13"
+        executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildTerraformExecutionRole"
+        label: "terraform-latest"
+        launchType: "FARGATE"
+        memory: 0
+        memoryReservation: 4096
+        networkMode: "awsvpc"
+        privileged: false
+        remoteFSRoot: "/home/jenkins"
+        securityGroups: "${/mgmt/fargate_security_group}"
+        sharedMemorySize: 0
+        subnets: "${/mgmt/fargate_subnet}"
+        templateName: "terraform-v13"
+      - assignPublicIp: false
         cpu: 1024
         environments:
         - name: "INTG_ACCOUNT"
