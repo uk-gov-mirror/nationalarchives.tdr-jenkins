@@ -9,7 +9,7 @@ module "jenkins_ecr_build_terraform_v13_repository" {
 
 module "jenkins_build_terraform_v13_execution_policy" {
   source        = "./tdr-terraform-modules/iam_policy"
-  name          = "TDRJenkinsBuildTerraformExecutionPolicy"
+  name          = "TDRJenkinsBuildTerraformV13ExecutionPolicy"
   policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecr_policy.json.tpl", { repository_arn = module.jenkins_ecr_build_terraform_v13_repository.repository.arn })
 }
 
@@ -17,6 +17,6 @@ module "jenkins_build_terraform_v13_execution_role" {
   source             = "./tdr-terraform-modules/iam_role"
   assume_role_policy = templatefile("./tdr-terraform-modules/ecs/templates/ecs_assume_role_policy.json.tpl", {})
   common_tags        = local.common_tags
-  name               = "TDRJenkinsBuildTerraformExecutionRole"
+  name               = "TDRJenkinsBuildTerraformV13ExecutionRole"
   policy_attachments = { ecr_policy = module.jenkins_build_terraform_execution_policy.policy_arn }
 }
