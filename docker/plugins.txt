@@ -21,8 +21,8 @@ display-url-api:2.3.5
 docker-commons:1.17
 docker-workflow:1.26
 durable-task:1.37
-echarts-api:5.1.0-2
-font-awesome-api:5.15.3-2
+echarts-api:5.1.2-2
+font-awesome-api:5.15.3-3
 git:4.7.2
 git-client:3.7.2
 git-server:1.9
@@ -58,13 +58,13 @@ pipeline-stage-step:2.5
 pipeline-stage-tags-metadata:1.8.5
 pipeline-stage-view:2.19
 plain-credentials:1.7
-plugin-util-api:2.2.0
+plugin-util-api:2.3.0
 popper-api:1.16.1-2
-resource-disposer:0.15
+resource-disposer:0.16
 scm-api:2.6.4
 script-security:1.77
 slack:2.48
-snakeyaml-api:1.27.0
+snakeyaml-api:1.29.1
 ssh-agent:1.22
 ssh-credentials:1.19
 structs:1.23
@@ -73,7 +73,7 @@ token-macro:2.15
 trilead-api:1.0.13
 variant:1.4
 workflow-aggregator:2.6
-workflow-api:2.42
+workflow-api:2.44
 workflow-basic-steps:2.23
 workflow-cps:2.92
 workflow-cps-global-lib:2.19
