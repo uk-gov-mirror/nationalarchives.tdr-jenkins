@@ -21,6 +21,3 @@ if len(reservations) > 0:
     print((now - launch_time).days > int(age))
 else:
     print("False")
-
-
-
