@@ -12,7 +12,7 @@ boto_session = get_session(account_number, "TDRJenkinsDescribeEC2Role" + stage.c
 client = boto_session.client("ec2")
 
 resp = client.describe_instances(Filters=[{'Name': 'tag:Name', 'Values': [instance_name]}])
-d = datetime.fromisoformat("2021-06-08T15:42:22+00:00")
+
 reservations = resp["Reservations"]
 if len(reservations) > 0:
     instances = reservations[0]["Instances"][0]
