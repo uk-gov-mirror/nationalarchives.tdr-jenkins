@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mkdir /var/jenkins_home/userContent
+wget https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css -O /var/jenkins_home/userContent/bootstrap.min.css
 FILENAME=$(aws s3 ls s3://tdr-jenkins-backup-prod-mgmt | awk '{print $4}' | sort -r | head -1)
 # copy backup tar.gz file to var/jenkins_home directory so jenkins user has permissions to copy
 aws s3 cp s3://tdr-jenkins-backup-prod-mgmt/"$FILENAME" /var/jenkins_home/jenkins-backup.tar.gz
