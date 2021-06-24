@@ -1,6 +1,6 @@
 FROM jenkins/jenkins:alpine
 USER root
-ENV JAVA_OPTS "-Djenkins.install.runSetupWizard=false -Dhudson.model.DirectoryBrowserSupport.CSP=\"default-src 'self'\" ${JAVA_OPTS:-}"
+ENV JAVA_OPTS "-Djenkins.install.runSetupWizard=false ${JAVA_OPTS:-}"
 RUN apk update && \
         apk upgrade openssl && \
         apk add py3-pip zip make && \
