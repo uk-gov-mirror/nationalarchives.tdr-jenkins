@@ -7,7 +7,7 @@ RUN apk update && \
         mkdir -p /opt/jcasc && \
         addgroup docker && \
         addgroup jenkins docker && \
-        pip3 install awscli quik && \
+        pip3 install awscli && \
         mkdir -p /var/jenkins_home/init.groovy.d && \
         git clone https://github.com/awslabs/git-secrets.git && \
         make install -C git-secrets && \
