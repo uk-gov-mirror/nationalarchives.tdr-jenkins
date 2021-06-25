@@ -1,13 +1,13 @@
 FROM jenkins/jenkins:alpine
 USER root
-ENV JAVA_OPTS "-Djenkins.install.runSetupWizard=false ${JAVA_OPTS:-}"
+ENV JAVA_OPTS "-Djenkins.install.runSetupWizard=false -Dhudson.model.DirectoryBrowserSupport.CSP=\"default-src 'self'\" ${JAVA_OPTS:-}"
 RUN apk update && \
         apk upgrade openssl && \
         apk add py3-pip zip make && \
         mkdir -p /opt/jcasc && \
         addgroup docker && \
         addgroup jenkins docker && \
-        pip3 install awscli && \
+        pip3 install awscli quik && \
         mkdir -p /var/jenkins_home/init.groovy.d && \
         git clone https://github.com/awslabs/git-secrets.git && \
         make install -C git-secrets && \
