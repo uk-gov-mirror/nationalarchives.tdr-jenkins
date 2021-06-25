@@ -30,6 +30,7 @@ github:1.33.1
 github-api:1.123
 github-branch-source:2.11.1
 handlebars:3.0.8
+htmlpublisher:1.25
 hsts-filter-plugin:1.0
 jackson2-api:2.12.3
 jdk-tool:1.5
