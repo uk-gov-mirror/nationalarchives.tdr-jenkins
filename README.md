@@ -2,7 +2,7 @@
 
 All TDR documentation is available [here](https://github.com/nationalarchives/tdr-dev-documentation)
 
-This project can be used to spin up a jenkins server using ECS. The ECS cluster is created using terraform and the jenkins configuration uses the [JCasC](https://jenkins.io/projects/jcasc/) plugin. 
+This project can be used to spin up a jenkins server using ECS. The ECS cluster is created using terraform and the jenkins configuration uses the [JCasC](https://jenkins.io/projects/jcasc/) plugin.
 
 We use this project to create two Jenkins instances. For configuration:
 * Integration Jenkins uses the jenkins.yml file; and
@@ -109,14 +109,14 @@ Build and push the integration Jenkins
 
 ```bash
 docker build --pull --no-cache -t $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins:latest .
-`docker push $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins:latest
+docker push $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins:latest
 ```
 
 Build and push the production Jenkins
 
 ```bash
 docker build -f Dockerfile-prod --pull --no-cache -t $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins-pord:latest .
-`docker push $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins-prod:latest
+docker push $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins-prod:latest
 ```
 
 Then redeploy Jenkins in ECS. This will cause Jenkins downtime, so check with
