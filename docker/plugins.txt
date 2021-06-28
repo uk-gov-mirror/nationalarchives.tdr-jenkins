@@ -15,7 +15,7 @@ command-launcher:1.6
 configuration-as-code:1.51
 configuration-as-code-secret-ssm:1.0.1
 credentials:2.5
-credentials-binding:1.25
+credentials-binding:1.26
 cucumber-reports:5.5.0
 display-url-api:2.3.5
 docker-commons:1.17
@@ -74,10 +74,10 @@ token-macro:2.15
 trilead-api:1.0.13
 variant:1.4
 workflow-aggregator:2.6
-workflow-api:2.45
+workflow-api:2.46
 workflow-basic-steps:2.23
 workflow-cps:2.92
-workflow-cps-global-lib:2.20
+workflow-cps-global-lib:2.21
 workflow-durable-task-step:2.39
 workflow-job:2.41
 workflow-multibranch:2.26
