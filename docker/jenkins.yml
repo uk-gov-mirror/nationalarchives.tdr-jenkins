@@ -28,6 +28,10 @@ credentials:
           scope: GLOBAL
           secret: ${/mgmt/pr_monitor/slack/webhook}
       - string:
+          id: "slack-release-channel"
+          scope: GLOBAL
+          secret: ${/mgmt/release/slack/webhook}
+      - string:
           id: "npm-login"
           scope: GLOBAL
           secret: ${/mgmt/npm_token}
