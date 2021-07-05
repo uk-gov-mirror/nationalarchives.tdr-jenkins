@@ -1,5 +1,5 @@
 ace-editor:1.1
-amazon-ecs:1.37
+amazon-ecs:1.38
 antisamy-markup-formatter:2.1
 apache-httpcomponents-client-4-api:4.5.13-1.0
 authentication-tokens:1.4
@@ -38,7 +38,7 @@ jjwt-api:0.11.2-9.c8b45b8bb173
 jquery-detached:1.2.1
 jquery3-api:3.6.0-1
 jsch:0.1.55.2
-junit:1.50
+junit:1.51
 lockable-resources:2.11
 mailer:1.34
 matrix-auth:2.6.7
