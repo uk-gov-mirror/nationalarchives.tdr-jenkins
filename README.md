@@ -17,6 +17,8 @@ Each folder within the docker directory builds a Jenkins node image which is use
 
 ### Terraform
 
+**Important Note**: tdr-jenkins uses v13 of Terraform. Ensure that Terraform v13 is installed before proceeding.
+
 This creates
 * The EC2 instance for the master to run on
 * The VPC and subnets
@@ -138,7 +140,11 @@ will automatically deploy a new container when the first one has stopped.
 
 ### Deploy Jenkins EC2 instance and Terraform config
 
+**Important Note**: tdr-jenkins uses v13 of Terraform. Ensure that Terraform v13 is installed before proceeding.
+
 #### Set up sub-projects
+
+ **Note**: tdr-jenkins uses Terraform v13. To provide backwards compatibility for other projects not yet upgraded, tdr-terraform-modules branch `terraform-v13` should be used until all projects are upgraded to use Terraform v13.
 
 Clone the Terraform modules and the configurations project, which contains
 sensitive information like IP addresses:
@@ -146,6 +152,7 @@ sensitive information like IP addresses:
 ```bash
 cd terraform
 git clone git@github.com:nationalarchives/tdr-terraform-modules.git
+git checkout -b terraform-v13
 git clone git@github.com:nationalarchives/tdr-configurations.git
 ```
 
