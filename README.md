@@ -144,15 +144,12 @@ will automatically deploy a new container when the first one has stopped.
 
 #### Set up sub-projects
 
- **Note**: tdr-jenkins uses Terraform v13. To provide backwards compatibility for other projects not yet upgraded, tdr-terraform-modules branch `terraform-v13` should be used until all projects are upgraded to use Terraform v13.
-
 Clone the Terraform modules and the configurations project, which contains
 sensitive information like IP addresses:
 
 ```bash
 cd terraform
 git clone git@github.com:nationalarchives/tdr-terraform-modules.git
-git checkout -b terraform-v13
 git clone git@github.com:nationalarchives/tdr-configurations.git
 ```
 
