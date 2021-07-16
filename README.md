@@ -92,6 +92,8 @@ Before doing any Jenkins deployments:
 
 There are two Jenkins instances, integration and production, which need to be deployed but the process is similar.
 
+**Tip** It is worth updating all [plugins][plugin-updates] before proceeding, as old plugin versions can cause errors in the Jenkins startup.
+
 First set an environment variable with the TDR management account ID, replacing
 1234 with the real ID:
 
@@ -117,7 +119,7 @@ docker push $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins:latest
 Build and push the production Jenkins
 
 ```bash
-docker build -f Dockerfile-prod --pull --no-cache -t $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins-pord:latest .
+docker build -f Dockerfile-prod --pull --no-cache -t $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins-prod:latest .
 docker push $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins-prod:latest
 ```
 
@@ -137,6 +139,8 @@ aws ecs update-service --force-new-deployment --cluster jenkins-mgmt \
 If this fails because there are not enough resources available on the Jenkins
 EC2 instance, manually stop the current Jenkins ECS task in the AWS console. ECS
 will automatically deploy a new container when the first one has stopped.
+
+[plugin-updates]: https://github.com/nationalarchives/tdr-dev-documentation/blob/master/manual/update-jenkins.md#update-the-jenkins-plugins
 
 ### Deploy Jenkins EC2 instance and Terraform config
 
