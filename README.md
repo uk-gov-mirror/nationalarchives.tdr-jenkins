@@ -119,7 +119,7 @@ docker push $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins:latest
 Build and push the production Jenkins
 
 ```bash
-docker build -f Dockerfile-prod --pull --no-cache -t $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins-pord:latest .
+docker build -f Dockerfile-prod --pull --no-cache -t $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins-prod:latest .
 docker push $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins-prod:latest
 ```
 
