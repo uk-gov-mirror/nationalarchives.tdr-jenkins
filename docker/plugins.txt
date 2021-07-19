@@ -9,7 +9,7 @@ bootstrap4-api:4.6.0-3
 bouncycastle-api:2.20
 branch-api:2.6.5
 build-timeout:1.20
-checks-api:1.7.0
+checks-api:1.7.2
 cloudbees-folder:6.15
 command-launcher:1.6
 configuration-as-code:1.51
@@ -45,7 +45,7 @@ matrix-auth:2.6.7
 matrix-project:1.19
 momentjs:1.1.1
 okhttp-api:3.14.9
-pipeline-build-step:2.13
+pipeline-build-step:2.14
 pipeline-github-lib:1.0
 pipeline-graph-analysis:1.11
 pipeline-input-step:2.12
