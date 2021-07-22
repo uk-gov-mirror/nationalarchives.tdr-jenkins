@@ -16,7 +16,7 @@ pipeline {
           checkout scm
           sh 'plugin-updates'
           def diffExitCode = sh(script: "git diff --exit-code docker/plugins.txt", returnStdout: true).trim()
-          if(diffExitCode == "1 ") {
+          if(diffExitCode == "1") {
             sh 'git status'
             sh "git checkout -b ${branch}"
             sh 'git add docker/plugins.txt'
