@@ -15,16 +15,23 @@ pipeline {
           def branch = "plugin-updates-${versionTag}"
           checkout scm
           sh 'plugin-updates'
-          sh 'git status'
-          sh "git checkout -b ${branch}"
-          sh 'git add  docker/plugins.txt'
-          def notes = sh(script: "cat pr-notes", returnStdout: true).trim()
-          sh "git commit -m '${notes}'"
-          sshagent(['github-jenkins']) {
-            sh "git push -u origin plugin-updates-${versionTag}"
-          }
-          withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_TOKEN')]) {
-            sh 'gh pr create --fill'
+          def diffExitCode = sh(script: "git diff --exit-code docker/plugins.txt", returnStdout: true).trim()
+          if(diffExitCode == "1") {
+            sh 'git status'
+            sh "git checkout -b ${branch}"
+            sh 'git add docker/plugins.txt'
+            def notes = sh(script: "cat pr-notes", returnStdout: true).trim()
+            sh "git commit -m '${notes}'"
+            sshagent(['github-jenkins']) {
+              sh "git push -u origin plugin-updates-${versionTag}"
+            }
+            withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_TOKEN')]) {
+              sh 'gh pr create --fill'
+            }
+          } else {
+            tdr.postToDaTdrSlackChannel(colour: "good",
+              message: "*Jenkins plugin updates* : The plugin update job for Jenkins has run but found no updates"
+            )
           }
         }
       }
