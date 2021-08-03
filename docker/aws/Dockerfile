@@ -3,6 +3,7 @@ USER root
 RUN apk update \
     && apk add curl wget py3-pip gcc python3-dev musl-dev libffi-dev openssl-dev jansson-dev build-base libc-dev file-dev automake autoconf libtool flex bison \
     && apk upgrade openssl \
+    && apk upgrade apk-tools \
     && pip3 install boto3==1.17.96 \
     && pip3 install awscli==1.19.96 \
     && pip3 install c7n c7n-mailer c7n-guardian --ignore-installed six \
