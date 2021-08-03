@@ -10,7 +10,7 @@ bouncycastle-api:2.21
 branch-api:2.6.5
 build-timeout:1.20
 checks-api:1.7.2
-cloudbees-folder:6.15
+cloudbees-folder:6.16
 command-launcher:1.6
 configuration-as-code:1.51
 configuration-as-code-secret-ssm:1.0.1
@@ -23,12 +23,12 @@ docker-workflow:1.26
 durable-task:1.38
 echarts-api:5.1.2-3
 font-awesome-api:5.15.3-4
-git:4.8.0
-git-client:3.8.0
+git:4.8.1
+git-client:3.9.0
 git-server:1.10
 github:1.33.1
 github-api:1.123
-github-branch-source:2.11.1
+github-branch-source:2.11.2
 handlebars:3.0.8
 htmlpublisher:1.25
 hsts-filter-plugin:1.0
