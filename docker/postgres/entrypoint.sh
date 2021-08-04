@@ -7,4 +7,5 @@ echo -e "$GPG_KEY" | gpg --batch --import
 echo $GPG_KEY_ID:6: | gpg --import-ownertrust
 export KEYGRIP=$(gpg --list-keys --with-keygrip | grep Keygrip | cut -d'=' -f2 | xargs)
 /usr/libexec/gpg-preset-passphrase -c $KEYGRIP <<< $PASSPHRASE
+unset PASSPHRASE KEYGRIP GPG_KEY GPG_KEY_ID
 /usr/local/bin/jenkins-agent "$@"
