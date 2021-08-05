@@ -10,6 +10,14 @@ module "sbt_with_postgres" {
   sbt_with_postgres = true
 }
 
+module "plugin_updates" {
+  source         = "./tdr-terraform-modules/ecs"
+  common_tags    = local.common_tags
+  project        = var.project
+  vpc_id         = module.jenkins_vpc.vpc_id
+  plugin_updates = true
+}
+
 module "encryption_key" {
   source      = "./tdr-terraform-modules/kms"
   project     = var.project
@@ -133,4 +141,10 @@ module "jenkins_flow_logs" {
   role_arn      = module.jenkins_flow_log_role.role.arn
   s3_arn        = "arn:aws:s3:::tdr-log-data-mgmt/flowlogs/${local.environment}/jenkins/"
   vpc_id        = module.jenkins_vpc.vpc_id
+}
+
+module "jenkins_sign_commits_policy" {
+  source        = "./tdr-terraform-modules/iam_policy"
+  name          = "TDRJenkinsSignCommitsPolicy"
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_github_gpg_policy.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
 }

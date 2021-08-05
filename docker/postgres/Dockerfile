@@ -8,5 +8,4 @@ RUN apk update && apk add curl postgresql gnupg && \
 USER jenkins
 COPY entrypoint.sh /home/jenkins/entrypoint.sh
 RUN echo "*:*:*:*:password" > /home/jenkins/.pgpass && chmod 600 /home/jenkins/.pgpass
-ENV GIT_TRACE 1
 ENTRYPOINT ["/home/jenkins/entrypoint.sh"]
