@@ -18,6 +18,14 @@ module "plugin_updates" {
   plugin_updates = true
 }
 
+module "npm" {
+  source      = "./tdr-terraform-modules/ecs"
+  common_tags = local.common_tags
+  project     = var.project
+  vpc_id      = module.jenkins_vpc.vpc_id
+  npm         = true
+}
+
 module "encryption_key" {
   source      = "./tdr-terraform-modules/kms"
   project     = var.project
