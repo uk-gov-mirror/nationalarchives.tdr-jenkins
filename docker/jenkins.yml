@@ -157,12 +157,10 @@ jenkins:
           value: "${/mgmt/prod_account}"
         - name: "MANAGEMENT_ACCOUNT"
           value: "${/mgmt/management_account}"
-        image: "${/mgmt/management_account}.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-npm"
         label: "npm"
         launchType: "FARGATE"
         memory: 0
         memoryReservation: 4096
-        executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildNpmExecutionRole"
         networkMode: "awsvpc"
         privileged: false
         remoteFSRoot: "/home/jenkins"
@@ -170,6 +168,7 @@ jenkins:
         sharedMemorySize: 0
         subnets: "${/mgmt/fargate_subnet}"
         templateName: "npm"
+        taskDefinitionOverride: "arn:aws:ecs:eu-west-2:${/mgmt/management_account}:task-definition/npm"
       - assignPublicIp: false
         cpu: 2048
         image: "jenkins/jnlp-slave"
@@ -186,8 +185,6 @@ jenkins:
         templateName: "base"
       - assignPublicIp: true
         cpu: 2048
-        image: "${/mgmt/management_account}.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-plugin-updates"
-        executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildPluginUpdatesExecutionRole"
         label: "plugin-updates"
         launchType: "FARGATE"
         memory: 0
@@ -199,6 +196,7 @@ jenkins:
         sharedMemorySize: 0
         subnets: "${/mgmt/fargate_subnet}"
         templateName: "plugin-updates"
+        taskDefinitionOverride: "arn:aws:ecs:eu-west-2:${/mgmt/management_account}:task-definition/plugin-updates"
   crumbIssuer:
     standard:
       excludeClientIPFromCrumb: false
