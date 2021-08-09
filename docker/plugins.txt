@@ -21,7 +21,7 @@ display-url-api:2.3.5
 docker-commons:1.17
 docker-workflow:1.26
 durable-task:1.38
-echarts-api:5.1.2-3
+echarts-api:5.1.2-4
 font-awesome-api:5.15.3-4
 git:4.8.1
 git-client:3.9.0
@@ -45,7 +45,7 @@ matrix-auth:2.6.8
 matrix-project:1.19
 momentjs:1.1.1
 okhttp-api:3.14.9
-pipeline-build-step:2.14
+pipeline-build-step:2.15
 pipeline-github-lib:1.0
 pipeline-graph-analysis:1.11
 pipeline-input-step:2.12
