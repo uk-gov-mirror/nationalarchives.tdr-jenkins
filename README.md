@@ -178,23 +178,9 @@ Jenkins can use to build this. For example, there is a
 Once you have changed the Dockerfile for a Jenkins node, build the image and
 push it to ECR.
 
-There are two ways to build the node images depending on which image it is.
-
-For images in the `docker/signed/xxxx` directory
-
 ```
-  cd docker/signed
+  cd docker/nodes
   docker build -f <name-of-node>/Dockerfile -t nationalarchives/jenkins-build-<name-of-node>:latest .
-```
- 
-For the images in the other `docker/xxxxx` directories.
-  ```
-  cd docker/<name-of-node>
-  docker build -t nationalarchives/jenkins-build-<name-of-node>:latest .
-  ```
-
-Once they are built, they can be pushed as usual
-```
   docker push nationalarchives/jenkins-build-<name-of-node>:latest
 ```
 

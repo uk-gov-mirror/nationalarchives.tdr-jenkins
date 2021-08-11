@@ -14,7 +14,7 @@ RUN sbt universal:packageZipTarball && \
               cp tdr-plugin-updates/lib/* /usr/lib/ && \
               rm -rf /opt/plugin-updates
 USER jenkins
-COPY entrypoint.sh /home/jenkins/entrypoint.sh
+COPY entrypoint-for-commit-signing.sh /home/jenkins/entrypoint.sh
 RUN git config --global user.email digitalpreservation@nationalarchives.gov.uk
 RUN git config --global user.name tna-digital-archiving-jenkins
 ENTRYPOINT ["/home/jenkins/entrypoint.sh"]
