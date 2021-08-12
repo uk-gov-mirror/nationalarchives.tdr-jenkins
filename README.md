@@ -175,13 +175,20 @@ Jenkins can use to build this. For example, there is a
 
 #### Update a container
 
+First set an environment variable with the TDR management account ID, replacing
+1234 with the real ID:
+
+```bash
+export MGMT_ACCOUNT=1234
+```
+
 Once you have changed the Dockerfile for a Jenkins node, build the image and
 push it to ECR.
 
-```
+```bash
   cd docker/nodes
-  docker build -f <name-of-node>/Dockerfile -t nationalarchives/jenkins-build-<name-of-node>:latest .
-  docker push nationalarchives/jenkins-build-<name-of-node>:latest
+  docker build -f <name-of-node>/Dockerfile -t $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-<name-of-node>:latest .
+  docker push $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-<name-of-node>:latest
 ```
 
 #### Add a new container
