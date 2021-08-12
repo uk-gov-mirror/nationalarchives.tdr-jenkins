@@ -3,7 +3,7 @@ amazon-ecs:1.38
 antisamy-markup-formatter:2.1
 apache-httpcomponents-client-4-api:4.5.13-1.0
 authentication-tokens:1.4
-aws-credentials:1.29
+aws-credentials:1.30
 aws-java-sdk:1.11.995
 bootstrap4-api:4.6.0-3
 bouncycastle-api:2.21
@@ -20,8 +20,8 @@ cucumber-reports:5.5.0
 display-url-api:2.3.5
 docker-commons:1.17
 docker-workflow:1.26
-durable-task:1.38
-echarts-api:5.1.2-6
+durable-task:1.39
+echarts-api:5.1.2-8
 font-awesome-api:5.15.3-4
 git:4.8.1
 git-client:3.9.0
@@ -38,7 +38,7 @@ jjwt-api:0.11.2-9.c8b45b8bb173
 jquery-detached:1.2.1
 jquery3-api:3.6.0-2
 jsch:0.1.55.2
-junit:1.51
+junit:1.52
 lockable-resources:2.11
 mailer:1.34
 matrix-auth:2.6.8
