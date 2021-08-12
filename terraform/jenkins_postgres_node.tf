@@ -18,5 +18,8 @@ module "jenkins_build_postgres_execution_role" {
   assume_role_policy = templatefile("./tdr-terraform-modules/ecs/templates/ecs_assume_role_policy.json.tpl", {})
   common_tags        = local.common_tags
   name               = "TDRJenkinsBuildPostgresExecutionRole"
-  policy_attachments = { ecr_policy = module.jenkins_build_postgres_execution_policy.policy_arn }
+  policy_attachments = {
+    ecr_policy          = module.jenkins_build_postgres_execution_policy.policy_arn,
+    sign_commits_policy = module.jenkins_sign_commits_policy.policy_arn
+  }
 }
