@@ -21,7 +21,7 @@ display-url-api:2.3.5
 docker-commons:1.17
 docker-workflow:1.26
 durable-task:1.38
-echarts-api:5.1.2-4
+echarts-api:5.1.2-6
 font-awesome-api:5.15.3-4
 git:4.8.1
 git-client:3.9.0
