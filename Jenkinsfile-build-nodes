@@ -22,19 +22,27 @@ pipeline {
     stages {
       stage('Build node') {
         steps {
-          dir("./docker/nodes") {
-            script {
-              def account = params.ECR_REPOSITORY == "sandbox" ? "${env.SANDBOX_ACCOUNT}" : "${env.MANAGEMENT_ACCOUNT}"
-              def imageName = params.JENKINS_NODE == "jenkins" || "jenkins-prod" ? "${params.JENKINS_NODE}" : "jenkins-build-${params.JENKINS_NODE}"
-              def ecrRoot = "${account}.dkr.ecr.eu-west-2.amazonaws.com"
-              def imageTag = params.ECR_REPOSITORY == "sandbox" ? "${ecrRoot}/sandbox_ecr_repository:${imageName}"
-                      : "${ecrRoot}/${imageName}:latest"
-              def dockerFileLocation = params.JENKINS_NODE == "jenkins" || "jenkins-prod" ? "." : "-f ${params.JENKINS_NODE}"
+          script {
+            def account = params.ECR_REPOSITORY == "sandbox" ? "${env.SANDBOX_ACCOUNT}" : "${env.MANAGEMENT_ACCOUNT}"
+            def imageName = params.JENKINS_NODE == ("jenkins" || "jenkins-prod") ? "${params.JENKINS_NODE}" : "jenkins-build-${params.JENKINS_NODE}"
+            def ecrRoot = "${account}.dkr.ecr.eu-west-2.amazonaws.com"
+            def imageTag = params.ECR_REPOSITORY == "sandbox" ? "${ecrRoot}/sandbox_ecr_repository:${imageName}"
+                    : "${ecrRoot}/${imageName}:latest"
+            def jenkinsDockerFileName = params.JENKINS_NODE == "jenkins-prod" ? "Dockerfile-prod" : "Dockerfile"
 
-              sh "docker build ${dockerFileLocation}/Dockerfile --pull --no-cache -t ${imageTag} ."
-              sh "aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin ${account}.dkr.ecr.eu-west-2.amazonaws.com"
-              sh "docker push ${imageTag}"
+            //Docker files are located in different directories
+            if (params.JENKINS_NODE == ("jenkins" || "jenkins-prod")) {
+              dir("./docker") {
+                sh "docker build ${jenkinsDockerFileName} --pull --no-cache -t ${imageTag} ."
+              }
+            } else {
+              //Child node Docker files rely on script in the 'nodes' directory therefore requires different docker build command to build from the parent directory
+              dir("./docker/nodes") {
+                sh "docker build -f ${params.JENKINS_NODE}/Dockerfile --pull --no-cache -t ${imageTag} ."
+              }
             }
+            sh "aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin ${account}.dkr.ecr.eu-west-2.amazonaws.com"
+            sh "docker push ${imageTag}"
           }
         }
       }
