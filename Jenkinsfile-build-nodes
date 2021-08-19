@@ -18,14 +18,16 @@ pipeline {
       stage('Build node') {
         steps {
           dir("./docker/nodes") {
-            def buildCommand = params.JENKINS_NODE == "jenkins" ? "." : "-f ${params.JENKINS_NODE}"
-            def imageName = params.JENKINS_NODE == "jenkins" ? "jenkins" : "jenkins-build-${params.JENKINS_NODE}"
-            echo "Build Command: ${buildCommand}"
-            echo "Image Name: ${imageName}"
+            script {
+              def buildCommand = params.JENKINS_NODE == "jenkins" ? "." : "-f ${params.JENKINS_NODE}"
+              def imageName = params.JENKINS_NODE == "jenkins" ? "jenkins" : "jenkins-build-${params.JENKINS_NODE}"
+              echo "Build Command: ${buildCommand}"
+              echo "Image Name: ${imageName}"
 
 //            sh "docker build ${buildCommand}/Dockerfile --pull --no-cache -t ${env.MANAGEMENT_ACCOUNT}.dkr.ecr.eu-west-2.amazonaws.com/${imageName}:latest ."
 //            sh "aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin ${env.MANAGEMENT_ACCOUNT}.dkr.ecr.eu-west-2.amazonaws.com"
 //            sh "docker push ${env.MANAGEMENT_ACCOUNT}.dkr.ecr.eu-west-2.amazonaws.com/${imageName}:latest"
+            }
           }
         }
       }
