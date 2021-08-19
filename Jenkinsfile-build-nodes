@@ -1,0 +1,33 @@
+library("tdr-jenkinslib")
+
+pipeline {
+  agent {
+    label "master"
+  }
+  parameters {
+    string(
+      name: 'BRANCH',
+      defaultValue: 'master',
+      description: 'The branch to build from, defaults to master branch if not specified')
+    choice(
+      name: 'JENKINS_NODE',
+      choices: ['aws', 'jenkins', 'jenkins-prod', 'npm', 'plugin-updates', 'postgres', 'terraform', 'transfer-frontend'],
+      description: 'The Jenkins node you wish to build')
+    }
+    stages {
+      stage('Build node') {
+        steps {
+          dir("./docker/nodes") {
+            def buildCommand = params.JENKINS_NODE == "jenkins" ? "." : "-f ${params.JENKINS_NODE}"
+            def imageName = params.JENKINS_NODE == "jenkins" ? "jenkins" : "jenkins-build-${params.JENKINS_NODE}"
+            echo "Build Command: ${buildCommand}"
+            echo "Image Name: ${imageName}"
+
+//            sh "docker build ${buildCommand}/Dockerfile --pull --no-cache -t ${env.MANAGEMENT_ACCOUNT}.dkr.ecr.eu-west-2.amazonaws.com/${imageName}:latest ."
+//            sh "aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin ${env.MANAGEMENT_ACCOUNT}.dkr.ecr.eu-west-2.amazonaws.com"
+//            sh "docker push ${env.MANAGEMENT_ACCOUNT}.dkr.ecr.eu-west-2.amazonaws.com/${imageName}:latest"
+          }
+        }
+      }
+    }
+  }
