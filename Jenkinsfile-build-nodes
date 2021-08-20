@@ -1,4 +1,9 @@
-library("tdr-jenkinslib")
+def account = params.ECR_REPOSITORY == "sandbox" ? "${env.SANDBOX_ACCOUNT}" : "${env.MANAGEMENT_ACCOUNT}"
+def imageName = params.JENKINS_NODE == ("jenkins" || "jenkins-prod") ? "${params.JENKINS_NODE}" : "jenkins-build-${params.JENKINS_NODE}"
+def ecrRoot = "${account}.dkr.ecr.eu-west-2.amazonaws.com"
+def imageTag = params.ECR_REPOSITORY == "sandbox" ? "${ecrRoot}/sandbox_ecr_repository:${imageName}"
+        : "${ecrRoot}/${imageName}:latest"
+def dockerFileName = params.JENKINS_NODE == "jenkins-prod" ? "Dockerfile-prod" : "Dockerfile"
 
 pipeline {
   agent {
@@ -17,33 +22,44 @@ pipeline {
     choice(
       name: 'JENKINS_NODE',
       choices: ['aws', 'jenkins', 'jenkins-prod', 'npm', 'plugin-updates', 'postgres', 'terraform', 'transfer-frontend'],
-      description: 'The Jenkins node you wish to build')
+      description: 'The Jenkins node image you wish to build')
     }
     stages {
-      stage('Build node') {
+      stage('Build image node') {
         steps {
           script {
-            def account = params.ECR_REPOSITORY == "sandbox" ? "${env.SANDBOX_ACCOUNT}" : "${env.MANAGEMENT_ACCOUNT}"
-            def imageName = params.JENKINS_NODE == ("jenkins" || "jenkins-prod") ? "${params.JENKINS_NODE}" : "jenkins-build-${params.JENKINS_NODE}"
-            def ecrRoot = "${account}.dkr.ecr.eu-west-2.amazonaws.com"
-            def imageTag = params.ECR_REPOSITORY == "sandbox" ? "${ecrRoot}/sandbox_ecr_repository:${imageName}"
-                    : "${ecrRoot}/${imageName}:latest"
-            def jenkinsDockerFileName = params.JENKINS_NODE == "jenkins-prod" ? "Dockerfile-prod" : "Dockerfile"
-
             //Docker files are located in different directories
             if (params.JENKINS_NODE == ("jenkins" || "jenkins-prod")) {
               dir("./docker") {
-                sh "docker build ${jenkinsDockerFileName} --pull --no-cache -t ${imageTag} ."
+                sh "docker build ${dockerFileName} --pull --no-cache -t ${imageTag} ."
               }
             } else {
               //Child node Docker files rely on script in the 'nodes' directory therefore requires different docker build command to build from the parent directory
               dir("./docker/nodes") {
-                sh "docker build -f ${params.JENKINS_NODE}/Dockerfile --pull --no-cache -t ${imageTag} ."
+                sh "docker build -f ${params.JENKINS_NODE}/${dockerFileName} --pull --no-cache -t ${imageTag} ."
               }
             }
+          }
+        }
+      }
+      stage('Push node image to ECR') {
+        steps {
+          script {
             sh "aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin ${account}.dkr.ecr.eu-west-2.amazonaws.com"
             sh "docker push ${imageTag}"
           }
+        }
+      }
+    }
+    post {
+      always {
+        sh "docker rmi ${imageTag}"
+      }
+      failure {
+        if (params.BRANCH ==  "master") {
+          tdr.postToDaTdrSlackChannel(colour: "danger",
+            message: "*TDR Build Jenkins Node Images* :warning: The build for ${params.JENKINS_NODE} image on ${params.BRANCH} has failed"
+          )
         }
       }
     }
