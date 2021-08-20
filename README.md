@@ -234,5 +234,5 @@ To manually initiate a backup:
 [Maintenance Window history]: https://eu-west-2.console.aws.amazon.com/systems-manager/maintenance-windows/mw-0bd9ef68cfe04bd4e/history?region=eu-west-2
 [Systems Manager Command History]: https://eu-west-2.console.aws.amazon.com/systems-manager/run-command/complete-commands?region=eu-west-2
 [mw-config]: https://eu-west-2.console.aws.amazon.com/systems-manager/maintenance-windows/mw-0bd9ef68cfe04bd4e/description?region=eu-west-2
-[TDR Build Jenkins Node Images]: https://to_be_added.com
+[TDR Build Jenkins Node Images]: https://jenkins-prod.tdr-management.nationalarchives.gov.uk/job/TDR%20Build%20Jenkins%20Node%20Images
 [TDR Scripts: ECR Sandbox]: https://github.com/nationalarchives/tdr-scripts/tree/master/terraform/ecr-sandbox
