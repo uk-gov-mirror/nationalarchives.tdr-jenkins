@@ -1,3 +1,5 @@
+library("tdr-jenkinslib")
+
 def account = params.ECR_REPOSITORY == "sandbox" ? "${env.SANDBOX_ACCOUNT}" : "${env.MANAGEMENT_ACCOUNT}"
 def imageName = params.JENKINS_NODE == ("jenkins" || "jenkins-prod") ? "${params.JENKINS_NODE}" : "jenkins-build-${params.JENKINS_NODE}"
 def ecrRoot = "${account}.dkr.ecr.eu-west-2.amazonaws.com"
@@ -56,13 +58,11 @@ pipeline {
         sh "docker rmi ${imageTag}"
       }
       failure {
-        steps {
-          script {
-            if (params.BRANCH ==  "master") {
-              tdr.postToDaTdrSlackChannel(colour: "danger",
-                message: "*TDR Build Jenkins Node Images* :warning: The build for ${params.JENKINS_NODE} image on ${params.BRANCH} has failed"
-              )
-            }
+        script {
+          if (params.BRANCH == "master") {
+            tdr.postToDaTdrSlackChannel(colour: "danger",
+              message: "*TDR Build Jenkins Node Images* :warning: The build for *${params.JENKINS_NODE}* image on ${params.BRANCH} has failed"
+            )
           }
         }
       }
