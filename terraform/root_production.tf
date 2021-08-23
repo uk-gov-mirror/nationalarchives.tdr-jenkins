@@ -113,13 +113,19 @@ module "jenkins_ecs_task_role_prod" {
   common_tags        = local.common_tags
   assume_role_policy = templatefile("./tdr-terraform-modules/ecs/templates/ecs_assume_role_policy.json.tpl", {})
   name               = "TDRJenkinsProdAppTaskRole${title(local.environment)}"
-  policy_attachments = { task_policy = module.jenkins_task_policy_prod.policy_arn, cloudwatch_policy = module.jenkins_ecs_execution_cloudwatch_policy_prod.policy_arn, s3_policy = module.jenkins_s3_backup_policy_prod.policy_arn }
+  policy_attachments = { task_policy = module.jenkins_task_policy_prod.policy_arn, task_policy_additional = module.jenkins_task_policy_prod_additional.policy_arn, cloudwatch_policy = module.jenkins_ecs_execution_cloudwatch_policy_prod.policy_arn, s3_policy = module.jenkins_s3_backup_policy_prod.policy_arn }
 }
 
 module "jenkins_task_policy_prod" {
   source        = "./tdr-terraform-modules/iam_policy"
   name          = "TDRJenkinsTaskPolicyProd${title(local.environment)}"
   policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecs_task.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
+}
+
+module "jenkins_task_policy_prod_additional" {
+  source        = "./tdr-terraform-modules/iam_policy"
+  name          = "TDRJenkinsTaskPolicyAdditionalProd${title(local.environment)}"
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecs_task_prod.json.tpl", { account_id = data.aws_caller_identity.current.account_id, sandbox_account_id = data.aws_ssm_parameter.sandbox_account.value })
 }
 
 module "jenkins_backup_s3_prod" {

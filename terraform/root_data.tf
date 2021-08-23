@@ -26,3 +26,7 @@ data "aws_lambda_function" "notifications_function" {
 }
 
 data "aws_caller_identity" "current" {}
+
+data "aws_ssm_parameter" "sandbox_account" {
+  name = "/mgmt/sandbox_account"
+}
