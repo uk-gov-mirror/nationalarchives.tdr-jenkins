@@ -1,7 +1,8 @@
 library("tdr-jenkinslib")
 
+def isJenkinsParentNode = (params.JENKINS_NODE == "jenkins" || params.JENKINS_NODE == "jenkins-prod")
 def account = params.ECR_REPOSITORY == "sandbox" ? "${env.SANDBOX_ACCOUNT}" : "${env.MANAGEMENT_ACCOUNT}"
-def imageName = params.JENKINS_NODE == ("jenkins" || "jenkins-prod") ? "${params.JENKINS_NODE}" : "jenkins-build-${params.JENKINS_NODE}"
+def imageName = isJenkinsParentNode ? "${params.JENKINS_NODE}" : "jenkins-build-${params.JENKINS_NODE}"
 def ecrRoot = "${account}.dkr.ecr.eu-west-2.amazonaws.com"
 def imageTag = params.ECR_REPOSITORY == "sandbox" ? "${ecrRoot}/sandbox_ecr_repository:${imageName}"
         : "${ecrRoot}/${imageName}:latest"
@@ -31,7 +32,7 @@ pipeline {
         steps {
           script {
             //Docker files are located in different directories
-            if (params.JENKINS_NODE == ("jenkins" || "jenkins-prod")) {
+            if (isJenkinsParentNode) {
               dir("./docker") {
                 sh "docker build ${dockerFileName} --pull --no-cache -t ${imageTag} ."
               }
