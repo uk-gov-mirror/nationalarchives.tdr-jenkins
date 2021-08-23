@@ -34,7 +34,7 @@ pipeline {
             //Docker files are located in different directories
             if (isJenkinsParentNode) {
               dir("./docker") {
-                sh "docker build ${dockerFileName} --pull --no-cache -t ${imageTag} ."
+                sh "docker build -f ${dockerFileName} --pull --no-cache -t ${imageTag} ."
               }
             } else {
               //Child node Docker files rely on script in the 'nodes' directory therefore requires different docker build command to build from the parent directory
