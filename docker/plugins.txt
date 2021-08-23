@@ -31,7 +31,6 @@ git-server:1.10
 github:1.34.0
 github-api:1.123
 github-branch-source:2.11.2
-github-oauth:0.34-SNAPSHOT (private-53e10daa-sam)
 handlebars:3.0.8
 hsts-filter-plugin:1.0
 htmlpublisher:1.25
