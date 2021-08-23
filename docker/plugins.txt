@@ -77,7 +77,6 @@ timestamper:1.13
 token-macro:266.v44a80cf277fd
 trilead-api:1.0.13
 variant:1.4
-windows-slaves:1.8
 workflow-aggregator:2.6
 workflow-api:2.46
 workflow-basic-steps:2.24
