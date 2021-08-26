@@ -187,6 +187,8 @@ jenkins:
       env:
         - key: "MANAGEMENT_ACCOUNT"
           value: "${/mgmt/management_account}"
+        - key: "SANDBOX_ACCOUNT"
+          value: "${/mgmt/sandbox_account}"
   markupFormatter: "plainText"
   mode: EXCLUSIVE
   myViewsTabBar: "standard"

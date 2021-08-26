@@ -94,34 +94,25 @@ There are two Jenkins instances, integration and production, which need to be de
 
 **Tip** It is worth updating all [plugins][plugin-updates] before proceeding, as old plugin versions can cause errors in the Jenkins startup.
 
-First set an environment variable with the TDR management account ID, replacing
-1234 with the real ID:
+#### Building and Pushing Jenkins Docker Images to ECR
 
-```bash
-export MGMT_ACCOUNT=1234
-```
+There is a Jenkins job to *build* the images (deployment of updated images is a manual process): [TDR Build Jenkins Node Images][TDR Build Jenkins Node Images]
 
-Get credentials for the TDR management account using Single Sign On. Then log
-into ECR.
+Set the following parameters to build and push the image for deployment:
+* BRANCH: `master` (default value)
+* ECR_REPOSITORY: `mgmt` (default value)
+* JENKINS_NODE: `jenkins` or `jenkins-prod` (depends on which Jenkins instance is to be updated)
 
-```bash
-cd docker
-aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com
-```
+To check the whether the image has any vulnerabilities the image can be pushed to the sandbox ECR before pushing to the management ECR.
 
-Build and push the integration Jenkins
+*NOTE*: Before proceeding ensure the sandbox ECR has been created. See: [TDR Scripts: ECR Sandbox][TDR Scripts: ECR Sandbox]
 
-```bash
-docker build --pull --no-cache -t $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins:latest .
-docker push $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins:latest
-```
+Set the following parameters to build and push the image to the sandbox ECR:
+* BRANCH: `[name of branch with image changes]`
+* ECR_REPOSITORY: `sandbox`
+* JENKINS_NODE: `jenkins` or `jenkins-prod` (depends on which Jenkins instance is to be checked)
 
-Build and push the production Jenkins
-
-```bash
-docker build -f Dockerfile-prod --pull --no-cache -t $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins-prod:latest .
-docker push $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins-prod:latest
-```
+#### Deploying Updated Jenkins Images
 
 Then redeploy Jenkins in ECS. This will cause Jenkins downtime, so check with
 the rest of the team first.
@@ -175,29 +166,35 @@ Jenkins can use to build this. For example, there is a
 
 #### Update a container
 
-First set an environment variable with the TDR management account ID, replacing
-1234 with the real ID:
+There is a Jenkins job to *build* the node images: [TDR Build Jenkins Node Images][TDR Build Jenkins Node Images]
 
-```bash
-export MGMT_ACCOUNT=1234
-```
+Set the following parameters to build and push the image for deployment:
+* BRANCH: `master` (default value)
+* ECR_REPOSITORY: `mgmt` (default value)
+* JENKINS_NODE: `[select node image from drop down list]`
 
-Once you have changed the Dockerfile for a Jenkins node, build the image and
-push it to ECR.
+To check the whether the image has any vulnerabilities the image can be pushed to the sandbox ECR before pushing to the management ECR.
 
-```bash
-  cd docker/nodes
-  docker build -f <name-of-node>/Dockerfile -t $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-<name-of-node>:latest .
-  docker push $MGMT_ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-<name-of-node>:latest
-```
+*NOTE*: Before proceeding ensure the sandbox ECR has been created. See: [TDR Scripts: ECR Sandbox][TDR Scripts: ECR Sandbox]
+
+Set the following parameters to build and push the image to the sandbox ECR:
+* BRANCH: `[name of branch with image changes]`
+* ECR_REPOSITORY: `sandbox`
+* JENKINS_NODE: `[select node image from drop down list]`
 
 #### Add a new container
 
-The docker container must start with `FROM jenkins/inbound-agent:alpine` This image is mostly stock Alpine Linux and from there, you need to install whatever it is you need for your build. Build the docker image and push to ECR.
+The docker container must start with `FROM jenkins/inbound-agent:alpine` This image is mostly stock Alpine Linux and from there, you need to install whatever it is you need for your build:
+* Add the new node name to the list of node names in the `Jenkinsfile-build-nodes`
+* Add IAM permission for the production Jenkins ECS task role to access the ECR repository for the new image: [Prod ECS Task Role Policy][Prod ECS Task Role Policy]
+* Push Git branch with new container
+* Build the docker image and push to ECR using the Jenkins job, setting the `BRANCH` parameter to the branch with the new container: [TDR Build Jenkins Node Images][TDR Build Jenkins Node Images]
 
 You then need to configure another container in the clouds section of the jenkins [configuration](docker/jenkins.yml) You can copy and paste most of it, just change the name and the image.
 
 Rebuild and push the jenkins docker container and redeploy to ECS. You can then use this container in your builds.
+
+[Prod ECS Task Role Policy]: https://github.com/nationalarchives/tdr-terraform-modules/blob/master/iam_policy/templates/jenkins_ecs_task_prod.json.tpl
 
 ## Backups
 
@@ -237,3 +234,5 @@ To manually initiate a backup:
 [Maintenance Window history]: https://eu-west-2.console.aws.amazon.com/systems-manager/maintenance-windows/mw-0bd9ef68cfe04bd4e/history?region=eu-west-2
 [Systems Manager Command History]: https://eu-west-2.console.aws.amazon.com/systems-manager/run-command/complete-commands?region=eu-west-2
 [mw-config]: https://eu-west-2.console.aws.amazon.com/systems-manager/maintenance-windows/mw-0bd9ef68cfe04bd4e/description?region=eu-west-2
+[TDR Build Jenkins Node Images]: https://jenkins-prod.tdr-management.nationalarchives.gov.uk/job/TDR%20Build%20Jenkins%20Node%20Images
+[TDR Scripts: ECR Sandbox]: https://github.com/nationalarchives/tdr-scripts/tree/master/terraform/ecr-sandbox
