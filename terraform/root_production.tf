@@ -166,7 +166,7 @@ module "jenkins_production_cloudwatch_ssm_parameter" {
 module "jenkins_production_disk_space_alarm" {
   source             = "./tdr-terraform-modules/cloudwatch_alarms"
   environment        = local.environment
-  function           = "jenkins-disk-space-alarm"
+  function           = "jenkins-prod-disk-space-alarm"
   metric_name        = "disk_used_percent"
   project            = var.project
   threshold          = 70
