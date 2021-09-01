@@ -32,7 +32,7 @@ module "encryption_key" {
   function    = "encryption"
   environment = local.environment
   common_tags = local.common_tags
-  key_policy  = "message_system_access"
+  key_policy  = "cloudwatch"
 }
 
 module "jenkins_ami" {
@@ -155,4 +155,12 @@ module "jenkins_sign_commits_policy" {
   source        = "./tdr-terraform-modules/iam_policy"
   name          = "TDRJenkinsSignCommitsPolicy"
   policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_github_gpg_policy.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
+}
+
+module "notifications_topic" {
+  source      = "./tdr-terraform-modules/sns"
+  common_tags = local.common_tags
+  function    = "notifications"
+  project     = var.project
+  kms_key_arn = module.encryption_key.kms_key_arn
 }

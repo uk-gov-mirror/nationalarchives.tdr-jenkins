@@ -37,7 +37,7 @@ module "jenkins_integration_ec2" {
   name                = local.ec2_instance_name
   subnet_id           = module.jenkins_vpc.private_subnets[1]
   security_group_id   = module.jenkins_ec2_security_group.security_group_id
-  attach_policies     = { ec2_policy = module.jenkins_ec2_policy.policy_arn }
+  attach_policies     = { ec2_policy = module.jenkins_ec2_policy.policy_arn, cloudwatch_agent_policy = module.jenkins_integration_cloudwatch_agent_policy.policy_arn }
   private_ip          = "10.0.1.221"
   user_data           = "user_data_jenkins_docker"
   user_data_variables = { jenkins_cluster_name = "jenkins-${local.environment}" }
@@ -151,4 +151,27 @@ module "jenkins_integration_execution_policy" {
   source        = "./tdr-terraform-modules/iam_policy"
   name          = "TDRJenkinsExecutionPolicyMgmt"
   policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecs_execution_integration.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
+}
+
+module "jenkins_integration_cloudwatch_ssm_parameter" {
+  source      = "./tdr-terraform-modules/ssm_parameter"
+  common_tags = local.common_tags
+  parameters = [
+    { name = "/${local.environment}/jenkins_cloudwatch_agent_config", description = "The configuration for Jenkins Cloudwatch Agent", type = "String", value = templatefile("./tdr-terraform-modules/ssm_parameter/templates/jenkins_cloudwatch_agent.json.tpl", { server_name = "Jenkins" }) }
+  ]
+}
+
+module "jenkins_integration_cloudwatch_agent_policy" {
+  source        = "./tdr-terraform-modules/iam_policy"
+  name          = "TDRJenkinsCloudwatchAgentPolicyMgmt"
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_cloudwatch_agent_integration.json.tpl", {})
+}
+
+module "jenkins_integration_disk_space_alarm" {
+  source      = "./tdr-terraform-modules/cloudwatch_alarms"
+  environment = local.environment
+  function    = "jenkins-disk-space-alarm"
+  metric_name = "disk_used_percent"
+  project     = var.project
+  threshold   = 70
 }
