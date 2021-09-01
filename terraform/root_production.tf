@@ -154,3 +154,23 @@ module "jenkins_ecs_execution_policy_prod" {
   name          = "TDRJenkinsExecutionPolicyProdMgmt"
   policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecs_execution_prod.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
 }
+
+module "jenkins_integration_cloudwatch_ssm_parameter" {
+  source      = "./tdr-terraform-modules/ssm_parameter"
+  common_tags = local.common_tags
+  parameters = [
+    { name = "/${local.environment}/jenkins_cloudwatch_agent_config", description = "The configuration for Jenkins Cloudwatch Agent", type = "String", value = templatefile("./tdr-terraform-modules/ssm_parameter/templates/jenkins_cloudwatch_agent.json.tpl", { server_name = "JenkinsProd" }) }
+  ]
+}
+
+module "jenkins_integration_disk_space_alarm" {
+  source      = "./tdr-terraform-modules/cloudwatch_alarms"
+  environment = local.environment
+  function    = "jenkins-disk-space-alarm"
+  metric_name = "disk_used_percent"
+  project     = var.project
+  threshold   = 70
+  dimensions = {
+    server_name = "JenkinsProd"
+  }
+}

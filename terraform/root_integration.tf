@@ -161,12 +161,6 @@ module "jenkins_integration_cloudwatch_ssm_parameter" {
   ]
 }
 
-module "jenkins_integration_cloudwatch_agent_policy" {
-  source        = "./tdr-terraform-modules/iam_policy"
-  name          = "TDRJenkinsCloudwatchAgentPolicyMgmt"
-  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_cloudwatch_agent_integration.json.tpl", {})
-}
-
 module "jenkins_integration_disk_space_alarm" {
   source      = "./tdr-terraform-modules/cloudwatch_alarms"
   environment = local.environment
@@ -174,4 +168,7 @@ module "jenkins_integration_disk_space_alarm" {
   metric_name = "disk_used_percent"
   project     = var.project
   threshold   = 70
+  dimensions = {
+    server_name = "Jenkins"
+  }
 }
