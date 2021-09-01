@@ -1,11 +1,13 @@
 library("tdr-jenkinslib")
 
+def version = "v${env.BUILD_NUMBER}"
+def isSandboxEcr = params.ECR_REPOSITORY == "sandbox"
 def isJenkinsParentNode = (params.JENKINS_NODE == "jenkins" || params.JENKINS_NODE == "jenkins-prod")
-def account = params.ECR_REPOSITORY == "sandbox" ? "${env.SANDBOX_ACCOUNT}" : "${env.MANAGEMENT_ACCOUNT}"
+def account = isSandboxEcr ? "${env.SANDBOX_ACCOUNT}" : "${env.MANAGEMENT_ACCOUNT}"
 def imageName = isJenkinsParentNode ? "${params.JENKINS_NODE}" : "jenkins-build-${params.JENKINS_NODE}"
 def ecrRoot = "${account}.dkr.ecr.eu-west-2.amazonaws.com"
-def imageTag = params.ECR_REPOSITORY == "sandbox" ? "${ecrRoot}/sandbox_ecr_repository:${imageName}"
-        : "${ecrRoot}/${imageName}:latest"
+def imageTag = isSandboxEcr ? "${ecrRoot}/sandbox_ecr_repository:${imageName}"
+        : "${ecrRoot}/${imageName}:${version}"
 def dockerFileName = params.JENKINS_NODE == "jenkins-prod" ? "Dockerfile-prod" : "Dockerfile"
 
 pipeline {
@@ -50,6 +52,23 @@ pipeline {
           script {
             sh "aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin ${account}.dkr.ecr.eu-west-2.amazonaws.com"
             sh "docker push ${imageTag}"
+          }
+        }
+      }
+      stage('Post build') {
+        when {
+          expression { !isSandboxEcr }
+        }
+        //To avoid duplicate Docker image tag "jenkins-prod:latest" on the Jenkins prod instance tag the built image with version number
+        //Then retag as "latest" in ECR once the image has been pushed
+        stages {
+          stage('Tag image with "latest"') {
+            steps {
+              script {
+                def manifest = sh(script: "aws ecr batch-get-image --repository-name ${imageName} --image-ids imageTag=${version} --query 'images[].imageManifest' --output text", returnStdout: true).trim()
+                sh "aws ecr put-image --repository-name ${imageName} --image-tag latest --image-manifest '${manifest}'"
+              }
+            }
           }
         }
       }
