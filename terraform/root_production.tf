@@ -155,7 +155,7 @@ module "jenkins_ecs_execution_policy_prod" {
   policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecs_execution_prod.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
 }
 
-module "jenkins_integration_cloudwatch_ssm_parameter" {
+module "jenkins_production_cloudwatch_ssm_parameter" {
   source      = "./tdr-terraform-modules/ssm_parameter"
   common_tags = local.common_tags
   parameters = [
@@ -163,7 +163,7 @@ module "jenkins_integration_cloudwatch_ssm_parameter" {
   ]
 }
 
-module "jenkins_integration_disk_space_alarm" {
+module "jenkins_production_disk_space_alarm" {
   source      = "./tdr-terraform-modules/cloudwatch_alarms"
   environment = local.environment
   function    = "jenkins-disk-space-alarm"
