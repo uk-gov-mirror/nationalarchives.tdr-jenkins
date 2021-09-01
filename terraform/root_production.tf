@@ -37,10 +37,10 @@ module "jenkins_ec2_prod" {
   name                = "JenkinsProduction"
   subnet_id           = module.jenkins_vpc.private_subnets[1]
   security_group_id   = module.jenkins_ec2_security_group.security_group_id
-  attach_policies     = { ec2_policy = module.jenkins_ec2_policy.policy_arn }
+  attach_policies     = { ec2_policy = module.jenkins_ec2_policy.policy_arn, cloudwatch_agent_policy = module.jenkins_integration_cloudwatch_agent_policy.policy_arn }
   private_ip          = "10.0.1.222"
   user_data           = "user_data_jenkins_docker"
-  user_data_variables = { jenkins_cluster_name = "jenkins-prod-${local.environment}" }
+  user_data_variables = { jenkins_cluster_name = "jenkins-prod-${local.environment}", agent_policy_parameter_name = "/${local.environment}/cloudwatch/agent/production/policy" }
   instance_type       = "t2.medium"
   volume_size         = 60
 }
@@ -159,17 +159,18 @@ module "jenkins_production_cloudwatch_ssm_parameter" {
   source      = "./tdr-terraform-modules/ssm_parameter"
   common_tags = local.common_tags
   parameters = [
-    { name = "/${local.environment}/jenkins_cloudwatch_agent_config", description = "The configuration for Jenkins Cloudwatch Agent", type = "String", value = templatefile("./tdr-terraform-modules/ssm_parameter/templates/jenkins_cloudwatch_agent.json.tpl", { server_name = "JenkinsProd" }) }
+    { name = "/${local.environment}/cloudwatch/agent/production/policy", description = "The configuration for Jenkins Cloudwatch Agent", type = "String", value = templatefile("./tdr-terraform-modules/ssm_parameter/templates/jenkins_cloudwatch_agent.json.tpl", { server_name = "JenkinsProd" }) }
   ]
 }
 
 module "jenkins_production_disk_space_alarm" {
-  source      = "./tdr-terraform-modules/cloudwatch_alarms"
-  environment = local.environment
-  function    = "jenkins-disk-space-alarm"
-  metric_name = "disk_used_percent"
-  project     = var.project
-  threshold   = 70
+  source             = "./tdr-terraform-modules/cloudwatch_alarms"
+  environment        = local.environment
+  function           = "jenkins-disk-space-alarm"
+  metric_name        = "disk_used_percent"
+  project            = var.project
+  threshold          = 70
+  notification_topic = module.notifications_topic.sns_arn
   dimensions = {
     server_name = "JenkinsProd"
   }

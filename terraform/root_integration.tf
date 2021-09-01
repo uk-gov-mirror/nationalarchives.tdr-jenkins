@@ -40,7 +40,7 @@ module "jenkins_integration_ec2" {
   attach_policies     = { ec2_policy = module.jenkins_ec2_policy.policy_arn, cloudwatch_agent_policy = module.jenkins_integration_cloudwatch_agent_policy.policy_arn }
   private_ip          = "10.0.1.221"
   user_data           = "user_data_jenkins_docker"
-  user_data_variables = { jenkins_cluster_name = "jenkins-${local.environment}" }
+  user_data_variables = { jenkins_cluster_name = "jenkins-${local.environment}", agent_policy_parameter_name = "/${local.environment}/cloudwatch/agent/integration/policy" }
   instance_type       = "t2.medium"
   volume_size         = 60
 }
@@ -157,7 +157,7 @@ module "jenkins_integration_cloudwatch_ssm_parameter" {
   source      = "./tdr-terraform-modules/ssm_parameter"
   common_tags = local.common_tags
   parameters = [
-    { name = "/${local.environment}/jenkins_cloudwatch_agent_config", description = "The configuration for Jenkins Cloudwatch Agent", type = "String", value = templatefile("./tdr-terraform-modules/ssm_parameter/templates/jenkins_cloudwatch_agent.json.tpl", { server_name = "Jenkins" }) }
+    { name = "/${local.environment}/cloudwatch/agent/integration/policy", description = "The configuration for Jenkins Cloudwatch Agent", type = "String", value = templatefile("./tdr-terraform-modules/ssm_parameter/templates/jenkins_cloudwatch_agent.json.tpl", { server_name = "Jenkins" }) }
   ]
 }
 
