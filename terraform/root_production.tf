@@ -173,5 +173,9 @@ module "jenkins_production_disk_space_alarm" {
   notification_topic = module.notifications_topic.sns_arn
   dimensions = {
     server_name = "JenkinsProd"
+    host        = module.jenkins_ec2_prod.private_dns
+    device      = "xvda1"
+    fstype      = "ext4"
+    path        = "/"
   }
 }

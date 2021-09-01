@@ -162,13 +162,18 @@ module "jenkins_integration_cloudwatch_ssm_parameter" {
 }
 
 module "jenkins_integration_disk_space_alarm" {
-  source      = "./tdr-terraform-modules/cloudwatch_alarms"
-  environment = local.environment
-  function    = "jenkins-disk-space-alarm"
-  metric_name = "disk_used_percent"
-  project     = var.project
-  threshold   = 70
+  source             = "./tdr-terraform-modules/cloudwatch_alarms"
+  environment        = local.environment
+  function           = "jenkins-disk-space-alarm"
+  metric_name        = "disk_used_percent"
+  project            = var.project
+  threshold          = 70
+  notification_topic = module.notifications_topic.sns_arn
   dimensions = {
     server_name = "Jenkins"
+    host        = module.jenkins_integration_ec2.private_dns
+    device      = "xvda1"
+    fstype      = "ext4"
+    path        = "/"
   }
 }
