@@ -1,4 +1,4 @@
-FROM jenkins/inbound-agent:alpine
+FROM jenkins/inbound-agent:latest-alpine-jdk8
 USER root
 WORKDIR /opt
 RUN apk update && apk add curl postgresql gnupg && \
