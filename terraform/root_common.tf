@@ -168,5 +168,5 @@ module "notifications_topic" {
 module "jenkins_cloudwatch_agent_policy" {
   source        = "./tdr-terraform-modules/iam_policy"
   name          = "TDRJenkinsCloudwatchAgentPolicyMgmt"
-  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_cloudwatch_agent_integration.json.tpl", {})
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_cloudwatch_agent.json.tpl", {})
 }
