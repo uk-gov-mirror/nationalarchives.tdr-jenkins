@@ -65,8 +65,8 @@ pipeline {
           stage('Tag image with "latest"') {
             steps {
               script {
-                def manifest = sh(script: "aws ecr batch-get-image --repository-name ${imageName} --image-ids imageTag=${version} --query 'images[].imageManifest' --output text", returnStdout: true).trim()
-                sh "aws ecr put-image --repository-name ${imageName} --image-tag latest --image-manifest '${manifest}'"
+                def manifest = sh(script: "aws ecr batch-get-image --region eu-west-2 --repository-name ${imageName} --image-ids imageTag=${version} --query 'images[].imageManifest' --output text", returnStdout: true).trim()
+                sh "aws ecr put-image --region eu-west-2 --repository-name ${imageName} --image-tag latest --image-manifest '${manifest}'"
               }
             }
           }
