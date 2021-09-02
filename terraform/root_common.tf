@@ -165,7 +165,7 @@ module "notifications_topic" {
   kms_key_arn = module.encryption_key.kms_key_arn
 }
 
-module "jenkins_integration_cloudwatch_agent_policy" {
+module "jenkins_cloudwatch_agent_policy" {
   source        = "./tdr-terraform-modules/iam_policy"
   name          = "TDRJenkinsCloudwatchAgentPolicyMgmt"
   policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_cloudwatch_agent_integration.json.tpl", {})
