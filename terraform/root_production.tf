@@ -37,10 +37,10 @@ module "jenkins_ec2_prod" {
   name                = "JenkinsProduction"
   subnet_id           = module.jenkins_vpc.private_subnets[1]
   security_group_id   = module.jenkins_ec2_security_group.security_group_id
-  attach_policies     = { ec2_policy = module.jenkins_ec2_policy.policy_arn }
+  attach_policies     = { ec2_policy = module.jenkins_ec2_policy.policy_arn, cloudwatch_agent_policy = module.jenkins_cloudwatch_agent_policy.policy_arn }
   private_ip          = "10.0.1.222"
   user_data           = "user_data_jenkins_docker"
-  user_data_variables = { jenkins_cluster_name = "jenkins-prod-${local.environment}" }
+  user_data_variables = { jenkins_cluster_name = "jenkins-prod-${local.environment}", agent_policy_parameter_name = "/${local.environment}/cloudwatch/agent/production/policy" }
   instance_type       = "t2.medium"
   volume_size         = 60
 }
@@ -153,4 +153,29 @@ module "jenkins_ecs_execution_policy_prod" {
   source        = "./tdr-terraform-modules/iam_policy"
   name          = "TDRJenkinsExecutionPolicyProdMgmt"
   policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecs_execution_prod.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
+}
+
+module "jenkins_production_cloudwatch_ssm_parameter" {
+  source      = "./tdr-terraform-modules/ssm_parameter"
+  common_tags = local.common_tags
+  parameters = [
+    { name = "/${local.environment}/cloudwatch/agent/production/policy", description = "The configuration for Jenkins Cloudwatch Agent", type = "String", value = templatefile("./tdr-terraform-modules/ssm_parameter/templates/jenkins_cloudwatch_agent.json.tpl", { server_name = "JenkinsProd" }) }
+  ]
+}
+
+module "jenkins_production_disk_space_alarm" {
+  source             = "./tdr-terraform-modules/cloudwatch_alarms"
+  environment        = local.environment
+  function           = "jenkins-prod-disk-space-alarm"
+  metric_name        = "disk_used_percent"
+  project            = var.project
+  threshold          = 70
+  notification_topic = module.notifications_topic.sns_arn
+  dimensions = {
+    server_name = "JenkinsProd"
+    host        = module.jenkins_ec2_prod.private_dns
+    device      = "xvda1"
+    fstype      = "ext4"
+    path        = "/"
+  }
 }
