@@ -2,7 +2,7 @@ FROM jenkins/jenkins:2.306-alpine
 USER root
 ENV JAVA_OPTS "-Djenkins.install.runSetupWizard=false ${JAVA_OPTS:-}"
 RUN apk update && \
-        apk upgrade openssl apk-tools && \
+        apk upgrade openssl apk-tools libgcrypt && \
         apk add py3-pip zip make && \
         mkdir -p /opt/jcasc && \
         addgroup docker && \
