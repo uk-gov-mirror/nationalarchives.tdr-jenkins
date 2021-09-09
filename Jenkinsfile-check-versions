@@ -33,12 +33,13 @@ pipeline {
             if(commitMessage != "") {
               commitMessage = commitMessage + "See [the latest changelog](https://www.jenkins.io/changelog/) to check what will be updated"
               sh "git checkout -b ${branch}"
+              sh "git commit -m '$commitMessage'"
 
               sshagent(['github-jenkins']) {
                 sh "git push -u origin $branch"
               }
               withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_TOKEN')]) {
-                sh "gh pr create --fill"
+                sh "gh pr create --base create-pr-for-version-updates --fill"
               }
             }
           }
