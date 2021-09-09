@@ -39,52 +39,52 @@ pipeline {
                 sh "git push -u origin $branch"
               }
               withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_TOKEN')]) {
-                sh "gh pr create --base create-pr-for-version-updates --fill"
+                sh "gh pr create --fill"
               }
             }
           }
         }
       }
     }
-//    stage('AMI Updates') {
-//      agent {
-//        ecs {
-//          inheritFrom 'aws'
-//          taskrole "arn:aws:iam::${env.MANAGEMENT_ACCOUNT}:role/TDRJenkinsCheckAmiRole"
-//        }
-//      }
-//      stages {
-//        stage('Send slack message') {
-//          steps {
-//            script {
-//              def currentAmiId = sh(script: """aws s3 cp s3://tdr-terraform-state-jenkins/jenkins-terraform-state - | jq -r '.resources[] | select(.module=="module.jenkins_ami") | .instances[0].attributes.source_ami_id'""", returnStdout: true).trim()
-//              def mostRecentAmiId = sh(script: """aws ec2 describe-images --owners amazon --filters "Name=name,Values=amzn2-ami-ecs-hvm-2.0.*-x86_64-ebs" --query 'sort_by(Images, &CreationDate)[-1].ImageId' | jq -r""", returnStdout: true).trim()
-//              if(currentAmiId != mostRecentAmiId) {
-//                slackSend color: "good", message: """A new ami ${mostRecentAmiId} is available for Jenkins
-//See the developer manual for a guide on updating it
-//https://github.com/nationalarchives/tdr-dev-documentation/blob/master/manual/update-jenkins.md#update-the-ec2-instance
-//                  """, channel: "#da-tdr"
-//              }
-//            }
-//          }
-//        }
-//      }
-//    }
+    stage('AMI Updates') {
+      agent {
+        ecs {
+          inheritFrom 'aws'
+          taskrole "arn:aws:iam::${env.MANAGEMENT_ACCOUNT}:role/TDRJenkinsCheckAmiRole"
+        }
+      }
+      stages {
+        stage('Send slack message') {
+          steps {
+            script {
+              def currentAmiId = sh(script: """aws s3 cp s3://tdr-terraform-state-jenkins/jenkins-terraform-state - | jq -r '.resources[] | select(.module=="module.jenkins_ami") | .instances[0].attributes.source_ami_id'""", returnStdout: true).trim()
+              def mostRecentAmiId = sh(script: """aws ec2 describe-images --owners amazon --filters "Name=name,Values=amzn2-ami-ecs-hvm-2.0.*-x86_64-ebs" --query 'sort_by(Images, &CreationDate)[-1].ImageId' | jq -r""", returnStdout: true).trim()
+              if(currentAmiId != mostRecentAmiId) {
+                slackSend color: "good", message: """A new ami ${mostRecentAmiId} is available for Jenkins
+See the developer manual for a guide on updating it
+https://github.com/nationalarchives/tdr-dev-documentation/blob/master/manual/update-jenkins.md#update-the-ec2-instance
+                  """, channel: "#da-tdr"
+              }
+            }
+          }
+        }
+      }
+    }
   }
-//  post {
-//    failure {
-//      script {
-//        tdr.postToDaTdrSlackChannel(colour: "danger",
-//            message: "*Jenkins version check* :warning: The version check for Jenkins has failed"
-//        )
-//      }
-//    }
-//    unstable {
-//      script {
-//        tdr.postToDaTdrSlackChannel(colour: "warning",
-//            message: "*Jenkins version check* :warning: The version check for Jenkins was marked as unstable"
-//        )
-//      }
-//    }
-//  }
+  post {
+    failure {
+      script {
+        tdr.postToDaTdrSlackChannel(colour: "danger",
+            message: "*Jenkins version check* :warning: The version check for Jenkins has failed"
+        )
+      }
+    }
+    unstable {
+      script {
+        tdr.postToDaTdrSlackChannel(colour: "warning",
+            message: "*Jenkins version check* :warning: The version check for Jenkins was marked as unstable"
+        )
+      }
+    }
+  }
 }
