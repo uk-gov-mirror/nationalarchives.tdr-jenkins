@@ -12,7 +12,6 @@ pipeline {
           dir("docker") {
             def branch = "jenkins-version-updates-${versionTag}"
             def latestVersion = sh(script: """curl -s https://registry.hub.docker.com/v1/repositories/jenkins/jenkins/tags | jq -r '.[] | select(.name | endswith("alpine")) | .name' | awk -F"-" '{print \$1}' | grep -v '[^0-9\\.]' | sort -V | tail -1""", returnStdout: true).trim()
-            def nextVersion = sh(script: """curl -s https://registry.hub.docker.com/v1/repositories/jenkins/jenkins/tags | jq -r '.[] | select(.name | endswith("alpine")) | .name' | awk -F"-" '{print \$1}' | sort -V | grep -A1 2.306 | tail -1""", returnStdout: true).trim()
             def currentVersion = sh(script: """head -1 Dockerfile | grep -Eo '[0-9]\\.[0-9]+'""", returnStdout: true).trim()
             if(currentVersion != latestVersion) {
               sh """echo "FROM jenkins/jenkins:$latestVersion-alpine" > Dockerfile-new"""
@@ -20,15 +19,13 @@ pipeline {
               sh """mv Dockerfile-new Dockerfile"""
               sh "git checkout -b ${branch}"
               sh "git add Dockerfile"
-              sh "git commit -m 'Upgrade Jenkins to version $latestVersion\nSee [the latest changelog](https://www.jenkins.io/changelog/) to check what will be updated"
+              sh "git commit -m 'Upgrade Jenkins from version $currentVersion to version $latestVersion\n\nSee [the latest changelog](https://www.jenkins.io/changelog/) to check what will be updated'"
               sshagent(['github-jenkins']) {
                 sh "git push -u origin $branch"
               }
               withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_TOKEN')]) {
                 // Don't leave the --base argument here
-                def prOutput = sh(script: 'gh pr create --base create-pr-for-version-updates --fill', returnStdout: true).trim()
-                echo prOutput
-                slackSend color: "good", message: """Version ${latestVersion} is available for Jenkins $prOutput"""
+                "gh pr create --base create-pr-for-version-updates --fill"
               }
             }
           }
