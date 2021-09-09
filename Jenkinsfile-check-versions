@@ -25,7 +25,7 @@ pipeline {
               }
               withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_TOKEN')]) {
                 // Don't leave the --base argument here
-                "gh pr create --base create-pr-for-version-updates --fill"
+                sh "gh pr create --base create-pr-for-version-updates --fill"
               }
             }
           }
