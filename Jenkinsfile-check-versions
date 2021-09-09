@@ -39,7 +39,7 @@ pipeline {
                 sh "git push -u origin $branch"
               }
               withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_TOKEN')]) {
-                sh "gh pr create --fill"
+                sh "gh pr create --base create-pr-for-version-updates --fill"
               }
             }
           }
