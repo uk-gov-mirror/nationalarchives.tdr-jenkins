@@ -2,8 +2,10 @@ library("tdr-jenkinslib")
 
 String versionTag = "v${env.BUILD_NUMBER}"
 
-String updateDockerfile(String suffix, String environment, String currentVersion) {
+String updateDockerfile(String environment) {
   def latestVersion = sh(script: """curl -s https://registry.hub.docker.com/v1/repositories/jenkins/jenkins/tags | jq -r '.[] | select(.name | endswith("alpine")) | .name' | awk -F"-" '{print \$1}' | grep -v '[^0-9\\.]' | sort -V | tail -1""", returnStdout: true).trim()
+  String suffix = environment == 'integration' ? '' : '-prod'
+  String currentVersion = sh(script: """head -1 Dockerfile$suffix | grep -Eo '[0-9]\\.[0-9]+'""", returnStdout: true).trim()
   String message = ""
   if(currentVersion != latestVersion) {
     sh """echo "FROM jenkins/jenkins:$latestVersion-alpine" > Dockerfile-new$suffix"""
@@ -25,14 +27,12 @@ pipeline {
         script {
           dir("docker") {
             String branch = "jenkins-version-updates-${versionTag}"
-            String currentVersion = sh(script: """head -1 Dockerfile | grep -Eo '[0-9]\\.[0-9]+'""", returnStdout: true).trim()
-            String currentProdVersion = sh(script: """head -1 Dockerfile-prod | grep -Eo '[0-9]\\.[0-9]+'""", returnStdout: true).trim()
             String commitMessage = "Update Jenkins versions\n\n"
-            commitMessage = commitMessage + updateDockerfile('', 'integration', currentVersion)
-            commitMessage = commitMessage + updateDockerfile('-prod', 'production', currentProdVersion)
+            commitMessage = commitMessage + updateDockerfile('integration')
+            commitMessage = commitMessage + updateDockerfile('production')
             if(commitMessage != "") {
               commitMessage = commitMessage + "See [the latest changelog](https://www.jenkins.io/changelog/) to check what will be updated"
-              sh "git checkout -b ${branch}"
+              sh "git checkout -b $branch"
               sh "git commit -m '$commitMessage'"
 
               sshagent(['github-jenkins']) {
