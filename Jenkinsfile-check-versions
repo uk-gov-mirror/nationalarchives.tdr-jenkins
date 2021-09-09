@@ -1,5 +1,6 @@
 library("tdr-jenkinslib")
 
+def versionTag = "v${env.BUILD_NUMBER}"
 pipeline {
   agent {
     label "master"
@@ -8,13 +9,20 @@ pipeline {
     stage("Get version") {
       steps {
         script {
-          sh "docker pull jenkins/jenkins:alpine"
-          def latestVersion = sh(script: """docker inspect jenkins/jenkins:alpine | jq -r '.[0].ContainerConfig.Env[]' | grep JENKINS_VERSION | awk -F "=" '{print \$2}'""", returnStdout: true).trim()
-          def currentVersion = Jenkins.instance.getVersion().toString().trim()
+          def branch = "jenkins-version-updates-${versionTag}"
+          def latestVersion = sh(script: """curl -s https://registry.hub.docker.com/v1/repositories/jenkins/jenkins/tags | jq -r '.[] | select(.name | endswith("alpine")) | .name' | awk -F"-" '{print \$1}' | grep -v '[^0-9\\.]' | sort -V | tail -1""", returnStdout: true).trim()
+          def nextVersion = sh(script: """curl -s https://registry.hub.docker.com/v1/repositories/jenkins/jenkins/tags | jq -r '.[] | select(.name | endswith("alpine")) | .name' | awk -F"-" '{print \$1}' | sort -V | grep -A1 2.306 | tail -1""", returnStdout: true).trim()
+          def currentVersion = sh(script: """head -1 Dockerfile | grep -Eo '[0-9]\\.[0-9]+'""", returnStdout: true).trim()
           if(currentVersion != latestVersion) {
-            slackSend color: "good", message: """Version ${latestVersion} is available for Jenkins
-See the developer manual for a guide on updating it
-https://github.com/nationalarchives/tdr-dev-documentation/blob/master/manual/update-jenkins.md#update-the-jenkins-application-version""", channel: "#da-tdr"
+            sh """echo "FROM jenkins/jenkins:$VERSION-alpine" > Dockerfile-new"""
+            sh """tail -\$(( \$(wc -l < Dockerfile) -1 ))  Dockerfile >> Dockerfile-new"""
+            sh """mv Dockerfile-new Dockerfile"""
+            sh "git checkout -b ${branch}"
+            sh "git add Dockerfile"
+            sh "git commit -m 'Upgrade Jenkins to version $latestVersion\nSee [the latest changelog](https://www.jenkins.io/changelog/) to check what will be updated"
+            sh "git push -u origin $branch"
+            def prOutput = sh(script: "gh pr create --fill", returnStdout: true)
+            slackSend color: "good", message: """Version ${latestVersion} is available for Jenkins $prOutput"""
           }
         }
       }
