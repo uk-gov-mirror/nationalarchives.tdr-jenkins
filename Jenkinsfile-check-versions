@@ -1,6 +1,20 @@
 library("tdr-jenkinslib")
 
-def versionTag = "v${env.BUILD_NUMBER}"
+String versionTag = "v${env.BUILD_NUMBER}"
+
+String updateDockerfile(String suffix, String environment, String currentVersion) {
+  def latestVersion = sh(script: """curl -s https://registry.hub.docker.com/v1/repositories/jenkins/jenkins/tags | jq -r '.[] | select(.name | endswith("alpine")) | .name' | awk -F"-" '{print \$1}' | grep -v '[^0-9\\.]' | sort -V | tail -1""", returnStdout: true).trim()
+  String message = ""
+  if(currentVersion != latestVersion) {
+    sh """echo "FROM jenkins/jenkins:$latestVersion-alpine" > Dockerfile-new$suffix"""
+    sh """tail -\$(( \$(wc -l < Dockerfile$suffix) -1 ))  Dockerfile$suffix >> Dockerfile-new$suffix"""
+    sh """mv Dockerfile-new$suffix Dockerfile$suffix"""
+    sh "git add Dockerfile$suffix"
+    message = "Upgrade Jenkins $environment version from $currentVersion to $latestVersion\n"
+  }
+  message
+}
+
 pipeline {
   agent {
     label "plugin-updates"
@@ -10,67 +24,66 @@ pipeline {
       steps {
         script {
           dir("docker") {
-            def branch = "jenkins-version-updates-${versionTag}"
-            def latestVersion = sh(script: """curl -s https://registry.hub.docker.com/v1/repositories/jenkins/jenkins/tags | jq -r '.[] | select(.name | endswith("alpine")) | .name' | awk -F"-" '{print \$1}' | grep -v '[^0-9\\.]' | sort -V | tail -1""", returnStdout: true).trim()
-            def currentVersion = sh(script: """head -1 Dockerfile | grep -Eo '[0-9]\\.[0-9]+'""", returnStdout: true).trim()
-            if(currentVersion != latestVersion) {
-              sh """echo "FROM jenkins/jenkins:$latestVersion-alpine" > Dockerfile-new"""
-              sh """tail -\$(( \$(wc -l < Dockerfile) -1 ))  Dockerfile >> Dockerfile-new"""
-              sh """mv Dockerfile-new Dockerfile"""
+            String branch = "jenkins-version-updates-${versionTag}"
+            String currentVersion = sh(script: """head -1 Dockerfile | grep -Eo '[0-9]\\.[0-9]+'""", returnStdout: true).trim()
+            String currentProdVersion = sh(script: """head -1 Dockerfile-prod | grep -Eo '[0-9]\\.[0-9]+'""", returnStdout: true).trim()
+            String commitMessage = "Update Jenkins versions\n\n"
+            commitMessage = commitMessage + updateDockerfile('', 'integration', currentVersion)
+            commitMessage = commitMessage + updateDockerfile('-prod', 'production', currentProdVersion)
+            if(commitMessage != "") {
+              commitMessage = commitMessage + "See [the latest changelog](https://www.jenkins.io/changelog/) to check what will be updated"
               sh "git checkout -b ${branch}"
-              sh "git add Dockerfile"
-              sh "git commit -m 'Upgrade Jenkins from version $currentVersion to version $latestVersion\n\nSee [the latest changelog](https://www.jenkins.io/changelog/) to check what will be updated'"
+
               sshagent(['github-jenkins']) {
                 sh "git push -u origin $branch"
               }
               withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_TOKEN')]) {
-                // Don't leave the --base argument here
-                sh "gh pr create --base create-pr-for-version-updates --fill"
+                sh "gh pr create --fill"
               }
             }
           }
         }
       }
     }
-    stage('AMI Updates') {
-      agent {
-        ecs {
-          inheritFrom 'aws'
-          taskrole "arn:aws:iam::${env.MANAGEMENT_ACCOUNT}:role/TDRJenkinsCheckAmiRole"
-        }
-      }
-      stages {
-        stage('Send slack message') {
-          steps {
-            script {
-              def currentAmiId = sh(script: """aws s3 cp s3://tdr-terraform-state-jenkins/jenkins-terraform-state - | jq -r '.resources[] | select(.module=="module.jenkins_ami") | .instances[0].attributes.source_ami_id'""", returnStdout: true).trim()
-              def mostRecentAmiId = sh(script: """aws ec2 describe-images --owners amazon --filters "Name=name,Values=amzn2-ami-ecs-hvm-2.0.*-x86_64-ebs" --query 'sort_by(Images, &CreationDate)[-1].ImageId' | jq -r""", returnStdout: true).trim()
-              if(currentAmiId != mostRecentAmiId) {
-                slackSend color: "good", message: """A new ami ${mostRecentAmiId} is available for Jenkins
-See the developer manual for a guide on updating it
-https://github.com/nationalarchives/tdr-dev-documentation/blob/master/manual/update-jenkins.md#update-the-ec2-instance
-                  """, channel: "#da-tdr"
-              }
-            }
-          }
-        }
-      }
-    }
+//    stage('AMI Updates') {
+//      agent {
+//        ecs {
+//          inheritFrom 'aws'
+//          taskrole "arn:aws:iam::${env.MANAGEMENT_ACCOUNT}:role/TDRJenkinsCheckAmiRole"
+//        }
+//      }
+//      stages {
+//        stage('Send slack message') {
+//          steps {
+//            script {
+//              def currentAmiId = sh(script: """aws s3 cp s3://tdr-terraform-state-jenkins/jenkins-terraform-state - | jq -r '.resources[] | select(.module=="module.jenkins_ami") | .instances[0].attributes.source_ami_id'""", returnStdout: true).trim()
+//              def mostRecentAmiId = sh(script: """aws ec2 describe-images --owners amazon --filters "Name=name,Values=amzn2-ami-ecs-hvm-2.0.*-x86_64-ebs" --query 'sort_by(Images, &CreationDate)[-1].ImageId' | jq -r""", returnStdout: true).trim()
+//              if(currentAmiId != mostRecentAmiId) {
+//                slackSend color: "good", message: """A new ami ${mostRecentAmiId} is available for Jenkins
+//See the developer manual for a guide on updating it
+//https://github.com/nationalarchives/tdr-dev-documentation/blob/master/manual/update-jenkins.md#update-the-ec2-instance
+//                  """, channel: "#da-tdr"
+//              }
+//            }
+//          }
+//        }
+//      }
+//    }
   }
-  post {
-    failure {
-      script {
-        tdr.postToDaTdrSlackChannel(colour: "danger",
-            message: "*Jenkins version check* :warning: The version check for Jenkins has failed"
-        )
-      }
-    }
-    unstable {
-      script {
-        tdr.postToDaTdrSlackChannel(colour: "warning",
-            message: "*Jenkins version check* :warning: The version check for Jenkins was marked as unstable"
-        )
-      }
-    }
-  }
+//  post {
+//    failure {
+//      script {
+//        tdr.postToDaTdrSlackChannel(colour: "danger",
+//            message: "*Jenkins version check* :warning: The version check for Jenkins has failed"
+//        )
+//      }
+//    }
+//    unstable {
+//      script {
+//        tdr.postToDaTdrSlackChannel(colour: "warning",
+//            message: "*Jenkins version check* :warning: The version check for Jenkins was marked as unstable"
+//        )
+//      }
+//    }
+//  }
 }
