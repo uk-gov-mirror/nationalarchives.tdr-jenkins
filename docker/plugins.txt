@@ -16,7 +16,7 @@ cloudbees-folder:6.16
 command-launcher:1.6
 configuration-as-code:1.52
 configuration-as-code-secret-ssm:1.0.1
-credentials:2.5
+credentials:2.6.1
 credentials-binding:1.27
 cucumber-reports:5.5.4
 display-url-api:2.3.5
@@ -40,7 +40,7 @@ jjwt-api:0.11.2-9.c8b45b8bb173
 jquery-detached:1.2.1
 jquery3-api:3.6.0-2
 jsch:0.1.55.2
-junit:1.52
+junit:1.53
 lockable-resources:2.11
 mailer:1.34
 matrix-auth:2.6.8
