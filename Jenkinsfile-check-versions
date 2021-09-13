@@ -31,7 +31,6 @@ pipeline {
             commitMessage = commitMessage + updateDockerfile('integration')
             commitMessage = commitMessage + updateDockerfile('production')
             def diffExitCode = sh(script: "git diff-index --quiet HEAD --", returnStatus: true)
-            echo diffExitCode.toString()
             if(diffExitCode == 1) {
               commitMessage = commitMessage + "See [the latest changelog](https://www.jenkins.io/changelog/) to check what will be updated"
               sh "git checkout -b $branch"
