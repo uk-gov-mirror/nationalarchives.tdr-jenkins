@@ -30,7 +30,7 @@ pipeline {
             String commitMessage = "Update Jenkins versions\n\n"
             commitMessage = commitMessage + updateDockerfile('integration')
             commitMessage = commitMessage + updateDockerfile('production')
-            def diffExitCode = sh(script: "git diff --exit-code docker/Dockerfile docker/Dockerfile-prod", returnStatus: true)
+            def diffExitCode = sh(script: "git diff --exit-code -- docker/Dockerfile -- docker/Dockerfile-prod", returnStatus: true)
 
             if(diffExitCode == 1) {
               commitMessage = commitMessage + "See [the latest changelog](https://www.jenkins.io/changelog/) to check what will be updated"
