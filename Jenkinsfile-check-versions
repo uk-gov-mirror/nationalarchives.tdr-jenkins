@@ -1,20 +1,48 @@
 library("tdr-jenkinslib")
 
+String versionTag = "v${env.BUILD_NUMBER}"
+
+String updateDockerfile(String environment) {
+  def latestVersion = sh(script: """curl -s https://registry.hub.docker.com/v1/repositories/jenkins/jenkins/tags | jq -r '.[] | select(.name | endswith("alpine")) | .name' | awk -F"-" '{print \$1}' | grep -v '[^0-9\\.]' | sort -V | tail -1""", returnStdout: true).trim()
+  String suffix = environment == 'integration' ? '' : '-prod'
+  String currentVersion = sh(script: """head -1 Dockerfile$suffix | grep -Eo '[0-9]\\.[0-9]+'""", returnStdout: true).trim()
+  String message = ""
+  if(currentVersion != latestVersion) {
+    sh """echo "FROM jenkins/jenkins:$latestVersion-alpine" > Dockerfile-new$suffix"""
+    sh """tail -\$(( \$(wc -l < Dockerfile$suffix) -1 ))  Dockerfile$suffix >> Dockerfile-new$suffix"""
+    sh """mv Dockerfile-new$suffix Dockerfile$suffix"""
+    sh "git add Dockerfile$suffix"
+    message = "Upgrade Jenkins $environment version from $currentVersion to $latestVersion\n"
+  }
+  message
+}
+
 pipeline {
   agent {
-    label "master"
+    label "plugin-updates"
   }
   stages {
     stage("Get version") {
       steps {
         script {
-          sh "docker pull jenkins/jenkins:alpine"
-          def latestVersion = sh(script: """docker inspect jenkins/jenkins:alpine | jq -r '.[0].ContainerConfig.Env[]' | grep JENKINS_VERSION | awk -F "=" '{print \$2}'""", returnStdout: true).trim()
-          def currentVersion = Jenkins.instance.getVersion().toString().trim()
-          if(currentVersion != latestVersion) {
-            slackSend color: "good", message: """Version ${latestVersion} is available for Jenkins
-See the developer manual for a guide on updating it
-https://github.com/nationalarchives/tdr-dev-documentation/blob/master/manual/update-jenkins.md#update-the-jenkins-application-version""", channel: "#da-tdr"
+          dir("docker") {
+            String branch = "jenkins-version-updates-${versionTag}"
+            String commitMessage = "Update Jenkins versions\n\n"
+            commitMessage = commitMessage + updateDockerfile('integration')
+            commitMessage = commitMessage + updateDockerfile('production')
+            def diffExitCode = sh(script: "git diff-index --quiet HEAD --", returnStatus: true)
+            if(diffExitCode == 1) {
+              commitMessage = commitMessage + "See [the latest changelog](https://www.jenkins.io/changelog/) to check what will be updated"
+              sh "git checkout -b $branch"
+              sh "git commit -m '$commitMessage'"
+
+              sshagent(['github-jenkins']) {
+                sh "git push -u origin $branch"
+              }
+              withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_TOKEN')]) {
+                sh "gh pr create --fill"
+              }
+            }
           }
         }
       }
