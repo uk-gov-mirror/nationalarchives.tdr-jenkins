@@ -1,6 +1,6 @@
-FROM jenkins/jenkins:2.306-alpine
+FROM jenkins/jenkins:2.307-alpine
 USER root
-ENV JAVA_OPTS "-Djenkins.install.runSetupWizard=false ${JAVA_OPTS:-}"
+ENV JAVA_OPTS "-Djenkins.install.runSetupWizard=false -Djenkins.model.Jenkins.nodeNameAndSelfLabelOverride=master ${JAVA_OPTS:-}"
 RUN apk update && \
         apk upgrade openssl apk-tools libgcrypt curl nettle && \
         apk add py3-pip zip make && \
