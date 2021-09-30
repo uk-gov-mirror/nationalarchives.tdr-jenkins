@@ -12,7 +12,7 @@ def dockerFileName = params.JENKINS_NODE == "jenkins-prod" ? "Dockerfile-prod" :
 
 pipeline {
   agent {
-    label "master"
+    label "built-in"
   }
   parameters {
     string(
