@@ -1,4 +1,4 @@
-FROM jenkins/inbound-agent:alpine
+FROM jenkins/inbound-agent:4.9-1-alpine
 USER root
 ENV AWS_DEFAULT_REGION eu-west-2
 WORKDIR /opt
