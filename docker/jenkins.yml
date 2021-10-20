@@ -108,6 +108,8 @@ jenkins:
           value: "${/mgmt/prod_account}"
         - name: "MANAGEMENT_ACCOUNT"
           value: "${/mgmt/management_account}"
+        - name: "SANDBOX_ACCOUNT"
+          value: "${/mgmt/sandbox_account}"
         image: "${/mgmt/management_account}.dkr.ecr.eu-west-2.amazonaws.com/jenkins-build-terraform"
         executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildTerraformExecutionRole"
         label: "terraform"

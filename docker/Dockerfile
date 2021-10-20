@@ -12,7 +12,9 @@ RUN apk update && \
         git clone https://github.com/awslabs/git-secrets.git && \
         make install -C git-secrets && \
         wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -O /usr/local/bin/jq && \
-        chmod +x /usr/local/bin/jq
+        chmod +x /usr/local/bin/jq && \
+        wget $(curl https://api.github.com/repos/nationalarchives/tdr-backend-check-performance/releases/latest | jq -r '.assets[0].browser_download_url') && \
+        tar -xzf performance.tgz && mv performance/bin/tdr-backend-check-performance /usr/bin/checks && mv performance/lib/* /usr/lib/
 
 ENV CASC_JENKINS_CONFIG /usr/share/jenkins/ref/jenkins.yaml
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
