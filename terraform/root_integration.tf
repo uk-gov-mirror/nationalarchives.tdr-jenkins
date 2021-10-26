@@ -124,26 +124,19 @@ module "jenkins_integration_ecs_task_role" {
     task_policy       = module.jenkins_integration_task_policy.policy_arn,
     cloudwatch_policy = module.jenkins_integration_task_cloudwatch_policy.policy_arn,
     s3_policy         = module.jenkins_s3_backup_policy.policy_arn
-    performance_checks = module.jenkins_integration_task_performance_checks_policy.policy_arn
   }
 }
 
 module "jenkins_integration_task_policy" {
   source        = "./tdr-terraform-modules/iam_policy"
   name          = "TDRJenkinsTaskPolicy${title(local.environment)}"
-  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecs_task.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecs_task.json.tpl", { account_id = data.aws_caller_identity.current.account_id, sandbox_account_id = data.aws_ssm_parameter.sandbox_account.value })
 }
 
 module "jenkins_integration_task_cloudwatch_policy" {
   source        = "./tdr-terraform-modules/iam_policy"
   name          = "TDRJenkinsCloudwatchPolicyMgmt"
   policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecs_task_integration_cloudwatch.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
-}
-
-module "jenkins_integration_task_performance_checks_policy" {
-  source = "./tdr-terraform-modules/iam_policy"
-  name   = "TDRJenkinsPerformanceChecksPolicyMgmt"
-  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecs_task_performance_checks.json.tpl", {sandbox_account = data.aws_ssm_parameter.sandbox_account.value})
 }
 
 module "jenkins_integration_execution_role" {
