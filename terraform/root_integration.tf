@@ -130,7 +130,7 @@ module "jenkins_integration_ecs_task_role" {
 module "jenkins_integration_task_policy" {
   source        = "./tdr-terraform-modules/iam_policy"
   name          = "TDRJenkinsTaskPolicy${title(local.environment)}"
-  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecs_task.json.tpl", { account_id = data.aws_caller_identity.current.account_id })
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_ecs_task.json.tpl", { account_id = data.aws_caller_identity.current.account_id, sandbox_account_id = data.aws_ssm_parameter.sandbox_account.value })
 }
 
 module "jenkins_integration_task_cloudwatch_policy" {
