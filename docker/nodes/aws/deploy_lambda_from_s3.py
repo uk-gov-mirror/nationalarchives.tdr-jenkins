@@ -9,12 +9,23 @@ s3_bucket = sys.argv[4]
 s3_key = sys.argv[5]
 
 
+def publish_lambda_version():
+  publish_response = client.publish_version(FunctionName=function_name)
+  print(publish_response["Version"])
+
+
 if stage == "mgmt":
   client = boto3.client("lambda")
 else:
   boto_session = get_session(account_number, "TDRJenkinsLambdaRole" + stage.capitalize())
   client = boto_session.client("lambda")
 
-client.update_function_code(FunctionName=function_name, S3Bucket=s3_bucket, S3Key=s3_key)
-response = client.publish_version(FunctionName=function_name)
-print(response["Version"])
+function_active_waiter = client.get_waiter('function_active')
+
+update_response = client.update_function_code(FunctionName=function_name, S3Bucket=s3_bucket, S3Key=s3_key)
+
+function_active_waiter.wait(
+  FunctionName=function_name
+)
+
+publish_lambda_version()
