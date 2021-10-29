@@ -1,4 +1,4 @@
-FROM jenkins/inbound-agent:alpine
+FROM jenkins/inbound-agent:4.10-2
 USER root
 RUN apk update \
     && apk add curl wget py3-pip gcc python3-dev musl-dev libffi-dev openssl-dev jansson-dev build-base libc-dev file-dev automake autoconf libtool flex bison unzip \
