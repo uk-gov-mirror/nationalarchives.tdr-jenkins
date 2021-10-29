@@ -24,7 +24,7 @@ function_updated_waiter = client.get_waiter('function_updated')
 
 update_response = client.update_function_code(FunctionName=function_name, S3Bucket=s3_bucket, S3Key=s3_key)
 
-function_active_waiter.wait(
+function_updated_waiter.wait(
   FunctionName=function_name
 )
 
