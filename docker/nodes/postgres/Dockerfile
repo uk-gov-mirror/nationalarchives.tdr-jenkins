@@ -2,7 +2,7 @@ FROM jenkins/inbound-agent:latest-alpine-jdk8
 USER root
 WORKDIR /opt
 RUN apk update && apk add curl postgresql gnupg && \
-    apk upgrade musl openssl apk-tools && \
+    apk upgrade musl openssl apk-tools busybox && \
     curl -Ls https://github.com/sbt/sbt/releases/download/v1.4.1/sbt-1.4.1.tgz | tar --strip-components=1 -xzvf - && \
     ln /opt/bin/sbt /usr/local/bin/sbt && ln /opt/bin/sbt-launch.jar /usr/local/bin/sbt-launch.jar
 USER jenkins
