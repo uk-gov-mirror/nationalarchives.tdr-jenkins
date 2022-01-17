@@ -42,7 +42,7 @@ module "jenkins_integration_ec2" {
   user_data           = "user_data_jenkins_docker"
   user_data_variables = { jenkins_cluster_name = "jenkins-${local.environment}", agent_policy_parameter_name = "/${local.environment}/cloudwatch/agent/integration/policy" }
   instance_type       = "t2.medium"
-  volume_size         = 60
+  volume_size         = 120
 }
 
 # Configure Jenkins backup using Systems Manager Maintenance Windows
