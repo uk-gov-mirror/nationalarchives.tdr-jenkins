@@ -10,9 +10,7 @@ RUN apk update && apk add curl chromium firefox-esr tar xz npm python3-dev py3-p
 RUN pip3 install boto3
 COPY aws/ssm_get_parameter.py /ssm_get_parameter.py
 COPY aws/sessions.py /sessions.py
-WORKDIR /opt/e2e
-RUN wget https://raw.githubusercontent.com/nationalarchives/tdr-e2e-tests/master/build.sbt && \
-    mkdir project && \
-    wget https://raw.githubusercontent.com/nationalarchives/tdr-e2e-tests/master/project/Dependencies.scala -O project/Dependencies.scala && \
-    sbt run
+RUN git clone https://github.com/nationalarchives/tdr-e2e-tests.git
+WORKDIR /opt/tdr-e2e-tests
+RUN sbt run
 USER jenkins
