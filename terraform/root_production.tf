@@ -37,7 +37,7 @@ module "jenkins_ec2_prod" {
   name                = "JenkinsProduction"
   subnet_id           = module.jenkins_vpc.private_subnets[1]
   security_group_id   = module.jenkins_ec2_security_group.security_group_id
-  attach_policies     = { ec2_policy = module.jenkins_ec2_policy.policy_arn, cloudwatch_agent_policy = module.jenkins_cloudwatch_agent_policy.policy_arn }
+  attach_policies     = { ec2_policy = module.jenkins_ec2_policy.policy_arn, cloudwatch_agent_policy = module.jenkins_cloudwatch_agent_policy.policy_arn, publish_policy = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/TDRJenkinsPublishPolicy" }
   private_ip          = "10.0.1.222"
   user_data           = "user_data_jenkins_docker"
   user_data_variables = { jenkins_cluster_name = "jenkins-prod-${local.environment}", agent_policy_parameter_name = "/${local.environment}/cloudwatch/agent/production/policy" }
@@ -113,7 +113,7 @@ module "jenkins_ecs_task_role_prod" {
   common_tags        = local.common_tags
   assume_role_policy = templatefile("./tdr-terraform-modules/ecs/templates/ecs_assume_role_policy.json.tpl", {})
   name               = "TDRJenkinsProdAppTaskRole${title(local.environment)}"
-  policy_attachments = { task_policy = module.jenkins_task_policy_prod.policy_arn, task_policy_additional = module.jenkins_task_policy_prod_additional.policy_arn, cloudwatch_policy = module.jenkins_ecs_execution_cloudwatch_policy_prod.policy_arn, s3_policy = module.jenkins_s3_backup_policy_prod.policy_arn, publish_policy = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/TDRJenkinsPublishPolicy" }
+  policy_attachments = { task_policy = module.jenkins_task_policy_prod.policy_arn, task_policy_additional = module.jenkins_task_policy_prod_additional.policy_arn, cloudwatch_policy = module.jenkins_ecs_execution_cloudwatch_policy_prod.policy_arn, s3_policy = module.jenkins_s3_backup_policy_prod.policy_arn }
 }
 
 module "jenkins_task_policy_prod" {

@@ -6,11 +6,11 @@ RUN apk update && apk add curl chromium firefox-esr tar xz npm python3-dev py3-p
     apk upgrade openssl apk-tools busybox && \
     apk upgrade libxml2 && \
     curl -Ls https://github.com/sbt/sbt/releases/download/v1.4.1/sbt-1.4.1.tgz | tar --strip-components=1 -xzvf - && \
-    mv /opt/bin/* /usr/local/bin/
-RUN pip3 install boto3
+    mv /opt/bin/* /usr/local/bin/ && \
+    pip3 install boto3
 COPY aws/ssm_get_parameter.py /ssm_get_parameter.py
 COPY aws/sessions.py /sessions.py
 RUN git clone https://github.com/nationalarchives/tdr-e2e-tests.git
 WORKDIR /opt/tdr-e2e-tests
-RUN sbt run
+RUN sbt compile
 USER jenkins
