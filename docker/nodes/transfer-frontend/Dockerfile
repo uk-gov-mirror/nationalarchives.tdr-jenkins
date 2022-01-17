@@ -11,6 +11,9 @@ RUN apk update && apk add curl chromium firefox-esr tar xz npm python3-dev py3-p
 COPY aws/ssm_get_parameter.py /ssm_get_parameter.py
 COPY aws/sessions.py /sessions.py
 USER jenkins
-RUN git clone https://github.com/nationalarchives/tdr-e2e-tests.git
-WORKDIR /opt/tdr-e2e-tests
-RUN sbt compile
+RUN cd && \
+    git clone https://github.com/nationalarchives/tdr-e2e-tests.git && \
+    cd tdr-e2e-tests && \
+    sbt compile && \
+    cd .. && \
+    rm -rf tdr-e2e-tests
