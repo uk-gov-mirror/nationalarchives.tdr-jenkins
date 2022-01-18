@@ -84,6 +84,8 @@ jenkins:
           value: "${/mgmt/identitypoolid_intg}"
         - name: "INTG_AWS_ACCOUNT_NUMBER"
           value: "${/mgmt/intg_account}"
+        - name: "INTG_ACCOUNT"
+          value: "${/mgmt/intg_account}"
         executionRole: "arn:aws:iam::${/mgmt/management_account}:role/TDRJenkinsBuildTransferFrontendExecutionRole"
         label: "transfer-frontend"
         launchType: "FARGATE"
