@@ -37,7 +37,7 @@ module "jenkins_integration_ec2" {
   name                = local.ec2_instance_name
   subnet_id           = module.jenkins_vpc.private_subnets[1]
   security_group_id   = module.jenkins_ec2_security_group.security_group_id
-  attach_policies     = { ec2_policy = module.jenkins_ec2_policy.policy_arn, cloudwatch_agent_policy = module.jenkins_cloudwatch_agent_policy.policy_arn }
+  attach_policies     = { ec2_policy = module.jenkins_ec2_policy.policy_arn, cloudwatch_agent_policy = module.jenkins_cloudwatch_agent_policy.policy_arn, publish_policy = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/TDRJenkinsPublishPolicy" }
   private_ip          = "10.0.1.221"
   user_data           = "user_data_jenkins_docker"
   user_data_variables = { jenkins_cluster_name = "jenkins-${local.environment}", agent_policy_parameter_name = "/${local.environment}/cloudwatch/agent/integration/policy" }
