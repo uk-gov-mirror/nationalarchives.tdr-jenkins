@@ -1,4 +1,4 @@
-FROM jenkins/jenkins:2.330-alpine
+FROM jenkins/jenkins:2.331-alpine
 USER root
 ENV JAVA_OPTS "-Djenkins.install.runSetupWizard=false -Dhudson.model.DirectoryBrowserSupport.CSP=\"default-src 'self'\" ${JAVA_OPTS:-}"
 RUN apk update && \
