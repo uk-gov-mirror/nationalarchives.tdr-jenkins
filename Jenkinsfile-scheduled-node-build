@@ -1,0 +1,37 @@
+pipeline {
+  agent {
+    label "built-in"
+  }
+  stages {
+    stage("Rebuild nodes") {
+      script {
+        def nodeNames = ["aws", "npm", "plugin-updates", "postgres", "terraform", "transfer-frontend", "terraform-latest"]
+        nodeNames.each() { String jobName ->
+          build(
+              job: "TDR Build Jenkins Node Images",
+              parameters: [
+                  string(name: "BRANCH", value: "master"),
+                  string(name: "ECR_REPOSITORY", value: "mgmt"),
+                  string(name: "JENKINS_NODE", value: jobName)
+              ], wait: false)
+        }
+      }
+    }
+  }
+  post {
+    failure {
+      script {
+        tdr.postToDaTdrSlackChannel(colour: "danger",
+            message: "*Jenkins scheduled node rebuild* :warning: The scheduled rebuild of the Jenkins nodes has failed"
+        )
+      }
+    }
+    success {
+      script {
+        tdr.postToDaTdrSlackChannel(colour: "good",
+            message: "*Jenkins scheduled node rebuild* All Jenkins nodes have been rebuilt"
+        )
+      }
+    }
+  }
+}
