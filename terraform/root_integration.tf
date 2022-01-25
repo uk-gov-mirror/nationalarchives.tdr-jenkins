@@ -121,10 +121,17 @@ module "jenkins_integration_ecs_task_role" {
   assume_role_policy = templatefile("./tdr-terraform-modules/ecs/templates/ecs_assume_role_policy.json.tpl", {})
   name               = "TDRJenkinsAppTaskRole${title(local.environment)}"
   policy_attachments = {
-    task_policy       = module.jenkins_integration_task_policy.policy_arn,
-    cloudwatch_policy = module.jenkins_integration_task_cloudwatch_policy.policy_arn,
-    s3_policy         = module.jenkins_s3_backup_policy.policy_arn
+    task_policy             = module.jenkins_integration_task_policy.policy_arn,
+    cloudwatch_policy       = module.jenkins_integration_task_cloudwatch_policy.policy_arn,
+    s3_policy               = module.jenkins_s3_backup_policy.policy_arn
+    antivirus_lambda_policy = module.jenkins_get_av_lambda_policy.policy_arn
   }
+}
+
+module "jenkins_get_av_lambda_policy" {
+  source        = "./tdr-terraform-modules/iam_policy"
+  name          = "TDRJenkinsAvLambdaPolicy${title(local.environment)}"
+  policy_string = templatefile("./tdr-terraform-modules/iam_policy/templates/jenkins_av_lambda.json.tpl", { account_id = data.aws_caller_identity.current.account_id, region = local.aws_region, environment = local.environment })
 }
 
 module "jenkins_integration_task_policy" {
