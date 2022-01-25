@@ -241,7 +241,7 @@ jenkins:
   markupFormatter: "plainText"
   mode: EXCLUSIVE
   myViewsTabBar: "standard"
-  numExecutors: 15
+  numExecutors: 12
   primaryView:
     all:
       name: "all"

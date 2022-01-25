@@ -16,7 +16,7 @@ pipeline {
                     string(name: "BRANCH", value: "master"),
                     string(name: "ECR_REPOSITORY", value: "mgmt"),
                     string(name: "JENKINS_NODE", value: jobName)
-                ], wait: false)
+                ])
           }
         }
       }
