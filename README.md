@@ -182,6 +182,13 @@ Set the following parameters to build and push the image to the sandbox ECR:
 * ECR_REPOSITORY: `sandbox`
 * JENKINS_NODE: `[select node image from drop down list]`
 
+#### Periodically update the containers
+We are getting a number of vulnerabilities from the regular image scan in the Jenkins node images. The solution is usually to rebuild them using the Jenkins job above. 
+
+To try to reduce the amount of time we spend running this job, there is a new Jenkins job defined in [Jenkinsfile-scheduled-node-build](./Jenkinsfile-scheduled-node-build) 
+
+This job runs once a week and will call the [TDR Build Jenkins Node Images][TDR Build Jenkins Node Images] job for each of the node images. We don't build the Jenkins docker images themselves as these are usually done when there are plugin updates or a new Jenkins version. 
+
 #### Add a new container
 
 The docker container must start with `FROM jenkins/inbound-agent:alpine` This image is mostly stock Alpine Linux and from there, you need to install whatever it is you need for your build:

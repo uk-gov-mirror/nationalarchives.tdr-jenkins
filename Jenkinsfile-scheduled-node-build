@@ -11,12 +11,12 @@ pipeline {
           def nodeNames = ["aws", "npm", "plugin-updates", "postgres", "terraform", "transfer-frontend", "terraform-latest"]
           nodeNames.each() { String jobName ->
             build(
-                job: "TDR Build Jenkins Node Images",
-                parameters: [
-                    string(name: "BRANCH", value: "master"),
-                    string(name: "ECR_REPOSITORY", value: "mgmt"),
-                    string(name: "JENKINS_NODE", value: jobName)
-                ])
+              job: "TDR Build Jenkins Node Images",
+              parameters: [
+                string(name: "BRANCH", value: "master"),
+                string(name: "ECR_REPOSITORY", value: "mgmt"),
+                string(name: "JENKINS_NODE", value: jobName)
+              ])
           }
         }
       }
