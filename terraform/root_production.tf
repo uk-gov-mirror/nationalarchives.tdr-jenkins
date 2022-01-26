@@ -58,7 +58,7 @@ module "jenkins_backup_maintenance_window_prod" {
 module "jenkins_maintenance_window_event_prod" {
   source                  = "./tdr-terraform-modules/cloudwatch_events"
   event_pattern           = "jenkins_maintenance_event_window"
-  lambda_event_target_arn = list(data.aws_lambda_function.notifications_function.arn)
+  lambda_event_target_arn = tolist([data.aws_lambda_function.notifications_function.arn])
   rule_name               = "jenkins-backup-maintenance-window-prod"
   rule_description        = "Capture failed runs of the jenkins backup"
   event_variables         = { window_id = module.jenkins_backup_maintenance_window_prod.window_id }

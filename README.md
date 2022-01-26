@@ -135,7 +135,7 @@ will automatically deploy a new container when the first one has stopped.
 
 ### Deploy Jenkins EC2 instance and Terraform config
 
-**Important Note**: tdr-jenkins uses v13 of Terraform. Ensure that Terraform v13 is installed before proceeding.
+**Important Note**: tdr-jenkins uses v1.1.3 of Terraform. Ensure that Terraform v1.1.3 is installed before proceeding.
 
 #### Set up sub-projects
 
