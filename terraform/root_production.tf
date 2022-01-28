@@ -27,6 +27,7 @@ module "jenkins_dns_prod" {
   alb_dns_name          = module.jenkins_alb_prod.alb_dns_name
   alb_zone_id           = module.jenkins_alb_prod.alb_zone_id
   a_record_name         = "jenkins-prod"
+  create_hosted_zone    = false
 }
 
 module "jenkins_ec2_prod" {
