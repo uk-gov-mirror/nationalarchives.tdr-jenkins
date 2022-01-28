@@ -28,6 +28,7 @@ module "jenkins_dns_prod" {
   alb_zone_id           = module.jenkins_alb_prod.alb_zone_id
   a_record_name         = "jenkins-prod"
   create_hosted_zone    = false
+  hosted_zone_id        = data.aws_route53_zone.hosted_zone.id
 }
 
 module "jenkins_ec2_prod" {
