@@ -27,6 +27,8 @@ module "jenkins_integration_dns" {
   alb_dns_name          = module.jenkins_integration_alb.alb_dns_name
   alb_zone_id           = module.jenkins_integration_alb.alb_zone_id
   a_record_name         = "jenkins"
+  create_hosted_zone    = false
+  hosted_zone_id        = data.aws_route53_zone.hosted_zone.id
 }
 
 module "jenkins_integration_ec2" {
