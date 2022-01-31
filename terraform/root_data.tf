@@ -30,3 +30,7 @@ data "aws_caller_identity" "current" {}
 data "aws_ssm_parameter" "sandbox_account" {
   name = "/mgmt/sandbox_account"
 }
+
+data "aws_route53_zone" "hosted_zone" {
+  name = "tdr-management.nationalarchives.gov.uk"
+}
