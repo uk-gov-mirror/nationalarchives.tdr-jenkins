@@ -41,8 +41,8 @@ jjwt-api:0.11.2-9.c8b45b8bb173
 jquery-detached:1.2.1
 jquery3-api:3.6.0-2
 jsch:0.1.55.2
-junit:1.53
-lockable-resources:2.13
+junit:1.55
+lockable-resources:2.14
 mailer:408.vd726a_1130320
 matrix-auth:3.0.1
 matrix-project:1.20
