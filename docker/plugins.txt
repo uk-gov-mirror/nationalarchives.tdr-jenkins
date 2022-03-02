@@ -4,7 +4,7 @@ antisamy-markup-formatter:2.7
 apache-httpcomponents-client-4-api:4.5.13-1.0
 authentication-tokens:1.4
 aws-credentials:189.v3551d5642995
-aws-java-sdk:1.12.148-310.v5e3b_c2681d79
+aws-java-sdk:1.12.163-315.v2b_716ec8e4df
 bootstrap4-api:4.6.0-3
 bootstrap5-api:5.1.3-6
 bouncycastle-api:2.25
@@ -14,7 +14,7 @@ caffeine-api:2.9.2-29.v717aac953ff3
 checks-api:1.7.2
 cloudbees-folder:6.708.ve61636eb_65a_5
 command-launcher:1.6
-configuration-as-code:1346.ve8cfa_3473c94
+configuration-as-code:1413.vb_1b_8cb_c67a_f4
 configuration-as-code-secret-ssm:1.0.1
 credentials:1074.v60e6c29b_b_44b_
 credentials-binding:1.27.1
@@ -30,7 +30,7 @@ git-client:3.11.0
 git-server:1.10
 github:1.34.2
 github-api:1.301-378.v9807bd746da5
-github-branch-source:2.11.4
+github-branch-source:1577.v83564088883f
 github-oauth:0.37
 handlebars:3.0.8
 hsts-filter-plugin:1.0
@@ -57,17 +57,17 @@ pipeline-model-api:2.2064.v5eef7d0982b_e
 pipeline-model-declarative-agent:1.1.1
 pipeline-model-definition:2.2064.v5eef7d0982b_e
 pipeline-model-extensions:2.2064.v5eef7d0982b_e
-pipeline-rest-api:2.21
+pipeline-rest-api:2.22
 pipeline-stage-step:291.vf0a8a7aeeb50
 pipeline-stage-tags-metadata:2.2064.v5eef7d0982b_e
-pipeline-stage-view:2.21
+pipeline-stage-view:2.22
 plain-credentials:1.8
 plugin-util-api:2.14.0
 popper-api:1.16.1-2
 popper2-api:2.11.2-1
 resource-disposer:0.17
 scm-api:595.vd5a_df5eb_0e39
-script-security:1131.v8b_b_5eda_c328e
+script-security:1140.vf967fb_efa_55a_
 slack:602.v0da_f7458945d
 snakeyaml-api:1.29.1
 ssh-agent:1.24.1
@@ -75,7 +75,7 @@ ssh-credentials:1.19
 sshd:3.1.0
 structs:308.v852b473a2b8c
 timestamper:1.17
-token-macro:277.v7c8f82a_d66b_3
+token-macro:280.v97a_82642793c
 trilead-api:1.0.13
 variant:1.4
 workflow-aggregator:2.6
