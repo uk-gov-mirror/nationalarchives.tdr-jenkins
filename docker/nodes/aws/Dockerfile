@@ -5,6 +5,7 @@ RUN apk update \
     && apk upgrade openssl \
     && apk upgrade apk-tools \
     && apk upgrade busybox \
+    && apk upgrade expat \
     && pip3 install boto3 \
     && pip3 install c7n c7n-mailer c7n-guardian --ignore-installed six \
     && pip3 install ruamel.yaml \
