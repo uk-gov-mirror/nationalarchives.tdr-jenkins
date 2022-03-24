@@ -2,7 +2,7 @@ FROM jenkins/jenkins:2.339-alpine
 USER root
 ENV JAVA_OPTS "-Djenkins.install.runSetupWizard=false -Dhudson.model.DirectoryBrowserSupport.CSP=\"default-src 'self'\" ${JAVA_OPTS:-}"
 RUN apk update && \
-        apk upgrade openssl apk-tools libgcrypt curl nettle busybox expat && \
+        apk upgrade openssl apk-tools libgcrypt curl nettle busybox expat libretls && \
         apk add py3-pip zip make && \
         mkdir -p /opt/jcasc && \
         addgroup docker && \
