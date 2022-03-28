@@ -1,4 +1,4 @@
-FROM jenkins/jenkins:2.339-alpine
+FROM jenkins/jenkins:2.340-alpine
 USER root
 ENV JAVA_OPTS "-Djenkins.install.runSetupWizard=false ${JAVA_OPTS:-}"
 RUN apk update && \
