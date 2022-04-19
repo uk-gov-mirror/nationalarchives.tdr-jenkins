@@ -1,7 +1,7 @@
 FROM jenkins/inbound-agent:alpine
 USER root
 WORKDIR /opt
-RUN apk update && apk upgrade musl openssl apk-tools busybox expat libretls zlib && \
+RUN apk update && apk upgrade musl openssl apk-tools busybox expat libretls zlib git && \
               apk add bash curl gnupg && \
               curl -Ls https://github.com/sbt/sbt/releases/download/v1.4.1/sbt-1.4.1.tgz | tar --strip-components=1 -xzvf - && \
               mv /opt/bin/* /usr/local/bin/ && \
